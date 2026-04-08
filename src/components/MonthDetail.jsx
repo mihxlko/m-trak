@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import SongTable, { makeBlankSong } from './SongTable.jsx'
+import MediaBlock from './MediaBlock.jsx'
 
 export default function MonthDetail({ month, year, monthData, onSave }) {
   const hasSongs = monthData.songs && monthData.songs.length > 0
@@ -35,12 +36,11 @@ export default function MonthDetail({ month, year, monthData, onSave }) {
       <div className="month-detail-header">
         <div className="month-detail-title-group">
           <h1 className="month-detail-title">{month}, {year}</h1>
-          <span className="month-detail-sub">Songs</span>
         </div>
 
         <div className="month-detail-actions">
           {editMode ? (
-            <button className="pill-btn" onClick={handleDone}>Done</button>
+            <button className="btn" onClick={handleDone}>Done</button>
           ) : hasSongs ? (
             <button className="text-btn" onClick={handleEdit}>Edit</button>
           ) : null}
@@ -49,14 +49,22 @@ export default function MonthDetail({ month, year, monthData, onSave }) {
 
       {!editMode && !hasSongs ? (
         <div className="month-empty-state">
-          <button className="pill-btn" onClick={handleAddContent}>Add Content +</button>
+          <button className="btn" onClick={handleAddContent}>Add Content +</button>
         </div>
       ) : (
-        <SongTable
-          songs={editMode ? draftSongs : (monthData.songs || [])}
-          editMode={editMode}
-          onSongsChange={setDraftSongs}
-        />
+        <MediaBlock
+          title="Songs"
+          titleVisible={true}
+          titleEditable={false}
+          onTitleChange={null}
+        >
+          <SongTable
+            songs={editMode ? draftSongs : (monthData.songs || [])}
+            editMode={editMode}
+            onSongsChange={setDraftSongs}
+            onViewSongsChange={onSave}
+          />
+        </MediaBlock>
       )}
     </div>
   )

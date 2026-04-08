@@ -1,27 +1,16 @@
 import { useState, useEffect, useRef } from 'react'
 
-const YEARS = ['2025', '2026']
-
-function YearSwitcher({ selectedYear, onYearChange }) {
+function YearSwitcher({ years, selectedYear, onYearChange }) {
   const [open, setOpen] = useState(false)
   const ref = useRef(null)
 
   useEffect(() => {
-    function handleClickOutside(e) {
-      if (ref.current && !ref.current.contains(e.target)) {
-        setOpen(false)
-      }
+    function onMouseDown(e) {
+      if (ref.current && !ref.current.contains(e.target)) setOpen(false)
     }
-    if (open) {
-      document.addEventListener('mousedown', handleClickOutside)
-    }
-    return () => document.removeEventListener('mousedown', handleClickOutside)
+    if (open) document.addEventListener('mousedown', onMouseDown)
+    return () => document.removeEventListener('mousedown', onMouseDown)
   }, [open])
-
-  function handleSelect(year) {
-    onYearChange(year)
-    setOpen(false)
-  }
 
   return (
     <div className="year-switcher" ref={ref}>
@@ -34,11 +23,11 @@ function YearSwitcher({ selectedYear, onYearChange }) {
 
       {open && (
         <div className="year-dropdown">
-          {YEARS.map(year => (
+          {years.map(year => (
             <div
               key={year}
               className="year-dropdown-item"
-              onClick={() => handleSelect(year)}
+              onClick={() => { onYearChange(year); setOpen(false) }}
             >
               <span>{year}</span>
               {year === selectedYear && (
@@ -76,25 +65,188 @@ function GridIcon() {
   )
 }
 
-export default function TopBar({ currentView, selectedMonth, selectedYear, onYearChange, onNavigateBack, viewMode, onToggleView }) {
+function CalendarIcon() {
+  return (
+    <svg width="13" height="13" viewBox="0 0 13 13" fill="none">
+      <rect x="1" y="2" width="11" height="10" rx="2" stroke="currentColor" strokeWidth="1.2"/>
+      <path d="M1 5H12" stroke="currentColor" strokeWidth="1.2"/>
+      <path d="M4 1V3" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round"/>
+      <path d="M9 1V3" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round"/>
+    </svg>
+  )
+}
+
+function MonthIcon() {
+  return (
+    <svg width="13" height="13" viewBox="0 0 13 13" fill="none">
+      <rect x="1" y="1" width="11" height="11" rx="2" stroke="currentColor" strokeWidth="1.2"/>
+      <path d="M1 5H12" stroke="currentColor" strokeWidth="1.2"/>
+      <path d="M5 1V5" stroke="currentColor" strokeWidth="1.2"/>
+    </svg>
+  )
+}
+
+function FolderIcon() {
+  return (
+    <svg width="13" height="13" viewBox="0 0 13 13" fill="none">
+      <path d="M1.5 4.5C1.5 3.95 1.95 3.5 2.5 3.5H5.5L6.5 4.5H10.5C11.05 4.5 11.5 4.95 11.5 5.5V10C11.5 10.55 11.05 11 10.5 11H2.5C1.95 11 1.5 10.55 1.5 10V4.5Z"
+        stroke="currentColor" strokeWidth="1.2" fill="none"/>
+    </svg>
+  )
+}
+
+function BoardIcon() {
+  return (
+    <svg width="13" height="13" viewBox="0 0 13 13" fill="none">
+      <rect x="1.5" y="1.5" width="4" height="4" rx="1" stroke="currentColor" strokeWidth="1.2"/>
+      <rect x="7.5" y="1.5" width="4" height="4" rx="1" stroke="currentColor" strokeWidth="1.2"/>
+      <rect x="1.5" y="7.5" width="4" height="4" rx="1" stroke="currentColor" strokeWidth="1.2"/>
+      <rect x="7.5" y="7.5" width="4" height="4" rx="1" stroke="currentColor" strokeWidth="1.2"/>
+    </svg>
+  )
+}
+
+function TimelineCreateMenu({ onCreateYear, onCreateMonth }) {
+  const [open, setOpen] = useState(false)
+  const ref = useRef(null)
+
+  useEffect(() => {
+    function onMouseDown(e) {
+      if (ref.current && !ref.current.contains(e.target)) setOpen(false)
+    }
+    function onKeyDown(e) {
+      if (e.key === 'Escape') setOpen(false)
+    }
+    if (open) {
+      document.addEventListener('mousedown', onMouseDown)
+      document.addEventListener('keydown', onKeyDown)
+    }
+    return () => {
+      document.removeEventListener('mousedown', onMouseDown)
+      document.removeEventListener('keydown', onKeyDown)
+    }
+  }, [open])
+
+  return (
+    <div className="create-menu-wrapper" ref={ref}>
+      <button className="btn" onClick={() => setOpen(o => !o)}>Create +</button>
+      {open && (
+        <div className="create-dropdown">
+          <div
+            className="create-dropdown-item"
+            onClick={() => { setOpen(false); onCreateYear() }}
+          >
+            <CalendarIcon />
+            <span>Year</span>
+          </div>
+          <div
+            className="create-dropdown-item"
+            onClick={() => { setOpen(false); onCreateMonth() }}
+          >
+            <MonthIcon />
+            <span>Month</span>
+          </div>
+        </div>
+      )}
+    </div>
+  )
+}
+
+function BoardsCreateMenu({ onOpenBoardOverlay }) {
+  const [open, setOpen] = useState(false)
+  const ref = useRef(null)
+
+  useEffect(() => {
+    function onMouseDown(e) {
+      if (ref.current && !ref.current.contains(e.target)) setOpen(false)
+    }
+    function onKeyDown(e) {
+      if (e.key === 'Escape') setOpen(false)
+    }
+    if (open) {
+      document.addEventListener('mousedown', onMouseDown)
+      document.addEventListener('keydown', onKeyDown)
+    }
+    return () => {
+      document.removeEventListener('mousedown', onMouseDown)
+      document.removeEventListener('keydown', onKeyDown)
+    }
+  }, [open])
+
+  return (
+    <div className="create-menu-wrapper" ref={ref}>
+      <button className="btn" onClick={() => setOpen(o => !o)}>Create +</button>
+      {open && (
+        <div className="create-dropdown">
+          <div className="create-dropdown-item create-dropdown-item--disabled">
+            <FolderIcon />
+            <span>Folder</span>
+          </div>
+          <div
+            className="create-dropdown-item"
+            onClick={() => { setOpen(false); onOpenBoardOverlay() }}
+          >
+            <BoardIcon />
+            <span>Board</span>
+          </div>
+        </div>
+      )}
+    </div>
+  )
+}
+
+export default function TopBar({
+  currentView,
+  selectedMonth,
+  selectedYear,
+  selectedBoard,
+  years,
+  onYearChange,
+  onNavigateBack,
+  viewMode,
+  onToggleView,
+  onOpenBoardOverlay,
+  onCreateYear,
+  onCreateMonth,
+}) {
   return (
     <header className="topbar">
       <div className="topbar-breadcrumb">
-        {currentView === 'timeline' ? (
+        {currentView === 'timeline' && (
           <span className="topbar-breadcrumb-current">Timeline</span>
-        ) : (
+        )}
+        {currentView === 'month' && (
           <>
             <span className="topbar-breadcrumb-link" onClick={onNavigateBack}>Timeline</span>
             <span className="topbar-breadcrumb-sep">›</span>
             <span className="topbar-breadcrumb-current">{selectedMonth}</span>
           </>
         )}
+        {currentView === 'yourBoards' && (
+          <span className="topbar-breadcrumb-current">Your Boards</span>
+        )}
+        {currentView === 'boardDetail' && (
+          <>
+            <span className="topbar-breadcrumb-link" onClick={onNavigateBack}>Your Boards</span>
+            <span className="topbar-breadcrumb-sep">›</span>
+            <span className="topbar-breadcrumb-current">{selectedBoard?.name}</span>
+          </>
+        )}
       </div>
 
       <div className="topbar-controls">
-        <YearSwitcher selectedYear={selectedYear} onYearChange={onYearChange} />
-
-        <button className="icon-btn" title={viewMode === 'grid' ? 'Switch to list view' : 'Switch to grid view'} onClick={onToggleView}>
+        {currentView === 'timeline' && (
+          <TimelineCreateMenu onCreateYear={onCreateYear} onCreateMonth={onCreateMonth} />
+        )}
+        {currentView === 'yourBoards' && (
+          <BoardsCreateMenu onOpenBoardOverlay={onOpenBoardOverlay} />
+        )}
+        <YearSwitcher years={years} selectedYear={selectedYear} onYearChange={onYearChange} />
+        <button
+          className="icon-btn"
+          title={viewMode === 'grid' ? 'Switch to list view' : 'Switch to grid view'}
+          onClick={onToggleView}
+        >
           {viewMode === 'grid' ? <ListIcon /> : <GridIcon />}
         </button>
       </div>

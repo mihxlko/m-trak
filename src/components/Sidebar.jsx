@@ -22,17 +22,26 @@ function GridIcon() {
   )
 }
 
-export default function Sidebar({ activeProfileId, onSwitchProfile, currentView }) {
+export default function Sidebar({ activeProfileId, onSwitchProfile, currentView, onNavigateToTimeline, onNavigateToBoards }) {
+  const isTimelineActive = ['timeline', 'month'].includes(currentView)
+  const isBoardsActive = ['yourBoards', 'boardDetail'].includes(currentView)
+
   return (
     <aside className="sidebar">
       <ProfileSwitcher activeProfileId={activeProfileId} onSwitch={onSwitchProfile} />
 
       <nav className="sidebar-nav">
-        <div className={`sidebar-nav-item ${currentView !== 'boards' ? 'active' : ''}`}>
+        <div
+          className={`sidebar-nav-item ${isTimelineActive ? 'active' : ''}`}
+          onClick={onNavigateToTimeline}
+        >
           <CalendarIcon />
           <span>Timeline</span>
         </div>
-        <div className="sidebar-nav-item">
+        <div
+          className={`sidebar-nav-item ${isBoardsActive ? 'active' : ''}`}
+          onClick={onNavigateToBoards}
+        >
           <GridIcon />
           <span>Your Boards</span>
         </div>

@@ -1,6 +1,6 @@
 const PROFILES = [
-  { id: 'mihvlko', displayName: 'mihvlko', avatar: 'images/avatars/mihvlko.jpg' },
-  { id: 'test-user-1', displayName: 'test-user-1', avatar: null },
+  { id: 'mihxlko', displayName: 'mihxlko', avatar: 'images/avatars/mihvlko.jpg' },
+  { id: 'Test User', displayName: 'Test User', avatar: null },
 ]
 
 const MONTHS = [
@@ -8,20 +8,15 @@ const MONTHS = [
   'July', 'August', 'September', 'October', 'November', 'December',
 ]
 
-const YEARS = ['2025', '2026']
+const ACTIVE_PROFILE_KEY = 'm-trakActiveProfile'
+const VIEW_PREFERENCE_KEY = 'm-trakViewPreference'
+const BOARDS_KEY_PREFIX = 'm-trakBoards_'
 
-const ACTIVE_PROFILE_KEY = 'aulosActiveProfile'
-const VIEW_PREFERENCE_KEY = 'aulosViewPreference'
-
+// New data model: { years: { "2026": { "January": { songs, coverImage }, ... }, ... } }
+// Only years/months the user created exist, except the current calendar year is auto-created.
 function makeEmptyData() {
-  const data = {}
-  for (const year of YEARS) {
-    data[year] = {}
-    for (const month of MONTHS) {
-      data[year][month] = { songs: [], coverImage: null }
-    }
-  }
-  return data
+  const currentYear = String(new Date().getFullYear())
+  return { years: { [currentYear]: {} } }
 }
 
 export function getProfiles() {
@@ -29,7 +24,7 @@ export function getProfiles() {
 }
 
 export function getActiveProfile() {
-  return localStorage.getItem(ACTIVE_PROFILE_KEY) || 'mihvlko'
+  return localStorage.getItem(ACTIVE_PROFILE_KEY) || 'Test User'
 }
 
 export function setActiveProfile(profileId) {
@@ -37,31 +32,50 @@ export function setActiveProfile(profileId) {
 }
 
 export function getProfileData(profileId) {
-  const key = `aulosData_${profileId}`
+  const key = `m-trakData_${profileId}`
   const raw = localStorage.getItem(key)
   if (!raw) return makeEmptyData()
   try {
-    return JSON.parse(raw)
+    const parsed = JSON.parse(raw)
+    // Migrate old format (no `years` wrapper) → wipe and reinit
+    if (!parsed.years) return makeEmptyData()
+    return parsed
   } catch {
     return makeEmptyData()
   }
 }
 
 export function saveProfileData(profileId, data) {
-  const key = `aulosData_${profileId}`
-  localStorage.setItem(key, JSON.stringify(data))
+  localStorage.setItem(`m-trakData_${profileId}`, JSON.stringify(data))
 }
 
 export function getMonthData(profileId, year, month) {
   const data = getProfileData(profileId)
-  return data?.[year]?.[month] || { songs: [], coverImage: null }
+  return data?.years?.[year]?.[month] || { songs: [], coverImage: null }
 }
 
 export function saveMonthData(profileId, year, month, monthData) {
   const data = getProfileData(profileId)
-  if (!data[year]) data[year] = {}
-  if (!data[year][month]) data[year][month] = { songs: [], coverImage: null }
-  data[year][month] = monthData
+  if (!data.years) data.years = {}
+  if (!data.years[year]) data.years[year] = {}
+  data.years[year][month] = monthData
+  saveProfileData(profileId, data)
+}
+
+export function addYearToData(profileId, year) {
+  const data = getProfileData(profileId)
+  if (!data.years) data.years = {}
+  if (!data.years[year]) data.years[year] = {}
+  saveProfileData(profileId, data)
+}
+
+export function addMonthToData(profileId, year, month) {
+  const data = getProfileData(profileId)
+  if (!data.years) data.years = {}
+  if (!data.years[year]) data.years[year] = {}
+  if (!data.years[year][month]) {
+    data.years[year][month] = { songs: [], coverImage: null }
+  }
   saveProfileData(profileId, data)
 }
 
@@ -75,12 +89,93 @@ export function setViewPreference(view) {
 
 export function initializeProfiles() {
   for (const profile of PROFILES) {
-    const key = `aulosData_${profile.id}`
-    if (!localStorage.getItem(key)) {
-      localStorage.setItem(key, JSON.stringify(makeEmptyData()))
+    const dataKey = `m-trakData_${profile.id}`
+    const raw = localStorage.getItem(dataKey)
+    if (!raw) {
+      localStorage.setItem(dataKey, JSON.stringify(makeEmptyData()))
+    } else {
+      try {
+        const parsed = JSON.parse(raw)
+        // Migrate old format that lacks `years` wrapper
+        if (!parsed.years) {
+          localStorage.setItem(dataKey, JSON.stringify(makeEmptyData()))
+        }
+      } catch {
+        localStorage.setItem(dataKey, JSON.stringify(makeEmptyData()))
+      }
     }
+    initializeBoardsData(profile.id)
   }
   if (!localStorage.getItem(ACTIVE_PROFILE_KEY)) {
-    localStorage.setItem(ACTIVE_PROFILE_KEY, 'mihvlko')
+    localStorage.setItem(ACTIVE_PROFILE_KEY, 'Test User')
   }
 }
+
+// ── Boards ────────────────────────────────────────────────────────────────
+
+export function getBoardsData(profileId) {
+  const raw = localStorage.getItem(`${BOARDS_KEY_PREFIX}${profileId}`)
+  if (!raw) return []
+  try { return JSON.parse(raw) } catch { return [] }
+}
+
+export function saveBoardsData(profileId, data) {
+  localStorage.setItem(`${BOARDS_KEY_PREFIX}${profileId}`, JSON.stringify(data))
+}
+
+export function initializeBoardsData(profileId) {
+  const key = `${BOARDS_KEY_PREFIX}${profileId}`
+  if (!localStorage.getItem(key)) {
+    localStorage.setItem(key, JSON.stringify([]))
+  }
+}
+
+export function findBoardById(data, id) {
+  for (const item of data) {
+    if (item.id === id) return item
+    if (item.type === 'folder' && item.children) {
+      const found = findBoardById(item.children, id)
+      if (found) return found
+    }
+  }
+  return null
+}
+
+export function updateBoardById(data, id, updates) {
+  return data.map(item => {
+    if (item.id === id) return { ...item, ...updates }
+    if (item.type === 'folder' && item.children) {
+      return { ...item, children: updateBoardById(item.children, id, updates) }
+    }
+    return item
+  })
+}
+
+export function deleteBoardById(data, id) {
+  return data
+    .filter(item => item.id !== id)
+    .map(item => {
+      if (item.type === 'folder' && item.children) {
+        return { ...item, children: deleteBoardById(item.children, id) }
+      }
+      return item
+    })
+}
+
+export function addItemToFolder(data, folderId, newItem) {
+  return data.map(item => {
+    if (item.id === folderId && item.type === 'folder') {
+      return { ...item, children: [...(item.children || []), newItem] }
+    }
+    if (item.type === 'folder' && item.children) {
+      return { ...item, children: addItemToFolder(item.children, folderId, newItem) }
+    }
+    return item
+  })
+}
+
+export function addItemToRoot(data, newItem) {
+  return [...data, newItem]
+}
+
+export { MONTHS }
