@@ -329,7 +329,7 @@ input, button, select, textarea {
 .timeline-grid-content {
   flex: 1;
   overflow-y: auto;
-  padding: 20px 6px 32px;
+  padding: 10px 6px 32px;
 }
 
 .month-grid {
@@ -438,13 +438,15 @@ input, button, select, textarea {
   flex: 1;
   overflow-y: auto;
   padding: 32px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
 }
 
 .month-detail-header {
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
-  margin-bottom: 28px;
 }
 
 .month-detail-title-group {
@@ -467,7 +469,7 @@ input, button, select, textarea {
 .month-detail-actions {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 4px;
 }
 
 /* ---- BUTTON ---- */
@@ -492,6 +494,10 @@ input, button, select, textarea {
 
 .btn:hover {
   opacity: 0.88;
+}
+
+.btn-red {
+  background: #FFABAB;
 }
 
 .text-btn {
@@ -522,7 +528,209 @@ input, button, select, textarea {
   display: flex;
   align-items: center;
   justify-content: flex-start;
-  padding: 80px 0;
+}
+
+/* ---- MONTH BLOCKS ---- */
+
+.month-blocks {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.month-add-content-row {
+  display: flex;
+  align-items: flex-start;
+}
+
+/* ---- MEDIA BLOCK LABEL ROW ---- */
+
+.media-block {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.media-block-label-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 2px;
+}
+
+.media-block-header-menu {
+  display: flex;
+  align-items: center;
+}
+
+/* ---- ADD CONTENT DROPDOWN ---- */
+
+.add-content-wrapper {
+  position: relative;
+}
+
+.add-content-dropdown {
+  min-width: 140px;
+}
+
+.add-content-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.add-content-item.disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+
+/* ---- ALBUM CARD ---- */
+
+.albums-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  align-items: flex-start;
+}
+
+.album-card-wrapper {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+}
+
+.album-card-wrapper.dragging {
+  opacity: 0.4;
+}
+
+.album-card-wrapper.drop-before::before,
+.album-card-wrapper.drop-after::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background: #88D4C8;
+  border-radius: 1px;
+  z-index: 1;
+}
+
+.album-card-wrapper.drop-before::before {
+  left: -10px;
+}
+
+.album-card-wrapper.drop-after::after {
+  right: -10px;
+}
+
+.album-drag-handle {
+  position: absolute;
+  left: -10px;
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  align-items: center;
+  color: var(--color-text-muted);
+  cursor: grab;
+  opacity: 0;
+  transition: opacity 0.1s;
+}
+
+.album-card-wrapper:hover .album-drag-handle {
+  opacity: 1;
+}
+
+.album-card {
+  width: 200px;
+  border-radius: 8px;
+  background: var(--bg-song-block);
+  overflow: hidden;
+  position: relative;
+}
+
+.album-card-image {
+  width: 200px;
+  height: 200px;
+  background: var(--bg-image-placeholder);
+}
+
+.album-card-fields {
+  padding: 8px 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.album-card-input {
+  background: transparent;
+  border: none;
+  outline: none;
+  font-family: 'Inter', sans-serif;
+  font-weight: 500;
+  font-size: 12px;
+  letter-spacing: -0.03em;
+  width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.album-card-input.album-name-input {
+  color: var(--color-text-dark);
+}
+
+.album-card-input.artist-name-input {
+  color: var(--color-text-muted);
+}
+
+.album-card-text {
+  font-family: 'Inter', sans-serif;
+  font-weight: 500;
+  font-size: 12px;
+  letter-spacing: -0.03em;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  display: block;
+}
+
+.album-card-text.album-name-text {
+  color: var(--color-text-dark);
+}
+
+.album-card-text.artist-name-text {
+  color: var(--color-text-muted);
+}
+
+.album-card-text.muted {
+  color: var(--color-text-muted);
+}
+
+.album-card-menu {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+}
+
+.album-card-menu-btn {
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  color: var(--color-text-muted);
+  opacity: 0;
+  transition: opacity 0.1s;
+  display: flex;
+  align-items: center;
+}
+
+.album-card:hover .album-card-menu-btn {
+  opacity: 1;
+}
+
+.album-card-dropdown {
+  right: 0;
+  left: auto;
 }
 
 /* ---- SONG TABLE ---- */
@@ -556,6 +764,7 @@ input, button, select, textarea {
   grid-template-columns: 32px 50px 1fr 1fr 1fr;
   gap: 10px;
   align-items: center;
+  padding: 4px 8px;
   border-radius: 6px;
   background: var(--bg-song-block);
   transition: background 0.1s;
@@ -595,7 +804,7 @@ input, button, select, textarea {
   bottom: -6px;
 }
 
-/* Number cell: overlays row number with drag handle on hover */
+/* Number cell: drag handle appears 2px outside the right edge of the cell */
 .song-num-cell {
   position: relative;
   display: flex;
@@ -604,22 +813,17 @@ input, button, select, textarea {
 
 .song-row-num {
   color: var(--color-text-muted);
-  transition: opacity 0.1s;
 }
 
 .song-drag-handle {
   position: absolute;
-  left: 0;
+  right: calc(100% + 10px);
   display: flex;
   align-items: center;
   color: var(--color-text-muted);
   cursor: grab;
   opacity: 0;
   transition: opacity 0.1s;
-}
-
-.song-table.view-mode .song-row:hover .song-row-num {
-  opacity: 0;
 }
 
 .song-table.view-mode .song-row:hover .song-drag-handle {
@@ -640,8 +844,7 @@ input, button, select, textarea {
   padding: 0;
   cursor: pointer;
   color: var(--color-text-muted);
-  opacity: 0;
-  transition: opacity 0.1s;
+  opacity: 1;
   display: flex;
   align-items: center;
 }
@@ -684,6 +887,7 @@ input, button, select, textarea {
   align-items: center;
   justify-content: center;
   color: var(--color-text-muted);
+  position: relative;
 }
 
 .song-row-art {
@@ -858,7 +1062,7 @@ input, button, select, textarea {
 .boards-view-content {
   flex: 1;
   overflow-y: auto;
-  padding: 32px;
+  padding: 0 24px 0 24px;
 }
 
 .boards-grid {
@@ -869,7 +1073,7 @@ input, button, select, textarea {
 
 .boards-empty-state {
   color: var(--color-text-muted);
-  padding: 80px 0;
+  padding: 10px 0 0 0;
 }
 
 .board-card {

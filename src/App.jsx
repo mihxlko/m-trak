@@ -49,7 +49,7 @@ export default function App() {
   const existingMonths = Object.keys(yearData)
 
   const currentMonthData = selectedMonth
-    ? (yearData?.[selectedMonth] || { songs: [], coverImage: null })
+    ? (yearData?.[selectedMonth] || { blocks: [], coverImage: null })
     : null
 
   function refreshProfileData(profileId) {
@@ -114,15 +114,15 @@ export default function App() {
   }
 
   function handleCoverChange(month, base64) {
-    const monthData = profileData?.years?.[selectedYear]?.[month] || { songs: [], coverImage: null }
+    const monthData = profileData?.years?.[selectedYear]?.[month] || { blocks: [], coverImage: null }
     const updated = { ...monthData, coverImage: base64 }
     saveMonthData(activeProfileId, selectedYear, month, updated)
     refreshProfileData(activeProfileId)
   }
 
-  function handleSaveSongs(songs) {
-    const monthData = profileData?.years?.[selectedYear]?.[selectedMonth] || { songs: [], coverImage: null }
-    const updated = { ...monthData, songs }
+  function handleSaveBlocks(blocks) {
+    const monthData = profileData?.years?.[selectedYear]?.[selectedMonth] || { blocks: [], coverImage: null }
+    const updated = { ...monthData, blocks }
     saveMonthData(activeProfileId, selectedYear, selectedMonth, updated)
     refreshProfileData(activeProfileId)
   }
@@ -189,7 +189,7 @@ export default function App() {
             month={selectedMonth}
             year={selectedYear}
             monthData={currentMonthData}
-            onSave={handleSaveSongs}
+            onSave={handleSaveBlocks}
           />
         )}
         {currentView === 'yourBoards' && (

@@ -4,7 +4,9 @@ export default function MonthListRow({ month, monthData, onRowClick, onCoverChan
   const [menuOpen, setMenuOpen] = useState(false)
   const fileInputRef = useRef(null)
   const menuRef = useRef(null)
-  const hasSongs = monthData.songs && monthData.songs.length > 0
+  const hasContent = Array.isArray(monthData.blocks)
+    ? monthData.blocks.some(b => b.items?.length > 0)
+    : (monthData.songs?.length > 0)
 
   useEffect(() => {
     function handleClickOutside(e) {
@@ -51,7 +53,7 @@ export default function MonthListRow({ month, monthData, onRowClick, onCoverChan
 
       <div className="month-list-name-row">
         <span className="month-list-name">{month}</span>
-        {hasSongs && <span className="month-dot" />}
+        {hasContent && <span className="month-dot" />}
       </div>
 
       <div className="month-card-menu-wrapper" ref={menuRef} style={{ marginLeft: 'auto' }}>

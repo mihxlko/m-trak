@@ -49,9 +49,27 @@ export function saveProfileData(profileId, data) {
   localStorage.setItem(`m-trakData_${profileId}`, JSON.stringify(data))
 }
 
+function migrateMonthData(raw) {
+  if (!raw) return { blocks: [], coverImage: null }
+  // Already migrated
+  if (Array.isArray(raw.blocks)) return raw
+  // Legacy: had top-level songs array
+  const songs = Array.isArray(raw.songs) ? raw.songs : []
+  const blocks = songs.length > 0
+    ? [{ id: crypto.randomUUID(), type: 'songs', title: 'Songs', titleVisible: true, items: songs }]
+    : []
+  return { blocks, coverImage: raw.coverImage || null }
+}
+
 export function getMonthData(profileId, year, month) {
   const data = getProfileData(profileId)
-  return data?.years?.[year]?.[month] || { songs: [], coverImage: null }
+  const raw = data?.years?.[year]?.[month]
+  const migrated = migrateMonthData(raw)
+  // Write back immediately if migration happened
+  if (raw && !Array.isArray(raw.blocks)) {
+    saveMonthData(profileId, year, month, migrated)
+  }
+  return migrated
 }
 
 export function saveMonthData(profileId, year, month, monthData) {
@@ -74,7 +92,7 @@ export function addMonthToData(profileId, year, month) {
   if (!data.years) data.years = {}
   if (!data.years[year]) data.years[year] = {}
   if (!data.years[year][month]) {
-    data.years[year][month] = { songs: [], coverImage: null }
+    data.years[year][month] = { blocks: [], coverImage: null }
   }
   saveProfileData(profileId, data)
 }

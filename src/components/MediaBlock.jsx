@@ -1,14 +1,11 @@
-export default function MediaBlock({
-  title,
-  titleVisible = true,
-  titleEditable = false,
-  onTitleChange = null,
-  children,
-}) {
+export default function MediaBlock({ title, titleVisible = true, headerMenu, children }) {
   return (
-    <div className="media-block" style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+    <div className="media-block">
       {titleVisible && title && (
-        <span className="month-detail-sub">{title}</span>
+        <div className="media-block-label-row">
+          <span className="month-detail-sub">{title}</span>
+          {headerMenu && <div className="media-block-header-menu">{headerMenu}</div>}
+        </div>
       )}
       {children}
     </div>

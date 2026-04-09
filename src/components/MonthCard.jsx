@@ -4,7 +4,9 @@ export default function MonthCard({ month, monthData, onCardClick, onCoverChange
   const [menuOpen, setMenuOpen] = useState(false)
   const fileInputRef = useRef(null)
   const menuRef = useRef(null)
-  const hasSongs = monthData.songs && monthData.songs.length > 0
+  const hasContent = Array.isArray(monthData.blocks)
+    ? monthData.blocks.some(b => b.items?.length > 0)
+    : (monthData.songs?.length > 0)
 
   useEffect(() => {
     function handleClickOutside(e) {
@@ -59,7 +61,7 @@ export default function MonthCard({ month, monthData, onCardClick, onCoverChange
       <div className="month-card-footer">
         <div className="month-card-name-row">
           <span>{month}</span>
-          {hasSongs && <span className="month-dot" />}
+          {hasContent && <span className="month-dot" />}
         </div>
 
         <div className="month-card-menu-wrapper" ref={menuRef}>

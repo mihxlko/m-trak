@@ -32,9 +32,9 @@ function makeBlankSong() {
 }
 
 const VIEW_COLS = '32px 50px 1fr 1fr 1fr 24px'
-const EDIT_COLS = '32px 50px 1fr 1fr 1fr'
+const EDIT_COLS = '32px 50px 1fr 1fr 1fr 24px'
 
-export default function SongTable({ songs, editMode, onSongsChange, onViewSongsChange }) {
+export default function SongTable({ songs, editMode, onSongsChange, onViewSongsChange, onEdit, onDone }) {
   const [selectedIds, setSelectedIds] = useState(new Set())
   const [lastSelectedId, setLastSelectedId] = useState(null)
   const [undoBuffer, setUndoBuffer] = useState(null)
@@ -42,6 +42,7 @@ export default function SongTable({ songs, editMode, onSongsChange, onViewSongsC
   const [dropTargetId, setDropTargetId] = useState(null)
   const [dropBefore, setDropBefore] = useState(true)
   const [openMenuId, setOpenMenuId] = useState(null)
+  const [headerMenuOpen, setHeaderMenuOpen] = useState(false)
   const tableRef = useRef(null)
 
   // Clear interaction state when entering edit mode
@@ -62,8 +63,12 @@ export default function SongTable({ songs, editMode, onSongsChange, onViewSongsC
         setSelectedIds(new Set())
         setLastSelectedId(null)
         setOpenMenuId(null)
+        setHeaderMenuOpen(false)
       } else if (!e.target.closest('.song-row-menu')) {
         setOpenMenuId(null)
+      }
+      if (!e.target.closest('.header-menu-dots')) {
+        setHeaderMenuOpen(false)
       }
     }
     document.addEventListener('mousedown', onMouseDown)
@@ -77,6 +82,7 @@ export default function SongTable({ songs, editMode, onSongsChange, onViewSongsC
         setSelectedIds(new Set())
         setLastSelectedId(null)
         setOpenMenuId(null)
+        setHeaderMenuOpen(false)
       }
       if ((e.metaKey || e.ctrlKey) && e.key === 'z' && !editMode && undoBuffer) {
         e.preventDefault()
@@ -218,9 +224,29 @@ export default function SongTable({ songs, editMode, onSongsChange, onViewSongsC
         <span>Track</span>
         <span>Artist</span>
         <span>Album</span>
-        {!editMode && (
-          <span className="header-menu-dots"><DotsIcon /></span>
-        )}
+        <span className="header-menu-dots">
+          <button
+            className="song-row-menu-btn"
+            onClick={e => { e.stopPropagation(); setHeaderMenuOpen(prev => !prev) }}
+          >
+            <DotsIcon />
+          </button>
+          {headerMenuOpen && (
+            <div className="song-row-dropdown">
+              <button
+                className="song-row-dropdown-item"
+                onMouseDown={e => e.stopPropagation()}
+                onClick={e => {
+                  e.stopPropagation()
+                  setHeaderMenuOpen(false)
+                  editMode ? onDone() : onEdit()
+                }}
+              >
+                {editMode ? 'Done Editing' : 'Edit Block'}
+              </button>
+            </div>
+          )}
+        </span>
       </div>
 
       <div
