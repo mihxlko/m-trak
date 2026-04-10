@@ -36,7 +36,7 @@ function DocIcon() {
   )
 }
 
-export default function MonthDetail({ month, year, monthData, onSave, onSaveNotesDirect }) {
+export default function MonthDetail({ month, year, monthData, onSave, onSaveNotesDirect, onSaveTitleDirect }) {
   const blocks = monthData?.blocks || []
   const [editMode, setEditMode] = useState(false)
   const [draftBlocks, setDraftBlocks] = useState(blocks)
@@ -120,6 +120,11 @@ export default function MonthDetail({ month, year, monthData, onSave, onSaveNote
     onSave(cleaned)
   }
 
+  function handleTitleChange(blockId, newTitle) {
+    setDraftBlocks(prev => prev.map(b => b.id === blockId ? { ...b, title: newTitle } : b))
+    onSaveTitleDirect?.(blockId, newTitle)
+  }
+
   // Notes: update draftBlocks immediately, debounce the direct localStorage save
   function handleNotesChange(blockId, content) {
     setDraftBlocks(prev => prev.map(b => b.id === blockId ? { ...b, content } : b))
@@ -194,7 +199,7 @@ export default function MonthDetail({ month, year, monthData, onSave, onSaveNote
           {liveBlocks.map(block => {
             if (block.type === 'songs') {
               return (
-                <MediaBlock key={block.id} title={block.title} titleVisible={block.titleVisible}>
+                <MediaBlock key={block.id} title={block.title} titleVisible={block.titleVisible} editMode={editMode} onTitleChange={newTitle => handleTitleChange(block.id, newTitle)}>
                   <SongTable
                     songs={editMode ? (draftBlocks.find(b => b.id === block.id)?.items || []) : block.items}
                     editMode={editMode}
@@ -218,6 +223,7 @@ export default function MonthDetail({ month, year, monthData, onSave, onSaveNote
                   onEdit={handleEdit}
                   onDone={handleDone}
                   initialFocusId={justCreatedBlock?.id === block.id ? justCreatedBlock.items?.[0]?.id : null}
+                  onTitleChange={newTitle => handleTitleChange(block.id, newTitle)}
                 />
               )
             }
@@ -231,6 +237,8 @@ export default function MonthDetail({ month, year, monthData, onSave, onSaveNote
                   block={displayBlock}
                   onContentChange={content => handleNotesChange(block.id, content)}
                   autoFocus={justCreatedBlock?.id === block.id}
+                  editMode={editMode}
+                  onTitleChange={newTitle => handleTitleChange(block.id, newTitle)}
                 />
               )
             }

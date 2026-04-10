@@ -20,7 +20,7 @@ export function makeBlankAlbum() {
   return { id: uuid(), albumName: '', artistName: '', albumArtUrl: null }
 }
 
-export default function AlbumsBlock({ block, editMode, onItemsChange, onSave, onEdit, onDone, initialFocusId }) {
+export default function AlbumsBlock({ block, editMode, onItemsChange, onSave, onEdit, onDone, initialFocusId, onTitleChange }) {
   const [headerMenuOpen, setHeaderMenuOpen] = useState(false)
   const [dragId, setDragId] = useState(null)
   const [dropTargetId, setDropTargetId] = useState(null)
@@ -117,7 +117,7 @@ export default function AlbumsBlock({ block, editMode, onItemsChange, onSave, on
   )
 
   return (
-    <MediaBlock title={block.title} titleVisible={block.titleVisible} headerMenu={headerMenu}>
+    <MediaBlock title={block.title} titleVisible={block.titleVisible} headerMenu={headerMenu} editMode={editMode} onTitleChange={onTitleChange}>
       <div
         className="albums-grid"
         ref={containerRef}

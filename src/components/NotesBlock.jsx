@@ -11,7 +11,7 @@ function DotsIcon() {
   )
 }
 
-export default function NotesBlock({ block, onContentChange, autoFocus = false }) {
+export default function NotesBlock({ block, onContentChange, autoFocus = false, editMode = false, onTitleChange }) {
   const [content, setContent] = useState(block.content || '')
   const textareaRef = useRef(null)
 
@@ -41,7 +41,7 @@ export default function NotesBlock({ block, onContentChange, autoFocus = false }
   )
 
   return (
-    <MediaBlock title={block.title} titleVisible={block.titleVisible} headerMenu={headerMenu}>
+    <MediaBlock title={block.title} titleVisible={block.titleVisible} headerMenu={headerMenu} editMode={editMode} onTitleChange={onTitleChange}>
       <textarea
         ref={textareaRef}
         className="notes-textarea"

@@ -596,6 +596,48 @@ input, button, select, textarea {
   align-items: center;
 }
 
+/* ---- MEDIA BLOCK TITLE EDITING ---- */
+
+.media-block-title-group {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.media-block-title[contenteditable="true"] {
+  outline: none;
+  cursor: text;
+  border-bottom: 1px solid transparent;
+  transition: border-color 0.1s;
+}
+
+.media-block-title[contenteditable="true"]:hover,
+.media-block-title.editing {
+  border-bottom-color: var(--color-text-secondary);
+}
+
+.title-pencil-btn {
+  display: inline-flex;
+  align-items: center;
+  background: none;
+  border: none;
+  padding: 2px;
+  cursor: pointer;
+  color: var(--color-text-secondary);
+  opacity: 0;
+  transition: opacity 0.1s;
+  border-radius: 3px;
+}
+
+.media-block-title-group:hover .title-pencil-btn,
+.media-block-title.editing ~ .title-pencil-btn {
+  opacity: 1;
+}
+
+.title-pencil-btn:hover {
+  color: var(--color-text-dark);
+}
+
 /* ---- ADD CONTENT DROPDOWN ---- */
 
 .add-content-wrapper {
