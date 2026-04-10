@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from 'react'
 import SongTable, { makeBlankSong } from './SongTable.jsx'
 import AlbumsBlock, { makeBlankAlbum } from './AlbumsBlock.jsx'
+import NotesBlock from './NotesBlock.jsx'
 import MediaBlock from './MediaBlock.jsx'
 
 function uuid() { return crypto.randomUUID() }
@@ -24,17 +25,33 @@ function GridIcon() {
   )
 }
 
-export default function MonthDetail({ month, year, monthData, onSave }) {
+function DocIcon() {
+  return (
+    <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round">
+      <rect x="2" y="1" width="8" height="10" rx="1.2" />
+      <line x1="4" y1="4" x2="8" y2="4" />
+      <line x1="4" y1="6.5" x2="8" y2="6.5" />
+      <line x1="4" y1="9" x2="6.5" y2="9" />
+    </svg>
+  )
+}
+
+export default function MonthDetail({ month, year, monthData, onSave, onSaveNotesDirect }) {
   const blocks = monthData?.blocks || []
   const [editMode, setEditMode] = useState(false)
   const [draftBlocks, setDraftBlocks] = useState(blocks)
   const [addContentOpen, setAddContentOpen] = useState(false)
+  const [justCreatedBlock, setJustCreatedBlock] = useState(null)
   const addContentRef = useRef(null)
+  const notesTimers = useRef({})
 
-  // Sync when monthData changes (profile/month switch)
-  const [prevData, setPrevData] = useState(monthData)
-  if (monthData !== prevData) {
-    setPrevData(monthData)
+  // Sync only when the month/year identity changes (not on every data update)
+  // This allows notes direct-saves (which call refreshProfileData) to not reset state
+  const [prevMonth, setPrevMonth] = useState(month)
+  const [prevYear, setPrevYear] = useState(year)
+  if (month !== prevMonth || year !== prevYear) {
+    setPrevMonth(month)
+    setPrevYear(year)
     setDraftBlocks(monthData?.blocks || [])
     setEditMode(false)
   }
@@ -64,9 +81,12 @@ export default function MonthDetail({ month, year, monthData, onSave }) {
     setAddContentOpen(false)
     const newBlock = type === 'songs'
       ? { id: uuid(), type: 'songs', title: 'Songs', titleVisible: true, items: [makeBlankSong()] }
-      : { id: uuid(), type: 'albums', title: 'Albums', titleVisible: true, items: [makeBlankAlbum()] }
+      : type === 'albums'
+      ? { id: uuid(), type: 'albums', title: 'Albums', titleVisible: true, items: [makeBlankAlbum()] }
+      : { id: uuid(), type: 'notes', title: 'Notes', titleVisible: true, content: '' }
     const next = [...(editMode ? draftBlocks : blocks), newBlock]
     setDraftBlocks(next)
+    setJustCreatedBlock(newBlock)
     setEditMode(true)
   }
 
@@ -81,13 +101,12 @@ export default function MonthDetail({ month, year, monthData, onSave }) {
   }
 
   function handleDone() {
-    // Filter blank songs but keep album items
     const cleaned = draftBlocks.map(b => {
       if (b.type === 'songs') {
         return { ...b, items: b.items.filter(s => s.track.trim() !== '') }
       }
       return b
-    }).filter(b => b.items.length > 0)
+    }).filter(b => b.type === 'notes' || b.items?.length > 0)
     onSave(cleaned)
     setEditMode(false)
   }
@@ -99,6 +118,15 @@ export default function MonthDetail({ month, year, monthData, onSave }) {
   function handleAlbumSaveImmediate(blockId, items) {
     const cleaned = blocks.map(b => b.id === blockId ? { ...b, items } : b)
     onSave(cleaned)
+  }
+
+  // Notes: update draftBlocks immediately, debounce the direct localStorage save
+  function handleNotesChange(blockId, content) {
+    setDraftBlocks(prev => prev.map(b => b.id === blockId ? { ...b, content } : b))
+    clearTimeout(notesTimers.current[blockId])
+    notesTimers.current[blockId] = setTimeout(() => {
+      onSaveNotesDirect(blockId, content)
+    }, 300)
   }
 
   const hasBlocks = liveBlocks.length > 0
@@ -125,6 +153,14 @@ export default function MonthDetail({ month, year, monthData, onSave }) {
           >
             <GridIcon />
             Albums
+          </button>
+          <button
+            className="song-row-dropdown-item add-content-item"
+            onMouseDown={e => e.stopPropagation()}
+            onClick={() => handleAddBlock('notes')}
+          >
+            <DocIcon />
+            Notes
           </button>
         </div>
       )}
@@ -166,6 +202,7 @@ export default function MonthDetail({ month, year, monthData, onSave }) {
                     onViewSongsChange={items => onSave(blocks.map(b => b.id === block.id ? { ...b, items } : b))}
                     onEdit={handleEdit}
                     onDone={handleDone}
+                    initialFocusId={justCreatedBlock?.id === block.id ? justCreatedBlock.items?.[0]?.id : null}
                   />
                 </MediaBlock>
               )
@@ -180,6 +217,20 @@ export default function MonthDetail({ month, year, monthData, onSave }) {
                   onSave={items => handleAlbumSaveImmediate(block.id, items)}
                   onEdit={handleEdit}
                   onDone={handleDone}
+                  initialFocusId={justCreatedBlock?.id === block.id ? justCreatedBlock.items?.[0]?.id : null}
+                />
+              )
+            }
+            if (block.type === 'notes') {
+              const displayBlock = editMode
+                ? (draftBlocks.find(b => b.id === block.id) || block)
+                : block
+              return (
+                <NotesBlock
+                  key={block.id}
+                  block={displayBlock}
+                  onContentChange={content => handleNotesChange(block.id, content)}
+                  autoFocus={justCreatedBlock?.id === block.id}
                 />
               )
             }

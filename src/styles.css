@@ -766,6 +766,31 @@ input, button, select, textarea {
   left: auto;
 }
 
+/* ---- NOTES BLOCK ---- */
+
+.notes-textarea {
+  width: 100%;
+  resize: none;
+  border: none;
+  outline: none;
+  box-shadow: none;
+  background: #F9F9F8;
+  border-radius: 5px;
+  padding: 24px;
+  font-family: 'Inter', sans-serif;
+  font-weight: 500;
+  font-size: 12px;
+  letter-spacing: -0.03em;
+  color: var(--color-text-dark);
+  line-height: 1.5;
+  overflow: hidden;
+  display: block;
+}
+
+.notes-textarea::placeholder {
+  color: var(--color-text-muted);
+}
+
 /* ---- SONG TABLE ---- */
 
 .song-table {

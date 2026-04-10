@@ -34,7 +34,7 @@ function makeBlankSong() {
 const VIEW_COLS = '32px 50px 1fr 1fr 1fr 24px'
 const EDIT_COLS = '32px 50px 1fr 1fr 1fr 24px'
 
-export default function SongTable({ songs, editMode, onSongsChange, onViewSongsChange, onEdit, onDone }) {
+export default function SongTable({ songs, editMode, onSongsChange, onViewSongsChange, onEdit, onDone, initialFocusId }) {
   const [selectedIds, setSelectedIds] = useState(new Set())
   const [lastSelectedId, setLastSelectedId] = useState(null)
   const [undoBuffer, setUndoBuffer] = useState(null)
@@ -44,6 +44,7 @@ export default function SongTable({ songs, editMode, onSongsChange, onViewSongsC
   const [openMenuId, setOpenMenuId] = useState(null)
   const [headerMenuOpen, setHeaderMenuOpen] = useState(false)
   const tableRef = useRef(null)
+  const focusTrackIdRef = useRef(initialFocusId || null)
 
   // Clear interaction state when entering edit mode
   useEffect(() => {
@@ -206,7 +207,9 @@ export default function SongTable({ songs, editMode, onSongsChange, onViewSongsC
   }
 
   function handleAddTrack() {
-    onSongsChange([...songs, makeBlankSong()])
+    const blank = makeBlankSong()
+    focusTrackIdRef.current = blank.id
+    onSongsChange([...songs, blank])
   }
 
   if (!editMode && songs.length === 0) return null
@@ -303,6 +306,12 @@ export default function SongTable({ songs, editMode, onSongsChange, onViewSongsC
                     value={song.track}
                     placeholder="Track Name..."
                     onChange={e => handleFieldChange(song.id, 'track', e.target.value)}
+                    ref={el => {
+                      if (el && focusTrackIdRef.current === song.id) {
+                        el.focus()
+                        focusTrackIdRef.current = null
+                      }
+                    }}
                   />
                   <input
                     className="song-input"

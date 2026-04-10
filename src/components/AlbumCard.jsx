@@ -23,7 +23,7 @@ function DragIcon() {
   )
 }
 
-export default function AlbumCard({ album, editMode, onFieldChange, onDelete, dragHandleProps }) {
+export default function AlbumCard({ album, editMode, onFieldChange, onDelete, dragHandleProps, focusIdRef }) {
   const [menuOpen, setMenuOpen] = useState(false)
   const menuRef = useRef(null)
 
@@ -58,6 +58,12 @@ export default function AlbumCard({ album, editMode, onFieldChange, onDelete, dr
                 value={album.albumName}
                 placeholder="Album Name..."
                 onChange={e => onFieldChange(album.id, 'albumName', e.target.value)}
+                ref={el => {
+                  if (el && focusIdRef?.current === album.id) {
+                    el.focus()
+                    focusIdRef.current = null
+                  }
+                }}
               />
               <input
                 className="album-card-input artist-name-input"

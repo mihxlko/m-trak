@@ -137,6 +137,16 @@ export default function App() {
     refreshProfileData(activeProfileId)
   }
 
+  function handleSaveNotesDirect(blockId, content) {
+    const fresh = getProfileData(activeProfileId)
+    const current = fresh?.years?.[selectedYear]?.[selectedMonth]
+    if (!current?.blocks) return
+    if (!current.blocks.some(b => b.id === blockId)) return
+    const updated = { ...current, blocks: current.blocks.map(b => b.id === blockId ? { ...b, content } : b) }
+    saveMonthData(activeProfileId, selectedYear, selectedMonth, updated)
+    refreshProfileData(activeProfileId)
+  }
+
   function handleAddYear(year) {
     addYearToData(activeProfileId, year)
     refreshProfileData(activeProfileId)
@@ -202,6 +212,7 @@ export default function App() {
             year={selectedYear}
             monthData={currentMonthData}
             onSave={handleSaveBlocks}
+            onSaveNotesDirect={handleSaveNotesDirect}
           />
         )}
         {currentView === 'yourBoards' && (

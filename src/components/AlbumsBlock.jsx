@@ -20,13 +20,14 @@ export function makeBlankAlbum() {
   return { id: uuid(), albumName: '', artistName: '', albumArtUrl: null }
 }
 
-export default function AlbumsBlock({ block, editMode, onItemsChange, onSave, onEdit, onDone }) {
+export default function AlbumsBlock({ block, editMode, onItemsChange, onSave, onEdit, onDone, initialFocusId }) {
   const [headerMenuOpen, setHeaderMenuOpen] = useState(false)
   const [dragId, setDragId] = useState(null)
   const [dropTargetId, setDropTargetId] = useState(null)
   const [dropBefore, setDropBefore] = useState(true)
   const containerRef = useRef(null)
   const headerMenuRef = useRef(null)
+  const focusAlbumIdRef = useRef(initialFocusId || null)
 
   const albums = block.items || []
 
@@ -41,7 +42,9 @@ export default function AlbumsBlock({ block, editMode, onItemsChange, onSave, on
   }
 
   function handleAddAlbum() {
-    onItemsChange([...albums, makeBlankAlbum()])
+    const blank = makeBlankAlbum()
+    focusAlbumIdRef.current = blank.id
+    onItemsChange([...albums, blank])
   }
 
   // ── Drag reorder ────────────────────────────────────────────────────────
@@ -140,6 +143,7 @@ export default function AlbumsBlock({ block, editMode, onItemsChange, onSave, on
                 editMode={editMode}
                 onFieldChange={handleFieldChange}
                 onDelete={handleDelete}
+                focusIdRef={focusAlbumIdRef}
                 dragHandleProps={!editMode ? {
                   draggable: true,
                   onDragStart: e => handleDragStart(e, album),
