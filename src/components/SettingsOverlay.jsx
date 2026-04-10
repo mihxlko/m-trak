@@ -84,10 +84,10 @@ function LightPreview() {
 function DarkPreview() {
   return (
     <svg width="72" height="48" viewBox="0 0 72 48" fill="none">
-      <rect width="72" height="48" rx="4" fill="#1A1A1A" />
-      <rect x="1" y="1" width="18" height="46" rx="3" fill="#111111" />
-      <rect x="22" y="6" width="44" height="7" rx="2" fill="#222222" />
-      <rect x="22" y="17" width="44" height="24" rx="2" fill="#2A2A2A" />
+      <rect width="72" height="48" rx="4" fill="#09090b" />
+      <rect x="1" y="1" width="18" height="46" rx="3" fill="#18181b" />
+      <rect x="22" y="6" width="44" height="7" rx="2" fill="#27272a" />
+      <rect x="22" y="17" width="44" height="24" rx="2" fill="#27272a" />
     </svg>
   )
 }
@@ -95,12 +95,21 @@ function DarkPreview() {
 function SystemPreview() {
   return (
     <svg width="72" height="48" viewBox="0 0 72 48" fill="none">
-      <clipPath id="left-half"><rect width="36" height="48" /></clipPath>
-      <clipPath id="right-half"><rect x="36" width="36" height="48" /></clipPath>
-      <rect width="72" height="48" rx="4" fill="#F3F3F2" />
-      <rect x="36" y="0" width="36" height="48" rx="4" fill="#1A1A1A" />
-      <rect x="1" y="1" width="18" height="46" rx="3" fill="#E8E6E5" clipPath="url(#left-half)" />
-      <rect x="1" y="1" width="18" height="46" rx="3" fill="#111111" clipPath="url(#right-half)" />
+      <defs>
+        <clipPath id="sys-preview-clip">
+          <rect width="72" height="48" rx="4" />
+        </clipPath>
+      </defs>
+      <g clipPath="url(#sys-preview-clip)">
+        <rect x="0" y="0" width="36" height="48" fill="#F3F3F2" />
+        <rect x="36" y="0" width="36" height="48" fill="#09090b" />
+        <rect x="1" y="1" width="11" height="46" rx="2" fill="#E8E6E5" />
+        <rect x="37" y="1" width="11" height="46" fill="#18181b" />
+        <rect x="15" y="5" width="19" height="5" rx="1.5" fill="#E8E6E5" />
+        <rect x="15" y="15" width="19" height="27" rx="1.5" fill="#FDFDFD" />
+        <rect x="51" y="5" width="19" height="5" rx="1.5" fill="#27272a" />
+        <rect x="51" y="15" width="19" height="27" rx="1.5" fill="#27272a" />
+      </g>
     </svg>
   )
 }
@@ -210,6 +219,11 @@ function AppearancePage({ activeProfileId }) {
   function selectTheme(t) {
     setTheme(t)
     saveThemePreference(activeProfileId, t)
+    if (t === 'system') {
+      document.documentElement.removeAttribute('data-theme')
+    } else {
+      document.documentElement.setAttribute('data-theme', t)
+    }
   }
 
   const themes = [

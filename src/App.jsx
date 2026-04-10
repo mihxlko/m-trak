@@ -12,6 +12,7 @@ import Toast from './components/Toast.jsx'
 import {
   initializeProfiles,
   getActiveProfile,
+  getThemePreference,
   setActiveProfile,
   getProfileData,
   saveProfileData,
@@ -29,8 +30,18 @@ import {
 } from './utils/storage.js'
 import './styles.css'
 
+function applyTheme(profileId) {
+  const theme = getThemePreference(profileId)
+  if (theme === 'system') {
+    document.documentElement.removeAttribute('data-theme')
+  } else {
+    document.documentElement.setAttribute('data-theme', theme)
+  }
+}
+
 export default function App() {
   useEffect(() => { initializeProfiles() }, [])
+  useEffect(() => { applyTheme(getActiveProfile()) }, [])
 
   const [activeProfileId, setActiveProfileId] = useState(() => getActiveProfile())
   const [selectedYear, setSelectedYear] = useState(() => String(new Date().getFullYear()))
@@ -96,6 +107,7 @@ export default function App() {
     refreshProfileData(profileId)
     setBoardsData(getBoardsData(profileId))
     setSidebarOpenState(getSidebarOpen(profileId))
+    applyTheme(profileId)
   }
 
   function handleYearChange(year) {
