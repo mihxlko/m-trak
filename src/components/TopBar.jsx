@@ -218,13 +218,16 @@ export default function TopBar({
   onCreateYear,
   onCreateMonth,
   onToggleSidebar,
+  sidebarOpen,
 }) {
   return (
     <header className="topbar">
       <div className="topbar-left">
-        <button className="sidebar-toggle-btn" onClick={onToggleSidebar} title="Toggle sidebar">
-          <PanelLeftIcon />
-        </button>
+        {!sidebarOpen && (
+          <button className="sidebar-toggle-btn" onClick={onToggleSidebar} title="Open sidebar">
+            <PanelLeftIcon />
+          </button>
+        )}
         <div className="topbar-breadcrumb">
         {currentView === 'timeline' && (
           <span className="topbar-breadcrumb-current">Timeline</span>

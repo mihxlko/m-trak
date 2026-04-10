@@ -7,6 +7,7 @@ import BoardsView from './components/BoardsView.jsx'
 import NewBoardOverlay from './components/NewBoardOverlay.jsx'
 import NewYearOverlay from './components/NewYearOverlay.jsx'
 import NewMonthOverlay from './components/NewMonthOverlay.jsx'
+import SettingsOverlay from './components/SettingsOverlay.jsx'
 import {
   initializeProfiles,
   getActiveProfile,
@@ -41,6 +42,20 @@ export default function App() {
   const [showNewBoardOverlay, setShowNewBoardOverlay] = useState(false)
   const [showNewYearOverlay, setShowNewYearOverlay] = useState(false)
   const [showNewMonthOverlay, setShowNewMonthOverlay] = useState(false)
+  const [settingsOpen, setSettingsOpen] = useState(false)
+
+  // "," shortcut opens settings (when not focused in an input)
+  useEffect(() => {
+    function onKeyDown(e) {
+      if (e.key !== ',') return
+      const tag = e.target.tagName
+      if (tag === 'INPUT' || tag === 'TEXTAREA' || e.target.isContentEditable) return
+      e.preventDefault()
+      setSettingsOpen(true)
+    }
+    document.addEventListener('keydown', onKeyDown)
+    return () => document.removeEventListener('keydown', onKeyDown)
+  }, [])
 
   // Derive the sorted list of available years, always including the current year
   const currentCalendarYear = String(new Date().getFullYear())
@@ -188,6 +203,8 @@ export default function App() {
         onNavigateToTimeline={handleNavigateToTimeline}
         onNavigateToBoards={handleNavigateToBoards}
         isOpen={sidebarOpen}
+        onToggleSidebar={handleToggleSidebar}
+        onOpenSettings={() => setSettingsOpen(true)}
       />
 
       <div className="main-area">
@@ -205,6 +222,7 @@ export default function App() {
           onCreateYear={() => setShowNewYearOverlay(true)}
           onCreateMonth={() => setShowNewMonthOverlay(true)}
           onToggleSidebar={handleToggleSidebar}
+          sidebarOpen={sidebarOpen}
         />
 
         {currentView === 'timeline' && (
@@ -257,6 +275,12 @@ export default function App() {
           existingMonths={existingMonths}
           onDone={handleAddMonth}
           onCancel={() => setShowNewMonthOverlay(false)}
+        />
+      )}
+      {settingsOpen && (
+        <SettingsOverlay
+          activeProfileId={activeProfileId}
+          onClose={() => setSettingsOpen(false)}
         />
       )}
     </div>

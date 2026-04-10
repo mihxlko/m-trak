@@ -108,6 +108,40 @@ input, button, select, textarea {
   opacity: 1;
 }
 
+/* ---- SIDEBAR HEADER ROW ---- */
+
+.sidebar-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 4px;
+}
+
+.sidebar-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  flex-shrink: 0;
+}
+
+.sidebar-icon-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--color-text-muted);
+  padding: 5px;
+  border-radius: 6px;
+  transition: background 0.1s, color 0.1s;
+}
+
+.sidebar-icon-btn:hover {
+  background: rgba(0,0,0,0.06);
+  color: var(--color-text-dark);
+}
+
 /* ---- PROFILE SWITCHER ---- */
 
 .profile-switcher {
@@ -1395,4 +1429,432 @@ input, button, select, textarea {
 .month-select-item--disabled {
   color: var(--color-text-muted);
   cursor: default;
+}
+
+/* ---- SETTINGS OVERLAY ---- */
+
+.settings-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.4);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.settings-container {
+  position: relative;
+  width: 720px;
+  height: 520px;
+  background: var(--bg-main);
+  border-radius: 12px;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.18), 0 4px 16px rgba(0,0,0,0.08);
+  display: flex;
+  overflow: hidden;
+}
+
+.settings-close-btn {
+  position: absolute;
+  top: 14px;
+  right: 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--color-text-muted);
+  padding: 4px;
+  border-radius: 4px;
+  transition: color 0.1s;
+  z-index: 10;
+}
+
+.settings-close-btn:hover {
+  color: var(--color-text-dark);
+}
+
+.settings-close-esc {
+  font-family: 'Inter', sans-serif;
+  font-size: 9px;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  color: var(--color-text-muted);
+  line-height: 1;
+}
+
+/* ---- SETTINGS LEFT PANEL ---- */
+
+.settings-left-panel {
+  width: 220px;
+  flex-shrink: 0;
+  background: var(--bg-app);
+  border-radius: 12px 0 0 12px;
+  display: flex;
+  flex-direction: column;
+  padding: 20px 12px 16px;
+  gap: 4px;
+}
+
+.settings-left-profile {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 10px 16px;
+  border-bottom: 1px solid rgba(0,0,0,0.06);
+  margin-bottom: 4px;
+}
+
+.settings-left-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: var(--bg-image-placeholder);
+  flex-shrink: 0;
+  overflow: hidden;
+}
+
+.settings-left-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.settings-left-profile-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.settings-left-name {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--color-text-dark);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.settings-left-email {
+  font-size: 11px;
+  color: var(--color-text-muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.settings-nav {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  flex: 1;
+}
+
+.settings-nav-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 10px;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 500;
+  font-family: 'Inter', sans-serif;
+  letter-spacing: -0.03em;
+  color: var(--color-text-dark);
+  background: none;
+  border: none;
+  cursor: pointer;
+  text-align: left;
+  transition: background 0.1s;
+}
+
+.settings-nav-item svg {
+  color: var(--color-text-muted);
+  flex-shrink: 0;
+}
+
+.settings-nav-item:hover {
+  background: rgba(0,0,0,0.05);
+}
+
+.settings-nav-item.active {
+  background: var(--bg-song-block);
+}
+
+.settings-signout {
+  color: var(--color-text-muted);
+  margin-top: auto;
+}
+
+.settings-signout svg {
+  color: var(--color-text-muted);
+}
+
+/* ---- SETTINGS RIGHT PANEL ---- */
+
+.settings-right-panel {
+  flex: 1;
+  overflow-y: auto;
+  padding: 28px 32px;
+  min-width: 0;
+}
+
+.settings-page {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.settings-page-header {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.settings-page-title {
+  font-size: 18px;
+  font-weight: 500;
+  letter-spacing: -0.03em;
+  color: var(--color-text-dark);
+}
+
+.settings-page-subtitle {
+  font-size: 12px;
+  color: var(--color-text-muted);
+}
+
+.settings-divider {
+  height: 1px;
+  background: rgba(0,0,0,0.07);
+  margin-top: 8px;
+}
+
+/* ---- SETTINGS PROFILE CARD ---- */
+
+.settings-profile-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  background: var(--bg-song-block);
+  border-radius: 8px;
+  padding: 20px;
+}
+
+.settings-profile-avatar {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: var(--bg-image-placeholder);
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.settings-profile-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.settings-profile-name {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--color-text-dark);
+}
+
+.settings-profile-email {
+  font-size: 12px;
+  color: var(--color-text-muted);
+  outline: none;
+  cursor: text;
+  border-bottom: 1px solid transparent;
+  transition: border-color 0.1s;
+  min-width: 60px;
+  text-align: center;
+}
+
+.settings-profile-email:empty::before {
+  content: attr(data-placeholder);
+  color: var(--color-text-muted);
+  opacity: 0.5;
+}
+
+.settings-profile-email:hover,
+.settings-profile-email.editing {
+  border-bottom-color: var(--color-text-muted);
+}
+
+/* ---- SETTINGS SECTIONS ---- */
+
+.settings-section {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.settings-section-label {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--color-text-dark);
+}
+
+.settings-section-sublabel {
+  font-size: 11px;
+  color: var(--color-text-muted);
+  margin-bottom: 4px;
+}
+
+.settings-birthday-row {
+  display: flex;
+  gap: 8px;
+}
+
+.settings-input {
+  background: var(--bg-song-block);
+  border: none;
+  border-radius: 8px;
+  padding: 8px 10px;
+  font-size: 12px;
+  font-weight: 500;
+  font-family: 'Inter', sans-serif;
+  letter-spacing: -0.03em;
+  color: var(--color-text-dark);
+  outline: none;
+  flex: 1;
+  transition: background 0.1s;
+}
+
+.settings-input:focus {
+  background: #F0F0EF;
+}
+
+.settings-input-day {
+  flex: 0 0 80px;
+}
+
+/* ---- SETTINGS DANGER ZONE ---- */
+
+.settings-danger-section {
+  padding-top: 4px;
+  border-top: 1px solid rgba(0,0,0,0.06);
+}
+
+.settings-danger-label {
+  color: #E53E3E;
+}
+
+.settings-delete-btn {
+  align-self: flex-start;
+  background: #E53E3E;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 8px 16px;
+  font-size: 12px;
+  font-weight: 500;
+  font-family: 'Inter', sans-serif;
+  letter-spacing: -0.03em;
+  cursor: pointer;
+  margin-top: 2px;
+  transition: opacity 0.1s;
+}
+
+.settings-delete-btn:hover {
+  opacity: 0.85;
+}
+
+/* ---- SETTINGS THEME CARDS ---- */
+
+.settings-theme-cards {
+  display: flex;
+  gap: 12px;
+  margin-top: 4px;
+}
+
+.settings-theme-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 10px;
+  border-radius: 8px;
+  background: var(--bg-song-block);
+  border: 1.5px solid transparent;
+  cursor: pointer;
+  transition: border-color 0.1s;
+  position: relative;
+}
+
+.settings-theme-card:hover {
+  border-color: rgba(0,0,0,0.1);
+}
+
+.settings-theme-card.selected {
+  border-color: var(--color-button);
+}
+
+.settings-theme-check {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  color: var(--color-button);
+  display: flex;
+  align-items: center;
+}
+
+.settings-theme-label {
+  font-size: 11px;
+  font-weight: 500;
+  font-family: 'Inter', sans-serif;
+  color: var(--color-text-secondary);
+}
+
+/* ---- SETTINGS SHORTCUTS ---- */
+
+.settings-section-header-label {
+  font-size: 11px;
+  font-weight: 500;
+  font-family: 'Inter', sans-serif;
+  letter-spacing: 0.05em;
+  color: var(--color-text-muted);
+  text-transform: uppercase;
+  margin-bottom: 4px;
+}
+
+.settings-shortcut-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 0;
+  border-bottom: 1px solid rgba(0,0,0,0.05);
+}
+
+.settings-shortcut-name {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--color-text-dark);
+}
+
+.settings-shortcut-keys {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.settings-key-badge {
+  background: var(--bg-song-block);
+  border: 1px solid rgba(0,0,0,0.1);
+  border-radius: 4px;
+  padding: 3px 7px;
+  font-size: 11px;
+  font-weight: 500;
+  font-family: 'Inter', sans-serif;
+  color: var(--color-text-dark);
 }

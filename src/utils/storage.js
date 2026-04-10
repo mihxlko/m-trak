@@ -205,4 +205,26 @@ export function addItemToRoot(data, newItem) {
   return [...data, newItem]
 }
 
+// ── Profile info (email, birthday) ───────────────────────────────────────────
+
+export function getProfileInfo(profileId) {
+  const raw = localStorage.getItem(`aulosProfile_${profileId}`)
+  if (!raw) return { email: '', birthday: { month: '', day: '' } }
+  try { return JSON.parse(raw) } catch { return { email: '', birthday: { month: '', day: '' } } }
+}
+
+export function saveProfileInfo(profileId, info) {
+  localStorage.setItem(`aulosProfile_${profileId}`, JSON.stringify(info))
+}
+
+// ── Theme preference ──────────────────────────────────────────────────────────
+
+export function getThemePreference(profileId) {
+  return localStorage.getItem(`aulosTheme_${profileId}`) || 'light'
+}
+
+export function saveThemePreference(profileId, theme) {
+  localStorage.setItem(`aulosTheme_${profileId}`, theme)
+}
+
 export { MONTHS }
