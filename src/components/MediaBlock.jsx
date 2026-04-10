@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react'
+import { useState, useRef, useEffect } from 'react'
 
 function PencilIcon() {
   return (
@@ -8,10 +8,43 @@ function PencilIcon() {
   )
 }
 
-export default function MediaBlock({ title, titleVisible = true, headerMenu, children, editMode = false, onTitleChange }) {
+function DotsIcon() {
+  return (
+    <svg width="12" height="12" viewBox="0 0 12 12" fill="currentColor">
+      <circle cx="6" cy="1.5" r="1.2" />
+      <circle cx="6" cy="6" r="1.2" />
+      <circle cx="6" cy="10.5" r="1.2" />
+    </svg>
+  )
+}
+
+export default function MediaBlock({
+  title, titleVisible = true, children,
+  editMode = false, onTitleChange,
+  onEdit, onDone, onRemove,
+}) {
   const titleRef = useRef(null)
   const [isEditingTitle, setIsEditingTitle] = useState(false)
   const savedTitleRef = useRef(title)
+
+  const [menuOpen, setMenuOpen] = useState(false)
+  const menuRef = useRef(null)
+
+  const hasMenu = !!(onEdit || onDone || onRemove)
+
+  useEffect(() => {
+    if (!menuOpen) return
+    function onMouseDown(e) {
+      if (menuRef.current && !menuRef.current.contains(e.target)) setMenuOpen(false)
+    }
+    function onKeyDown(e) { if (e.key === 'Escape') setMenuOpen(false) }
+    document.addEventListener('mousedown', onMouseDown)
+    document.addEventListener('keydown', onKeyDown)
+    return () => {
+      document.removeEventListener('mousedown', onMouseDown)
+      document.removeEventListener('keydown', onKeyDown)
+    }
+  }, [menuOpen])
 
   function handleTitleFocus() {
     savedTitleRef.current = titleRef.current.innerText
@@ -22,23 +55,15 @@ export default function MediaBlock({ title, titleVisible = true, headerMenu, chi
     const val = titleRef.current.innerText.trim()
     setIsEditingTitle(false)
     if (val) {
-      if (val !== savedTitleRef.current) {
-        onTitleChange?.(val)
-      }
+      if (val !== savedTitleRef.current) onTitleChange?.(val)
     } else {
       titleRef.current.innerText = savedTitleRef.current
     }
   }
 
   function handleTitleKeyDown(e) {
-    if (e.key === 'Enter') {
-      e.preventDefault()
-      titleRef.current.blur()
-    }
-    if (e.key === 'Escape') {
-      titleRef.current.innerText = savedTitleRef.current
-      titleRef.current.blur()
-    }
+    if (e.key === 'Enter') { e.preventDefault(); titleRef.current.blur() }
+    if (e.key === 'Escape') { titleRef.current.innerText = savedTitleRef.current; titleRef.current.blur() }
   }
 
   function handlePencilMouseDown(e) {
@@ -75,7 +100,52 @@ export default function MediaBlock({ title, titleVisible = true, headerMenu, chi
               </button>
             )}
           </div>
-          {headerMenu && <div className="media-block-header-menu">{headerMenu}</div>}
+
+          {hasMenu && (
+            <div className="media-block-header-menu" ref={menuRef} style={{ position: 'relative' }}>
+              <button
+                className="song-row-menu-btn"
+                onClick={e => { e.stopPropagation(); setMenuOpen(v => !v) }}
+              >
+                <DotsIcon />
+              </button>
+              {menuOpen && (
+                <div className="song-row-dropdown">
+                  {editMode ? (
+                    <button
+                      className="song-row-dropdown-item"
+                      onMouseDown={e => e.stopPropagation()}
+                      onClick={() => { setMenuOpen(false); onDone?.() }}
+                    >
+                      Done Editing
+                    </button>
+                  ) : (
+                    <>
+                      {onEdit && (
+                        <button
+                          className="song-row-dropdown-item"
+                          onMouseDown={e => e.stopPropagation()}
+                          onClick={() => { setMenuOpen(false); onEdit() }}
+                        >
+                          Edit Block
+                        </button>
+                      )}
+                      {onEdit && onRemove && <div className="dropdown-divider" />}
+                      {onRemove && (
+                        <button
+                          className="song-row-dropdown-item song-row-dropdown-item--danger"
+                          onMouseDown={e => e.stopPropagation()}
+                          onClick={() => { setMenuOpen(false); onRemove() }}
+                        >
+                          Remove Block
+                        </button>
+                      )}
+                    </>
+                  )}
+                </div>
+              )}
+            </div>
+          )}
         </div>
       )}
       {children}

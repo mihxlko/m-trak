@@ -499,6 +499,20 @@ input, button, select, textarea {
   background: rgba(0,0,0,0.05);
 }
 
+.month-card-dropdown-item--danger {
+  color: #E53E3E;
+}
+
+.month-card-dropdown-item--danger:hover {
+  background: rgba(229, 62, 62, 0.06);
+}
+
+.month-card-dropdown-divider {
+  height: 1px;
+  background: rgba(0,0,0,0.07);
+  margin: 4px 0;
+}
+
 /* ---- MONTH DETAIL ---- */
 
 .month-detail-content {
@@ -1013,6 +1027,20 @@ input, button, select, textarea {
 
 .song-row-dropdown-item:hover {
   background: rgba(0, 0, 0, 0.04);
+}
+
+.song-row-dropdown-item--danger {
+  color: #E53E3E;
+}
+
+.song-row-dropdown-item--danger:hover {
+  background: rgba(229, 62, 62, 0.06);
+}
+
+.dropdown-divider {
+  height: 1px;
+  background: rgba(0, 0, 0, 0.07);
+  margin: 4px 0;
 }
 
 /* Header three-dot placeholder */
@@ -1857,4 +1885,60 @@ input, button, select, textarea {
   font-weight: 500;
   font-family: 'Inter', sans-serif;
   color: var(--color-text-dark);
+}
+
+/* ---- TOAST ---- */
+
+.toast-container {
+  position: fixed;
+  bottom: 32px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 500;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.22), 0 1px 6px rgba(0,0,0,0.1);
+}
+
+.toast {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  background: var(--color-text-dark);
+  padding: 10px 16px;
+}
+
+.toast-text {
+  font-size: 12px;
+  font-weight: 500;
+  color: #fff;
+  white-space: nowrap;
+}
+
+.toast-restore-btn {
+  font-size: 12px;
+  font-weight: 500;
+  font-family: 'Inter', sans-serif;
+  letter-spacing: -0.03em;
+  color: #fff;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  white-space: nowrap;
+}
+
+.toast-restore-btn:hover {
+  text-decoration: underline;
+}
+
+.toast-progress {
+  height: 3px;
+  background: var(--color-button);
+  animation: toast-countdown 5s linear forwards;
+}
+
+@keyframes toast-countdown {
+  from { width: 100%; }
+  to { width: 0%; }
 }

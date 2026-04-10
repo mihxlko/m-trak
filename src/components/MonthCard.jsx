@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react'
 
-export default function MonthCard({ month, monthData, onCardClick, onCoverChange }) {
+export default function MonthCard({ month, monthData, onCardClick, onCoverChange, onRemove }) {
   const [menuOpen, setMenuOpen] = useState(false)
   const fileInputRef = useRef(null)
   const menuRef = useRef(null)
@@ -29,6 +29,12 @@ export default function MonthCard({ month, monthData, onCardClick, onCoverChange
     e.stopPropagation()
     setMenuOpen(false)
     fileInputRef.current?.click()
+  }
+
+  function handleRemoveClick(e) {
+    e.stopPropagation()
+    setMenuOpen(false)
+    onRemove?.(month)
   }
 
   function handleFileChange(e) {
@@ -70,6 +76,10 @@ export default function MonthCard({ month, monthData, onCardClick, onCoverChange
             <div className="month-card-dropdown">
               <div className="month-card-dropdown-item" onClick={handleAddPhoto}>
                 Add photo
+              </div>
+              <div className="month-card-dropdown-divider" />
+              <div className="month-card-dropdown-item month-card-dropdown-item--danger" onClick={handleRemoveClick}>
+                Remove board
               </div>
             </div>
           )}

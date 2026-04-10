@@ -2,16 +2,6 @@ import { useState, useRef } from 'react'
 import MediaBlock from './MediaBlock.jsx'
 import AlbumCard from './AlbumCard.jsx'
 
-function DotsIcon() {
-  return (
-    <svg width="12" height="12" viewBox="0 0 12 12" fill="currentColor">
-      <circle cx="6" cy="1.5" r="1.2" />
-      <circle cx="6" cy="6" r="1.2" />
-      <circle cx="6" cy="10.5" r="1.2" />
-    </svg>
-  )
-}
-
 function uuid() {
   return crypto.randomUUID()
 }
@@ -20,13 +10,11 @@ export function makeBlankAlbum() {
   return { id: uuid(), albumName: '', artistName: '', albumArtUrl: null }
 }
 
-export default function AlbumsBlock({ block, editMode, onItemsChange, onSave, onEdit, onDone, initialFocusId, onTitleChange }) {
-  const [headerMenuOpen, setHeaderMenuOpen] = useState(false)
+export default function AlbumsBlock({ block, editMode, onItemsChange, onSave, onEdit, onDone, initialFocusId, onTitleChange, onRemove }) {
   const [dragId, setDragId] = useState(null)
   const [dropTargetId, setDropTargetId] = useState(null)
   const [dropBefore, setDropBefore] = useState(true)
   const containerRef = useRef(null)
-  const headerMenuRef = useRef(null)
   const focusAlbumIdRef = useRef(initialFocusId || null)
 
   const albums = block.items || []
@@ -90,34 +78,16 @@ export default function AlbumsBlock({ block, editMode, onItemsChange, onSave, on
     setDropTargetId(null)
   }
 
-  const headerMenu = (
-    <div className="header-menu-dots" ref={headerMenuRef} style={{ position: 'relative' }}>
-      <button
-        className="song-row-menu-btn"
-        onClick={e => { e.stopPropagation(); setHeaderMenuOpen(v => !v) }}
-      >
-        <DotsIcon />
-      </button>
-      {headerMenuOpen && (
-        <div className="song-row-dropdown">
-          <button
-            className="song-row-dropdown-item"
-            onMouseDown={e => e.stopPropagation()}
-            onClick={e => {
-              e.stopPropagation()
-              setHeaderMenuOpen(false)
-              editMode ? onDone() : onEdit()
-            }}
-          >
-            {editMode ? 'Done Editing' : 'Edit Block'}
-          </button>
-        </div>
-      )}
-    </div>
-  )
-
   return (
-    <MediaBlock title={block.title} titleVisible={block.titleVisible} headerMenu={headerMenu} editMode={editMode} onTitleChange={onTitleChange}>
+    <MediaBlock
+      title={block.title}
+      titleVisible={block.titleVisible}
+      editMode={editMode}
+      onTitleChange={onTitleChange}
+      onEdit={onEdit}
+      onDone={onDone}
+      onRemove={onRemove}
+    >
       <div
         className="albums-grid"
         ref={containerRef}

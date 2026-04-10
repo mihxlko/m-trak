@@ -3,6 +3,7 @@ import SongTable, { makeBlankSong } from './SongTable.jsx'
 import AlbumsBlock, { makeBlankAlbum } from './AlbumsBlock.jsx'
 import NotesBlock from './NotesBlock.jsx'
 import MediaBlock from './MediaBlock.jsx'
+import Toast from './Toast.jsx'
 
 function uuid() { return crypto.randomUUID() }
 
@@ -36,7 +37,7 @@ function DocIcon() {
   )
 }
 
-export default function MonthDetail({ month, year, monthData, onSave, onSaveNotesDirect, onSaveTitleDirect }) {
+export default function MonthDetail({ month, year, monthData, onSave, onSaveNotesDirect, onSaveTitleDirect, onSaveBlocksDirect }) {
   const blocks = monthData?.blocks || []
   const [editMode, setEditMode] = useState(false)
   const [draftBlocks, setDraftBlocks] = useState(blocks)
@@ -45,8 +46,73 @@ export default function MonthDetail({ month, year, monthData, onSave, onSaveNote
   const addContentRef = useRef(null)
   const notesTimers = useRef({})
 
-  // Sync only when the month/year identity changes (not on every data update)
-  // This allows notes direct-saves (which call refreshProfileData) to not reset state
+  // ── Pending block removal ────────────────────────────────────────────────
+  const [pendingRemovedId, setPendingRemovedId] = useState(null)
+  const [toastVisible, setToastVisible] = useState(false)
+  const [toastKey, setToastKey] = useState(0)
+  const pendingRemovalRef = useRef(null)
+  const timerRef = useRef(null)
+
+  // Keep fresh refs for use in cleanup effects
+  const blocksRef = useRef(blocks)
+  blocksRef.current = blocks
+  const onSaveBlocksDirectRef = useRef(onSaveBlocksDirect)
+  onSaveBlocksDirectRef.current = onSaveBlocksDirect
+
+  // Commit pending removal when month/year changes or component unmounts
+  useEffect(() => {
+    return () => {
+      if (pendingRemovalRef.current) {
+        clearTimeout(timerRef.current)
+        const pending = pendingRemovalRef.current
+        const filtered = blocksRef.current.filter(b => b.id !== pending.block.id)
+        onSaveBlocksDirectRef.current?.(year, month, filtered)
+        pendingRemovalRef.current = null
+      }
+    }
+  }, [month, year]) // eslint-disable-line react-hooks/exhaustive-deps
+
+  function commitPendingRemoval() {
+    const pending = pendingRemovalRef.current
+    if (!pending) return
+    const filtered = blocks.filter(b => b.id !== pending.block.id)
+    onSave(filtered)
+    pendingRemovalRef.current = null
+    setPendingRemovedId(null)
+    clearTimeout(timerRef.current)
+    setToastVisible(false)
+  }
+
+  function handleRemoveBlock(blockId) {
+    // Commit any previous pending removal first
+    if (pendingRemovalRef.current) {
+      clearTimeout(timerRef.current)
+      const prev = pendingRemovalRef.current
+      onSave(blocks.filter(b => b.id !== prev.block.id))
+      pendingRemovalRef.current = null
+    }
+
+    const idx = blocks.findIndex(b => b.id === blockId)
+    pendingRemovalRef.current = { block: blocks[idx], index: idx }
+    setPendingRemovedId(blockId)
+
+    // Show toast with 5-second timer
+    clearTimeout(timerRef.current)
+    setToastKey(k => k + 1)
+    setToastVisible(true)
+    timerRef.current = setTimeout(() => {
+      commitPendingRemoval()
+    }, 5000)
+  }
+
+  function handleRestoreBlock() {
+    clearTimeout(timerRef.current)
+    pendingRemovalRef.current = null
+    setPendingRemovedId(null)
+    setToastVisible(false)
+  }
+
+  // Sync only when the month/year identity changes
   const [prevMonth, setPrevMonth] = useState(month)
   const [prevYear, setPrevYear] = useState(year)
   if (month !== prevMonth || year !== prevYear) {
@@ -54,6 +120,9 @@ export default function MonthDetail({ month, year, monthData, onSave, onSaveNote
     setPrevYear(year)
     setDraftBlocks(monthData?.blocks || [])
     setEditMode(false)
+    // Clear toast/pending (cleanup effect handles the save)
+    setPendingRemovedId(null)
+    setToastVisible(false)
   }
 
   // Close add-content dropdown on outside click / Escape
@@ -76,6 +145,8 @@ export default function MonthDetail({ month, year, monthData, onSave, onSaveNote
   }, [addContentOpen])
 
   const liveBlocks = editMode ? draftBlocks : blocks
+  // Filter out any pending-removed block from display
+  const displayBlocks = liveBlocks.filter(b => b.id !== pendingRemovedId)
 
   function handleAddBlock(type) {
     setAddContentOpen(false)
@@ -91,7 +162,17 @@ export default function MonthDetail({ month, year, monthData, onSave, onSaveNote
   }
 
   function handleEdit() {
-    setDraftBlocks(blocks)
+    // Commit any pending removal before entering edit mode
+    clearTimeout(timerRef.current)
+    const pending = pendingRemovalRef.current
+    const currentBlocks = pending ? blocks.filter(b => b.id !== pending.block.id) : blocks
+    if (pending) {
+      onSave(currentBlocks)
+      pendingRemovalRef.current = null
+      setPendingRemovedId(null)
+      setToastVisible(false)
+    }
+    setDraftBlocks(currentBlocks)
     setEditMode(true)
   }
 
@@ -101,13 +182,19 @@ export default function MonthDetail({ month, year, monthData, onSave, onSaveNote
   }
 
   function handleDone() {
-    const cleaned = draftBlocks.map(b => {
-      if (b.type === 'songs') {
-        return { ...b, items: b.items.filter(s => s.track.trim() !== '') }
-      }
-      return b
-    }).filter(b => b.type === 'notes' || b.items?.length > 0)
+    const cleaned = draftBlocks
+      .filter(b => b.id !== pendingRemovedId)
+      .map(b => {
+        if (b.type === 'songs') {
+          return { ...b, items: b.items.filter(s => s.track.trim() !== '') }
+        }
+        return b
+      }).filter(b => b.type === 'notes' || b.items?.length > 0)
     onSave(cleaned)
+    pendingRemovalRef.current = null
+    setPendingRemovedId(null)
+    clearTimeout(timerRef.current)
+    setToastVisible(false)
     setEditMode(false)
   }
 
@@ -120,12 +207,6 @@ export default function MonthDetail({ month, year, monthData, onSave, onSaveNote
     onSave(cleaned)
   }
 
-  function handleTitleChange(blockId, newTitle) {
-    setDraftBlocks(prev => prev.map(b => b.id === blockId ? { ...b, title: newTitle } : b))
-    onSaveTitleDirect?.(blockId, newTitle)
-  }
-
-  // Notes: update draftBlocks immediately, debounce the direct localStorage save
   function handleNotesChange(blockId, content) {
     setDraftBlocks(prev => prev.map(b => b.id === blockId ? { ...b, content } : b))
     clearTimeout(notesTimers.current[blockId])
@@ -134,7 +215,12 @@ export default function MonthDetail({ month, year, monthData, onSave, onSaveNote
     }, 300)
   }
 
-  const hasBlocks = liveBlocks.length > 0
+  function handleTitleChange(blockId, newTitle) {
+    setDraftBlocks(prev => prev.map(b => b.id === blockId ? { ...b, title: newTitle } : b))
+    onSaveTitleDirect?.(blockId, newTitle)
+  }
+
+  const hasBlocks = displayBlocks.length > 0
 
   const addContentDropdown = (
     <div className="add-content-wrapper" ref={addContentRef}>
@@ -196,17 +282,26 @@ export default function MonthDetail({ month, year, monthData, onSave, onSaveNote
         </div>
       ) : (
         <div className="month-blocks">
-          {liveBlocks.map(block => {
+          {displayBlocks.map(block => {
+            const onRemove = !editMode ? () => handleRemoveBlock(block.id) : undefined
+
             if (block.type === 'songs') {
               return (
-                <MediaBlock key={block.id} title={block.title} titleVisible={block.titleVisible} editMode={editMode} onTitleChange={newTitle => handleTitleChange(block.id, newTitle)}>
+                <MediaBlock
+                  key={block.id}
+                  title={block.title}
+                  titleVisible={block.titleVisible}
+                  editMode={editMode}
+                  onTitleChange={newTitle => handleTitleChange(block.id, newTitle)}
+                  onEdit={handleEdit}
+                  onDone={handleDone}
+                  onRemove={onRemove}
+                >
                   <SongTable
                     songs={editMode ? (draftBlocks.find(b => b.id === block.id)?.items || []) : block.items}
                     editMode={editMode}
                     onSongsChange={items => handleBlockItemsChange(block.id, items)}
                     onViewSongsChange={items => onSave(blocks.map(b => b.id === block.id ? { ...b, items } : b))}
-                    onEdit={handleEdit}
-                    onDone={handleDone}
                     initialFocusId={justCreatedBlock?.id === block.id ? justCreatedBlock.items?.[0]?.id : null}
                   />
                 </MediaBlock>
@@ -222,6 +317,7 @@ export default function MonthDetail({ month, year, monthData, onSave, onSaveNote
                   onSave={items => handleAlbumSaveImmediate(block.id, items)}
                   onEdit={handleEdit}
                   onDone={handleDone}
+                  onRemove={onRemove}
                   initialFocusId={justCreatedBlock?.id === block.id ? justCreatedBlock.items?.[0]?.id : null}
                   onTitleChange={newTitle => handleTitleChange(block.id, newTitle)}
                 />
@@ -239,6 +335,7 @@ export default function MonthDetail({ month, year, monthData, onSave, onSaveNote
                   autoFocus={justCreatedBlock?.id === block.id}
                   editMode={editMode}
                   onTitleChange={newTitle => handleTitleChange(block.id, newTitle)}
+                  onRemove={onRemove}
                 />
               )
             }
@@ -250,6 +347,10 @@ export default function MonthDetail({ month, year, monthData, onSave, onSaveNote
             </div>
           )}
         </div>
+      )}
+
+      {toastVisible && (
+        <Toast key={toastKey} onRestore={handleRestoreBlock} />
       )}
     </div>
   )

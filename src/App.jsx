@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import Sidebar from './components/Sidebar.jsx'
 import TopBar from './components/TopBar.jsx'
 import TimelineGrid from './components/TimelineGrid.jsx'
@@ -8,11 +8,13 @@ import NewBoardOverlay from './components/NewBoardOverlay.jsx'
 import NewYearOverlay from './components/NewYearOverlay.jsx'
 import NewMonthOverlay from './components/NewMonthOverlay.jsx'
 import SettingsOverlay from './components/SettingsOverlay.jsx'
+import Toast from './components/Toast.jsx'
 import {
   initializeProfiles,
   getActiveProfile,
   setActiveProfile,
   getProfileData,
+  saveProfileData,
   saveMonthData,
   addYearToData,
   addMonthToData,
@@ -44,6 +46,13 @@ export default function App() {
   const [showNewMonthOverlay, setShowNewMonthOverlay] = useState(false)
   const [settingsOpen, setSettingsOpen] = useState(false)
 
+  // ── Pending board (month) removal ────────────────────────────────────────
+  const [boardPendingMonth, setBoardPendingMonth] = useState(null)
+  const [boardToastVisible, setBoardToastVisible] = useState(false)
+  const [boardToastKey, setBoardToastKey] = useState(0)
+  const boardRemovalRef = useRef(null) // { month, data, year }
+  const boardRemovalTimerRef = useRef(null)
+
   // "," shortcut opens settings (when not focused in an input)
   useEffect(() => {
     function onKeyDown(e) {
@@ -64,6 +73,9 @@ export default function App() {
     .sort((a, b) => Number(a) - Number(b))
 
   const yearData = profileData?.years?.[selectedYear] || {}
+  const displayYearData = (boardPendingMonth && boardRemovalRef.current?.year === selectedYear)
+    ? Object.fromEntries(Object.entries(yearData).filter(([m]) => m !== boardPendingMonth))
+    : yearData
   const existingMonths = Object.keys(yearData)
 
   const currentMonthData = selectedMonth
@@ -138,6 +150,66 @@ export default function App() {
     setSidebarOpen(activeProfileId, next)
   }
 
+  // ── Board removal helpers ────────────────────────────────────────────────
+
+  function writeBoardDeletion(pending) {
+    const fresh = getProfileData(activeProfileId)
+    if (fresh.years?.[pending.year]) {
+      delete fresh.years[pending.year][pending.month]
+      saveProfileData(activeProfileId, fresh)
+    }
+  }
+
+  function commitBoardRemoval() {
+    const pending = boardRemovalRef.current
+    if (!pending) return
+    clearTimeout(boardRemovalTimerRef.current)
+    writeBoardDeletion(pending)
+    refreshProfileData(activeProfileId)
+    boardRemovalRef.current = null
+    setBoardPendingMonth(null)
+    setBoardToastVisible(false)
+  }
+
+  function handleRemoveBoard(month) {
+    let hadPrevious = false
+    if (boardRemovalRef.current) {
+      clearTimeout(boardRemovalTimerRef.current)
+      writeBoardDeletion(boardRemovalRef.current)
+      boardRemovalRef.current = null
+      hadPrevious = true
+    }
+    boardRemovalRef.current = { month, data: yearData[month], year: selectedYear }
+    setBoardPendingMonth(month)
+    setBoardToastKey(k => k + 1)
+    setBoardToastVisible(true)
+    boardRemovalTimerRef.current = setTimeout(() => {
+      commitBoardRemoval()
+    }, 5000)
+    if (hadPrevious) refreshProfileData(activeProfileId)
+  }
+
+  function handleRestoreBoard() {
+    clearTimeout(boardRemovalTimerRef.current)
+    boardRemovalRef.current = null
+    setBoardPendingMonth(null)
+    setBoardToastVisible(false)
+  }
+
+  // Commit pending board removal when leaving timeline or switching years
+  useEffect(() => {
+    if (!boardRemovalRef.current) return
+    const pending = boardRemovalRef.current
+    if (currentView !== 'timeline' || pending.year !== selectedYear) {
+      clearTimeout(boardRemovalTimerRef.current)
+      writeBoardDeletion(pending)
+      refreshProfileData(activeProfileId)
+      boardRemovalRef.current = null
+      setBoardPendingMonth(null)
+      setBoardToastVisible(false)
+    }
+  }, [selectedYear, currentView]) // eslint-disable-line react-hooks/exhaustive-deps
+
   function handleCoverChange(month, base64) {
     const monthData = profileData?.years?.[selectedYear]?.[month] || { blocks: [], coverImage: null }
     const updated = { ...monthData, coverImage: base64 }
@@ -149,6 +221,15 @@ export default function App() {
     const monthData = profileData?.years?.[selectedYear]?.[selectedMonth] || { blocks: [], coverImage: null }
     const updated = { ...monthData, blocks }
     saveMonthData(activeProfileId, selectedYear, selectedMonth, updated)
+    refreshProfileData(activeProfileId)
+  }
+
+  function handleSaveBlocksDirect(year, month, blocks) {
+    const fresh = getProfileData(activeProfileId)
+    const current = fresh?.years?.[year]?.[month]
+    if (!current) return
+    const updated = { ...current, blocks }
+    saveMonthData(activeProfileId, year, month, updated)
     refreshProfileData(activeProfileId)
   }
 
@@ -227,11 +308,12 @@ export default function App() {
 
         {currentView === 'timeline' && (
           <TimelineGrid
-            yearData={yearData}
+            yearData={displayYearData}
             selectedYear={selectedYear}
             onMonthClick={handleMonthClick}
             onCoverChange={handleCoverChange}
             viewMode={viewMode}
+            onRemoveMonth={handleRemoveBoard}
           />
         )}
         {currentView === 'month' && (
@@ -242,6 +324,7 @@ export default function App() {
             onSave={handleSaveBlocks}
             onSaveNotesDirect={handleSaveNotesDirect}
             onSaveTitleDirect={handleSaveTitleDirect}
+            onSaveBlocksDirect={handleSaveBlocksDirect}
           />
         )}
         {currentView === 'yourBoards' && (
@@ -282,6 +365,9 @@ export default function App() {
           activeProfileId={activeProfileId}
           onClose={() => setSettingsOpen(false)}
         />
+      )}
+      {boardToastVisible && (
+        <Toast key={boardToastKey} onRestore={handleRestoreBoard} />
       )}
     </div>
   )
