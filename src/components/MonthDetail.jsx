@@ -62,8 +62,6 @@ export default function MonthDetail({ month, year, monthData, onSave }) {
 
   function handleAddBlock(type) {
     setAddContentOpen(false)
-    const existing = liveBlocks.find(b => b.type === type)
-    if (existing) return
     const newBlock = type === 'songs'
       ? { id: uuid(), type: 'songs', title: 'Songs', titleVisible: true, items: [makeBlankSong()] }
       : { id: uuid(), type: 'albums', title: 'Albums', titleVisible: true, items: [makeBlankAlbum()] }
@@ -104,7 +102,6 @@ export default function MonthDetail({ month, year, monthData, onSave }) {
   }
 
   const hasBlocks = liveBlocks.length > 0
-  const existingTypes = new Set(liveBlocks.map(b => b.type))
 
   const addContentDropdown = (
     <div className="add-content-wrapper" ref={addContentRef}>
@@ -114,17 +111,17 @@ export default function MonthDetail({ month, year, monthData, onSave }) {
       {addContentOpen && (
         <div className="song-row-dropdown add-content-dropdown">
           <button
-            className={`song-row-dropdown-item add-content-item${existingTypes.has('songs') ? ' disabled' : ''}`}
+            className="song-row-dropdown-item add-content-item"
             onMouseDown={e => e.stopPropagation()}
-            onClick={() => !existingTypes.has('songs') && handleAddBlock('songs')}
+            onClick={() => handleAddBlock('songs')}
           >
             <MusicNoteIcon />
             Songs
           </button>
           <button
-            className={`song-row-dropdown-item add-content-item${existingTypes.has('albums') ? ' disabled' : ''}`}
+            className="song-row-dropdown-item add-content-item"
             onMouseDown={e => e.stopPropagation()}
-            onClick={() => !existingTypes.has('albums') && handleAddBlock('albums')}
+            onClick={() => handleAddBlock('albums')}
           >
             <GridIcon />
             Albums
