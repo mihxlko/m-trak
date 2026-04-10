@@ -195,6 +195,15 @@ function BoardsCreateMenu({ onOpenBoardOverlay }) {
   )
 }
 
+function PanelLeftIcon() {
+  return (
+    <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+      <rect x="1" y="1" width="14" height="14" rx="2" stroke="currentColor" strokeWidth="1.3"/>
+      <line x1="5" y1="1" x2="5" y2="15" stroke="currentColor" strokeWidth="1.3"/>
+    </svg>
+  )
+}
+
 export default function TopBar({
   currentView,
   selectedMonth,
@@ -208,10 +217,15 @@ export default function TopBar({
   onOpenBoardOverlay,
   onCreateYear,
   onCreateMonth,
+  onToggleSidebar,
 }) {
   return (
     <header className="topbar">
-      <div className="topbar-breadcrumb">
+      <div className="topbar-left">
+        <button className="sidebar-toggle-btn" onClick={onToggleSidebar} title="Toggle sidebar">
+          <PanelLeftIcon />
+        </button>
+        <div className="topbar-breadcrumb">
         {currentView === 'timeline' && (
           <span className="topbar-breadcrumb-current">Timeline</span>
         )}
@@ -232,6 +246,7 @@ export default function TopBar({
             <span className="topbar-breadcrumb-current">{selectedBoard?.name}</span>
           </>
         )}
+        </div>
       </div>
 
       <div className="topbar-controls">

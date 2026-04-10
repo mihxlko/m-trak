@@ -105,6 +105,15 @@ export function setViewPreference(view) {
   localStorage.setItem(VIEW_PREFERENCE_KEY, view)
 }
 
+export function getSidebarOpen(profileId) {
+  const val = localStorage.getItem(`aulosSidebarOpen_${profileId}`)
+  return val === null ? true : val === 'true'
+}
+
+export function setSidebarOpen(profileId, value) {
+  localStorage.setItem(`aulosSidebarOpen_${profileId}`, String(value))
+}
+
 export function initializeProfiles() {
   for (const profile of PROFILES) {
     const dataKey = `m-trakData_${profile.id}`

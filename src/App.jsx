@@ -17,6 +17,8 @@ import {
   addMonthToData,
   getViewPreference,
   setViewPreference,
+  getSidebarOpen,
+  setSidebarOpen,
   getBoardsData,
   saveBoardsData,
   addItemToRoot,
@@ -35,6 +37,7 @@ export default function App() {
   const [profileData, setProfileData] = useState(() => getProfileData(getActiveProfile()))
   const [boardsData, setBoardsData] = useState(() => getBoardsData(getActiveProfile()))
   const [viewMode, setViewMode] = useState(() => getViewPreference()) // 'grid' | 'list'
+  const [sidebarOpen, setSidebarOpenState] = useState(() => getSidebarOpen(getActiveProfile()))
   const [showNewBoardOverlay, setShowNewBoardOverlay] = useState(false)
   const [showNewYearOverlay, setShowNewYearOverlay] = useState(false)
   const [showNewMonthOverlay, setShowNewMonthOverlay] = useState(false)
@@ -65,6 +68,7 @@ export default function App() {
     setSelectedYear(String(new Date().getFullYear()))
     refreshProfileData(profileId)
     setBoardsData(getBoardsData(profileId))
+    setSidebarOpenState(getSidebarOpen(profileId))
   }
 
   function handleYearChange(year) {
@@ -113,6 +117,12 @@ export default function App() {
     setViewPreference(next)
   }
 
+  function handleToggleSidebar() {
+    const next = !sidebarOpen
+    setSidebarOpenState(next)
+    setSidebarOpen(activeProfileId, next)
+  }
+
   function handleCoverChange(month, base64) {
     const monthData = profileData?.years?.[selectedYear]?.[month] || { blocks: [], coverImage: null }
     const updated = { ...monthData, coverImage: base64 }
@@ -157,6 +167,7 @@ export default function App() {
         currentView={currentView}
         onNavigateToTimeline={handleNavigateToTimeline}
         onNavigateToBoards={handleNavigateToBoards}
+        isOpen={sidebarOpen}
       />
 
       <div className="main-area">
@@ -173,6 +184,7 @@ export default function App() {
           onOpenBoardOverlay={() => setShowNewBoardOverlay(true)}
           onCreateYear={() => setShowNewYearOverlay(true)}
           onCreateMonth={() => setShowNewMonthOverlay(true)}
+          onToggleSidebar={handleToggleSidebar}
         />
 
         {currentView === 'timeline' && (

@@ -60,6 +60,14 @@ input, button, select, textarea {
   flex-direction: column;
   padding: 16px 12px;
   gap: 24px;
+  overflow: hidden;
+  transition: width 200ms ease, padding 200ms ease, opacity 200ms ease;
+}
+
+.sidebar.sidebar-collapsed {
+  width: 0;
+  padding: 0;
+  opacity: 0;
 }
 
 .sidebar-nav {
@@ -113,7 +121,7 @@ input, button, select, textarea {
   cursor: pointer;
   user-select: none;
   transition: background 0.1s;
-  width: 100%;
+  width: fit-content;
 }
 
 .profile-switcher-trigger:hover {
@@ -222,6 +230,29 @@ input, button, select, textarea {
   padding: 10px;
   flex-shrink: 0;
   border-bottom: 1px solid #F3F3F2;
+}
+
+.topbar-left {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.sidebar-toggle-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--color-text-secondary);
+  display: flex;
+  align-items: center;
+  padding: 4px;
+  border-radius: 4px;
+  transition: opacity 0.1s;
+  flex-shrink: 0;
+}
+
+.sidebar-toggle-btn:hover {
+  opacity: 0.6;
 }
 
 .topbar-breadcrumb {

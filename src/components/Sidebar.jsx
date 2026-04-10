@@ -22,12 +22,12 @@ function GridIcon() {
   )
 }
 
-export default function Sidebar({ activeProfileId, onSwitchProfile, currentView, onNavigateToTimeline, onNavigateToBoards }) {
+export default function Sidebar({ activeProfileId, onSwitchProfile, currentView, onNavigateToTimeline, onNavigateToBoards, isOpen }) {
   const isTimelineActive = ['timeline', 'month'].includes(currentView)
   const isBoardsActive = ['yourBoards', 'boardDetail'].includes(currentView)
 
   return (
-    <aside className="sidebar">
+    <aside className={`sidebar${isOpen ? '' : ' sidebar-collapsed'}`}>
       <ProfileSwitcher activeProfileId={activeProfileId} onSwitch={onSwitchProfile} />
 
       <nav className="sidebar-nav">
