@@ -53,6 +53,67 @@ export default function MonthDetail({ month, year, monthData, onSave, onSaveNote
   const pendingRemovalRef = useRef(null)
   const timerRef = useRef(null)
 
+  // ── Block drag reorder ───────────────────────────────────────────────────
+  const [dragBlockId, setDragBlockId] = useState(null)
+  const [dropTargetBlockId, setDropTargetBlockId] = useState(null)
+  const [dropBlockBefore, setDropBlockBefore] = useState(true)
+  const dragBlockIdRef = useRef(null)
+  const monthBlocksRef = useRef(null)
+
+  function handleBlockDragStart(e, blockId) {
+    dragBlockIdRef.current = blockId
+    setDragBlockId(blockId)
+    e.dataTransfer.effectAllowed = 'move'
+  }
+
+  function handleBlockDragEnd() {
+    dragBlockIdRef.current = null
+    setDragBlockId(null)
+    setDropTargetBlockId(null)
+  }
+
+  function handleBlocksContainerDragOver(e) {
+    e.preventDefault()
+    e.dataTransfer.dropEffect = 'move'
+    const wrappers = monthBlocksRef.current?.querySelectorAll('.month-block-wrapper[data-block-id]')
+    if (!wrappers?.length) return
+    for (const wrapper of wrappers) {
+      const rect = wrapper.getBoundingClientRect()
+      if (e.clientY >= rect.top && e.clientY <= rect.bottom) {
+        const mid = rect.top + rect.height / 2
+        setDropTargetBlockId(wrapper.dataset.blockId)
+        setDropBlockBefore(e.clientY < mid)
+        return
+      }
+    }
+    setDropTargetBlockId(null)
+  }
+
+  function handleBlocksContainerDrop(e) {
+    e.preventDefault()
+    const dragId = dragBlockIdRef.current
+    if (!dropTargetBlockId || !dragId || dragId === dropTargetBlockId) {
+      setDragBlockId(null)
+      setDropTargetBlockId(null)
+      return
+    }
+    const source = editMode ? draftBlocks : blocks
+    const dragged = source.find(b => b.id === dragId)
+    if (!dragged) { setDragBlockId(null); setDropTargetBlockId(null); return }
+    const rest = source.filter(b => b.id !== dragId)
+    const targetIdx = rest.findIndex(b => b.id === dropTargetBlockId)
+    const insertAt = targetIdx === -1 ? rest.length : dropBlockBefore ? targetIdx : targetIdx + 1
+    const next = [...rest]
+    next.splice(insertAt, 0, dragged)
+    if (editMode) {
+      setDraftBlocks(next)
+    } else {
+      onSave(next)
+    }
+    setDragBlockId(null)
+    setDropTargetBlockId(null)
+  }
+
   // Keep fresh refs for use in cleanup effects
   const blocksRef = useRef(blocks)
   blocksRef.current = blocks
@@ -281,14 +342,24 @@ export default function MonthDetail({ month, year, monthData, onSave, onSaveNote
           {addContentDropdown}
         </div>
       ) : (
-        <div className="month-blocks">
+        <div
+          className="month-blocks"
+          ref={monthBlocksRef}
+          onDragOver={handleBlocksContainerDragOver}
+          onDrop={handleBlocksContainerDrop}
+        >
           {displayBlocks.map(block => {
             const onRemove = !editMode ? () => handleRemoveBlock(block.id) : undefined
+            const dragHandleProps = {
+              draggable: true,
+              onDragStart: e => handleBlockDragStart(e, block.id),
+              onDragEnd: handleBlockDragEnd,
+            }
 
+            let blockEl = null
             if (block.type === 'songs') {
-              return (
+              blockEl = (
                 <MediaBlock
-                  key={block.id}
                   title={block.title}
                   titleVisible={block.titleVisible}
                   editMode={editMode}
@@ -296,6 +367,7 @@ export default function MonthDetail({ month, year, monthData, onSave, onSaveNote
                   onEdit={handleEdit}
                   onDone={handleDone}
                   onRemove={onRemove}
+                  dragHandleProps={dragHandleProps}
                 >
                   <SongTable
                     songs={editMode ? (draftBlocks.find(b => b.id === block.id)?.items || []) : block.items}
@@ -306,11 +378,9 @@ export default function MonthDetail({ month, year, monthData, onSave, onSaveNote
                   />
                 </MediaBlock>
               )
-            }
-            if (block.type === 'albums') {
-              return (
+            } else if (block.type === 'albums') {
+              blockEl = (
                 <AlbumsBlock
-                  key={block.id}
                   block={editMode ? (draftBlocks.find(b => b.id === block.id) || block) : block}
                   editMode={editMode}
                   onItemsChange={items => handleBlockItemsChange(block.id, items)}
@@ -320,26 +390,42 @@ export default function MonthDetail({ month, year, monthData, onSave, onSaveNote
                   onRemove={onRemove}
                   initialFocusId={justCreatedBlock?.id === block.id ? justCreatedBlock.items?.[0]?.id : null}
                   onTitleChange={newTitle => handleTitleChange(block.id, newTitle)}
+                  dragHandleProps={dragHandleProps}
+                  blockDragActive={!!dragBlockId}
                 />
               )
-            }
-            if (block.type === 'notes') {
+            } else if (block.type === 'notes') {
               const displayBlock = editMode
                 ? (draftBlocks.find(b => b.id === block.id) || block)
                 : block
-              return (
+              blockEl = (
                 <NotesBlock
-                  key={block.id}
                   block={displayBlock}
                   onContentChange={content => handleNotesChange(block.id, content)}
                   autoFocus={justCreatedBlock?.id === block.id}
                   editMode={editMode}
                   onTitleChange={newTitle => handleTitleChange(block.id, newTitle)}
                   onRemove={onRemove}
+                  dragHandleProps={dragHandleProps}
                 />
               )
             }
-            return null
+
+            if (!blockEl) return null
+            return (
+              <div
+                key={block.id}
+                data-block-id={block.id}
+                className={[
+                  'month-block-wrapper',
+                  dragBlockId === block.id ? 'block-dragging' : '',
+                  dropTargetBlockId === block.id && dropBlockBefore ? 'block-drop-before' : '',
+                  dropTargetBlockId === block.id && !dropBlockBefore ? 'block-drop-after' : '',
+                ].filter(Boolean).join(' ')}
+              >
+                {blockEl}
+              </div>
+            )
           })}
           {editMode && (
             <div className="month-add-content-row">

@@ -18,10 +18,24 @@ function DotsIcon() {
   )
 }
 
+function DragIcon() {
+  return (
+    <svg width="10" height="14" viewBox="0 0 10 14" fill="currentColor">
+      <circle cx="3" cy="2.5" r="1.1" />
+      <circle cx="7" cy="2.5" r="1.1" />
+      <circle cx="3" cy="7" r="1.1" />
+      <circle cx="7" cy="7" r="1.1" />
+      <circle cx="3" cy="11.5" r="1.1" />
+      <circle cx="7" cy="11.5" r="1.1" />
+    </svg>
+  )
+}
+
 export default function MediaBlock({
   title, titleVisible = true, children,
   editMode = false, onTitleChange,
   onEdit, onDone, onRemove,
+  dragHandleProps,
 }) {
   const titleRef = useRef(null)
   const [isEditingTitle, setIsEditingTitle] = useState(false)
@@ -84,6 +98,11 @@ export default function MediaBlock({
       {titleVisible && (
         <div className="media-block-label-row">
           <div className="media-block-title-group">
+            {dragHandleProps && (
+              <span className="block-drag-handle" {...dragHandleProps}>
+                <DragIcon />
+              </span>
+            )}
             <span
               ref={titleRef}
               className={`month-detail-sub media-block-title${isEditingTitle ? ' editing' : ''}`}

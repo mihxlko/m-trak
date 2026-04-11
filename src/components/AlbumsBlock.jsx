@@ -10,7 +10,7 @@ export function makeBlankAlbum() {
   return { id: uuid(), albumName: '', artistName: '', albumArtUrl: null }
 }
 
-export default function AlbumsBlock({ block, editMode, onItemsChange, onSave, onEdit, onDone, initialFocusId, onTitleChange, onRemove }) {
+export default function AlbumsBlock({ block, editMode, onItemsChange, onSave, onEdit, onDone, initialFocusId, onTitleChange, onRemove, dragHandleProps, blockDragActive }) {
   const [dragId, setDragId] = useState(null)
   const [dropTargetId, setDropTargetId] = useState(null)
   const [dropBefore, setDropBefore] = useState(true)
@@ -18,6 +18,12 @@ export default function AlbumsBlock({ block, editMode, onItemsChange, onSave, on
   const focusAlbumIdRef = useRef(initialFocusId || null)
 
   const albums = block.items || []
+
+  // Clear internal drop state whenever block-level drag becomes active
+  if (blockDragActive && (dropTargetId !== null || dragId !== null)) {
+    setDropTargetId(null)
+    setDragId(null)
+  }
 
   function handleFieldChange(id, field, value) {
     onItemsChange(albums.map(a => a.id === id ? { ...a, [field]: value } : a))
@@ -87,13 +93,14 @@ export default function AlbumsBlock({ block, editMode, onItemsChange, onSave, on
       onEdit={onEdit}
       onDone={onDone}
       onRemove={onRemove}
+      dragHandleProps={dragHandleProps}
     >
       <div
         className="albums-grid"
         ref={containerRef}
-        onDragOver={!editMode ? handleDragOver : undefined}
-        onDrop={!editMode ? handleDrop : undefined}
-        onDragLeave={!editMode ? () => setDropTargetId(null) : undefined}
+        onDragOver={!editMode && !blockDragActive ? handleDragOver : undefined}
+        onDrop={!editMode && !blockDragActive ? handleDrop : undefined}
+        onDragLeave={!editMode && !blockDragActive ? () => setDropTargetId(null) : undefined}
       >
         {albums.map(album => {
           const isDropTarget = dropTargetId === album.id

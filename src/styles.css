@@ -657,6 +657,35 @@ input, button, select, textarea {
   gap: 24px;
 }
 
+.month-block-wrapper {
+  position: relative;
+}
+
+.month-block-wrapper.block-dragging {
+  opacity: 0.4;
+}
+
+.month-block-wrapper.block-drop-before::before,
+.month-block-wrapper.block-drop-after::after {
+  content: '';
+  display: block;
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: var(--color-button);
+  border-radius: 1px;
+  pointer-events: none;
+}
+
+.month-block-wrapper.block-drop-before::before {
+  top: -13px;
+}
+
+.month-block-wrapper.block-drop-after::after {
+  bottom: -13px;
+}
+
 .month-add-content-row {
   display: flex;
   align-items: flex-start;
@@ -688,6 +717,26 @@ input, button, select, textarea {
   display: flex;
   align-items: center;
   gap: 5px;
+}
+
+.block-drag-handle {
+  display: inline-flex;
+  align-items: center;
+  color: var(--color-text-secondary);
+  opacity: 0;
+  cursor: grab;
+  padding: 2px 1px;
+  border-radius: 3px;
+  transition: opacity 0.1s;
+  flex-shrink: 0;
+}
+
+.block-drag-handle:active {
+  cursor: grabbing;
+}
+
+.media-block-label-row:hover .block-drag-handle {
+  opacity: 1;
 }
 
 .media-block-title[contenteditable="true"] {

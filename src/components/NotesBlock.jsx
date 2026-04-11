@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect } from 'react'
 import MediaBlock from './MediaBlock.jsx'
 
-export default function NotesBlock({ block, onContentChange, autoFocus = false, editMode = false, onTitleChange, onRemove }) {
+export default function NotesBlock({ block, onContentChange, autoFocus = false, editMode = false, onTitleChange, onRemove, dragHandleProps }) {
   const [content, setContent] = useState(block.content || '')
   const textareaRef = useRef(null)
 
@@ -28,6 +28,7 @@ export default function NotesBlock({ block, onContentChange, autoFocus = false, 
       editMode={editMode}
       onTitleChange={onTitleChange}
       onRemove={onRemove}
+      dragHandleProps={dragHandleProps}
     >
       <textarea
         ref={textareaRef}
