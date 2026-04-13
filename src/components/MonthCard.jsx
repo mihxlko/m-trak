@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react'
 
-export default function MonthCard({ month, monthData, onCardClick, onCoverChange, onRemove }) {
+export default function MonthCard({ month, monthData, onCardClick, onCoverChange, onRemove, isOwner }) {
   const [menuOpen, setMenuOpen] = useState(false)
   const fileInputRef = useRef(null)
   const menuRef = useRef(null)
@@ -70,20 +70,22 @@ export default function MonthCard({ month, monthData, onCardClick, onCoverChange
           {hasContent && <span className="month-dot" />}
         </div>
 
-        <div className="month-card-menu-wrapper" ref={menuRef}>
-          <span className="month-card-menu" onClick={handleMenuClick}>⋯</span>
-          {menuOpen && (
-            <div className="month-card-dropdown">
-              <div className="month-card-dropdown-item" onClick={handleAddPhoto}>
-                Add photo
+        {isOwner && (
+          <div className="month-card-menu-wrapper" ref={menuRef}>
+            <span className="month-card-menu" onClick={handleMenuClick}>⋯</span>
+            {menuOpen && (
+              <div className="month-card-dropdown">
+                <div className="month-card-dropdown-item" onClick={handleAddPhoto}>
+                  Add photo
+                </div>
+                <div className="month-card-dropdown-divider" />
+                <div className="month-card-dropdown-item month-card-dropdown-item--danger" onClick={handleRemoveClick}>
+                  Remove board
+                </div>
               </div>
-              <div className="month-card-dropdown-divider" />
-              <div className="month-card-dropdown-item month-card-dropdown-item--danger" onClick={handleRemoveClick}>
-                Remove board
-              </div>
-            </div>
-          )}
-        </div>
+            )}
+          </div>
+        )}
       </div>
     </div>
   )

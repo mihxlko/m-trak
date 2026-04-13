@@ -219,6 +219,7 @@ export default function TopBar({
   onCreateMonth,
   onToggleSidebar,
   sidebarOpen,
+  isOwner,
 }) {
   return (
     <header className="topbar">
@@ -253,10 +254,10 @@ export default function TopBar({
       </div>
 
       <div className="topbar-controls">
-        {currentView === 'timeline' && (
+        {isOwner && currentView === 'timeline' && (
           <TimelineCreateMenu onCreateYear={onCreateYear} onCreateMonth={onCreateMonth} />
         )}
-        {currentView === 'yourBoards' && (
+        {isOwner && currentView === 'yourBoards' && (
           <BoardsCreateMenu onOpenBoardOverlay={onOpenBoardOverlay} />
         )}
         <YearSwitcher years={years} selectedYear={selectedYear} onYearChange={onYearChange} />

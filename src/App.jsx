@@ -27,6 +27,7 @@ import {
   saveBoardsData,
   addItemToRoot,
   MONTHS as MONTH_ORDER,
+  GUEST_PROFILE_ID,
 } from './utils/storage.js'
 import './styles.css'
 
@@ -43,7 +44,9 @@ export default function App() {
   useEffect(() => { initializeProfiles() }, [])
   useEffect(() => { applyTheme(getActiveProfile()) }, [])
 
+  const isLocal = window.location.hostname === 'localhost'
   const [activeProfileId, setActiveProfileId] = useState(() => getActiveProfile())
+  const isOwner = isLocal || activeProfileId === GUEST_PROFILE_ID
   const [selectedYear, setSelectedYear] = useState(() => String(new Date().getFullYear()))
   const [currentView, setCurrentView] = useState('timeline') // 'timeline' | 'month' | 'yourBoards' | 'boardDetail'
   const [selectedMonth, setSelectedMonth] = useState(null)
@@ -316,6 +319,7 @@ export default function App() {
           onCreateMonth={() => setShowNewMonthOverlay(true)}
           onToggleSidebar={handleToggleSidebar}
           sidebarOpen={sidebarOpen}
+          isOwner={isOwner}
         />
 
         {currentView === 'timeline' && (
@@ -326,6 +330,7 @@ export default function App() {
             onCoverChange={handleCoverChange}
             viewMode={viewMode}
             onRemoveMonth={handleRemoveBoard}
+            isOwner={isOwner}
           />
         )}
         {currentView === 'month' && (
@@ -337,6 +342,7 @@ export default function App() {
             onSaveNotesDirect={handleSaveNotesDirect}
             onSaveTitleDirect={handleSaveTitleDirect}
             onSaveBlocksDirect={handleSaveBlocksDirect}
+            isOwner={isOwner}
           />
         )}
         {currentView === 'yourBoards' && (

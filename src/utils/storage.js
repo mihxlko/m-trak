@@ -1,4 +1,4 @@
-const GUEST_PROFILE_ID = 'guest'
+export const GUEST_PROFILE_ID = 'guest'
 const GUEST_DISPLAY_NAME = 'Guest User'
 
 const PROFILES = [
@@ -243,6 +243,18 @@ export function getThemePreference(profileId) {
 
 export function saveThemePreference(profileId, theme) {
   storageFor(profileId).setItem(`aulosTheme_${profileId}`, theme)
+}
+
+export function exportProfileDataAsJSON(profileId) {
+  const data = getProfileData(profileId)
+  const json = JSON.stringify(data, null, 2)
+  const blob = new Blob([json], { type: 'application/json' })
+  const url = URL.createObjectURL(blob)
+  const a = document.createElement('a')
+  a.href = url
+  a.download = `${profileId}-seed.json`
+  a.click()
+  URL.revokeObjectURL(url)
 }
 
 export { MONTHS }

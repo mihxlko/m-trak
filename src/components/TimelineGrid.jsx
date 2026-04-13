@@ -2,7 +2,7 @@ import MonthCard from './MonthCard.jsx'
 import MonthListRow from './MonthListRow.jsx'
 import { MONTHS as MONTH_ORDER } from '../utils/storage.js'
 
-export default function TimelineGrid({ yearData, selectedYear, onMonthClick, onCoverChange, viewMode, onRemoveMonth }) {
+export default function TimelineGrid({ yearData, selectedYear, onMonthClick, onCoverChange, viewMode, onRemoveMonth, isOwner }) {
   const months = Object.keys(yearData || {})
     .sort((a, b) => MONTH_ORDER.indexOf(a) - MONTH_ORDER.indexOf(b))
 
@@ -22,6 +22,7 @@ export default function TimelineGrid({ yearData, selectedYear, onMonthClick, onC
               onRowClick={() => onMonthClick(month)}
               onCoverChange={onCoverChange}
               onRemove={onRemoveMonth}
+              isOwner={isOwner}
             />
           ))}
         </div>
@@ -35,6 +36,7 @@ export default function TimelineGrid({ yearData, selectedYear, onMonthClick, onC
               onCardClick={() => onMonthClick(month)}
               onCoverChange={onCoverChange}
               onRemove={onRemoveMonth}
+              isOwner={isOwner}
             />
           ))}
         </div>

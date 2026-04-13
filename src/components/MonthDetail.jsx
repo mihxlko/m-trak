@@ -37,7 +37,7 @@ function DocIcon() {
   )
 }
 
-export default function MonthDetail({ month, year, monthData, onSave, onSaveNotesDirect, onSaveTitleDirect, onSaveBlocksDirect }) {
+export default function MonthDetail({ month, year, monthData, onSave, onSaveNotesDirect, onSaveTitleDirect, onSaveBlocksDirect, isOwner }) {
   const blocks = monthData?.blocks || []
   const [editMode, setEditMode] = useState(false)
   const [draftBlocks, setDraftBlocks] = useState(blocks)
@@ -326,20 +326,20 @@ export default function MonthDetail({ month, year, monthData, onSave, onSaveNote
           <h1 className="month-detail-title">{month}, {year}</h1>
         </div>
         <div className="month-detail-actions">
-          {editMode ? (
+          {isOwner && (editMode ? (
             <>
               <button className="btn btn-red" onClick={handleCancel}>Cancel</button>
               <button className="btn" onClick={handleDone}>Done</button>
             </>
           ) : hasBlocks ? (
             <button className="text-btn" onClick={handleEdit}>Edit</button>
-          ) : null}
+          ) : null)}
         </div>
       </div>
 
       {!hasBlocks && !editMode ? (
         <div className="month-empty-state">
-          {addContentDropdown}
+          {isOwner && addContentDropdown}
         </div>
       ) : (
         <div
@@ -349,12 +349,12 @@ export default function MonthDetail({ month, year, monthData, onSave, onSaveNote
           onDrop={handleBlocksContainerDrop}
         >
           {displayBlocks.map(block => {
-            const onRemove = !editMode ? () => handleRemoveBlock(block.id) : undefined
-            const dragHandleProps = {
+            const onRemove = isOwner && !editMode ? () => handleRemoveBlock(block.id) : undefined
+            const dragHandleProps = isOwner ? {
               draggable: true,
               onDragStart: e => handleBlockDragStart(e, block.id),
               onDragEnd: handleBlockDragEnd,
-            }
+            } : undefined
 
             let blockEl = null
             if (block.type === 'songs') {
@@ -427,7 +427,7 @@ export default function MonthDetail({ month, year, monthData, onSave, onSaveNote
               </div>
             )
           })}
-          {editMode && (
+          {isOwner && editMode && (
             <div className="month-add-content-row">
               {addContentDropdown}
             </div>
