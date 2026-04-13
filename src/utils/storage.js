@@ -1,12 +1,19 @@
+const GUEST_PROFILE_ID = 'guest'
+const GUEST_DISPLAY_NAME = 'Guest User'
+
 const PROFILES = [
   { id: 'mihxlko', displayName: 'mihxlko', avatar: 'images/avatars/mihvlko.jpg' },
-  { id: 'Test User', displayName: 'Test User', avatar: null },
+  { id: GUEST_PROFILE_ID, displayName: GUEST_DISPLAY_NAME, avatar: null },
 ]
 
 const MONTHS = [
   'January', 'February', 'March', 'April', 'May', 'June',
   'July', 'August', 'September', 'October', 'November', 'December',
 ]
+
+function storageFor(profileId) {
+  return profileId === GUEST_PROFILE_ID ? sessionStorage : localStorage
+}
 
 const ACTIVE_PROFILE_KEY = 'm-trakActiveProfile'
 const VIEW_PREFERENCE_KEY = 'm-trakViewPreference'
@@ -24,7 +31,7 @@ export function getProfiles() {
 }
 
 export function getActiveProfile() {
-  return localStorage.getItem(ACTIVE_PROFILE_KEY) || 'Test User'
+  return localStorage.getItem(ACTIVE_PROFILE_KEY) || GUEST_PROFILE_ID
 }
 
 export function setActiveProfile(profileId) {
@@ -33,7 +40,7 @@ export function setActiveProfile(profileId) {
 
 export function getProfileData(profileId) {
   const key = `m-trakData_${profileId}`
-  const raw = localStorage.getItem(key)
+  const raw = storageFor(profileId).getItem(key)
   if (!raw) return makeEmptyData()
   try {
     const parsed = JSON.parse(raw)
@@ -46,7 +53,7 @@ export function getProfileData(profileId) {
 }
 
 export function saveProfileData(profileId, data) {
-  localStorage.setItem(`m-trakData_${profileId}`, JSON.stringify(data))
+  storageFor(profileId).setItem(`m-trakData_${profileId}`, JSON.stringify(data))
 }
 
 function migrateMonthData(raw) {
@@ -106,54 +113,56 @@ export function setViewPreference(view) {
 }
 
 export function getSidebarOpen(profileId) {
-  const val = localStorage.getItem(`aulosSidebarOpen_${profileId}`)
+  const val = storageFor(profileId).getItem(`aulosSidebarOpen_${profileId}`)
   return val === null ? true : val === 'true'
 }
 
 export function setSidebarOpen(profileId, value) {
-  localStorage.setItem(`aulosSidebarOpen_${profileId}`, String(value))
+  storageFor(profileId).setItem(`aulosSidebarOpen_${profileId}`, String(value))
 }
 
 export function initializeProfiles() {
   for (const profile of PROFILES) {
+    const storage = storageFor(profile.id)
     const dataKey = `m-trakData_${profile.id}`
-    const raw = localStorage.getItem(dataKey)
+    const raw = storage.getItem(dataKey)
     if (!raw) {
-      localStorage.setItem(dataKey, JSON.stringify(makeEmptyData()))
+      storage.setItem(dataKey, JSON.stringify(makeEmptyData()))
     } else {
       try {
         const parsed = JSON.parse(raw)
         // Migrate old format that lacks `years` wrapper
         if (!parsed.years) {
-          localStorage.setItem(dataKey, JSON.stringify(makeEmptyData()))
+          storage.setItem(dataKey, JSON.stringify(makeEmptyData()))
         }
       } catch {
-        localStorage.setItem(dataKey, JSON.stringify(makeEmptyData()))
+        storage.setItem(dataKey, JSON.stringify(makeEmptyData()))
       }
     }
     initializeBoardsData(profile.id)
   }
   if (!localStorage.getItem(ACTIVE_PROFILE_KEY)) {
-    localStorage.setItem(ACTIVE_PROFILE_KEY, 'Test User')
+    localStorage.setItem(ACTIVE_PROFILE_KEY, GUEST_PROFILE_ID)
   }
 }
 
 // ── Boards ────────────────────────────────────────────────────────────────
 
 export function getBoardsData(profileId) {
-  const raw = localStorage.getItem(`${BOARDS_KEY_PREFIX}${profileId}`)
+  const raw = storageFor(profileId).getItem(`${BOARDS_KEY_PREFIX}${profileId}`)
   if (!raw) return []
   try { return JSON.parse(raw) } catch { return [] }
 }
 
 export function saveBoardsData(profileId, data) {
-  localStorage.setItem(`${BOARDS_KEY_PREFIX}${profileId}`, JSON.stringify(data))
+  storageFor(profileId).setItem(`${BOARDS_KEY_PREFIX}${profileId}`, JSON.stringify(data))
 }
 
 export function initializeBoardsData(profileId) {
   const key = `${BOARDS_KEY_PREFIX}${profileId}`
-  if (!localStorage.getItem(key)) {
-    localStorage.setItem(key, JSON.stringify([]))
+  const storage = storageFor(profileId)
+  if (!storage.getItem(key)) {
+    storage.setItem(key, JSON.stringify([]))
   }
 }
 
@@ -205,26 +214,35 @@ export function addItemToRoot(data, newItem) {
   return [...data, newItem]
 }
 
+export function clearProfileData(profileId) {
+  const storage = storageFor(profileId)
+  storage.removeItem(`m-trakData_${profileId}`)
+  storage.removeItem(`aulosProfile_${profileId}`)
+  storage.removeItem(`aulosSidebarOpen_${profileId}`)
+  storage.removeItem(`aulosTheme_${profileId}`)
+  storage.removeItem(`${BOARDS_KEY_PREFIX}${profileId}`)
+}
+
 // ── Profile info (email, birthday) ───────────────────────────────────────────
 
 export function getProfileInfo(profileId) {
-  const raw = localStorage.getItem(`aulosProfile_${profileId}`)
+  const raw = storageFor(profileId).getItem(`aulosProfile_${profileId}`)
   if (!raw) return { email: '', birthday: { month: '', day: '' } }
   try { return JSON.parse(raw) } catch { return { email: '', birthday: { month: '', day: '' } } }
 }
 
 export function saveProfileInfo(profileId, info) {
-  localStorage.setItem(`aulosProfile_${profileId}`, JSON.stringify(info))
+  storageFor(profileId).setItem(`aulosProfile_${profileId}`, JSON.stringify(info))
 }
 
 // ── Theme preference ──────────────────────────────────────────────────────────
 
 export function getThemePreference(profileId) {
-  return localStorage.getItem(`aulosTheme_${profileId}`) || 'light'
+  return storageFor(profileId).getItem(`aulosTheme_${profileId}`) || 'light'
 }
 
 export function saveThemePreference(profileId, theme) {
-  localStorage.setItem(`aulosTheme_${profileId}`, theme)
+  storageFor(profileId).setItem(`aulosTheme_${profileId}`, theme)
 }
 
 export { MONTHS }

@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react'
-import { getProfiles, getProfileInfo, saveProfileInfo, getThemePreference, saveThemePreference } from '../utils/storage.js'
+import { getProfiles, getProfileInfo, saveProfileInfo, getThemePreference, saveThemePreference, clearProfileData } from '../utils/storage.js'
 
 // ── Icons ─────────────────────────────────────────────────────────────────────
 
@@ -151,8 +151,7 @@ function ProfilePage({ activeProfileId }) {
   function handleDeleteAccount() {
     const confirmed = window.confirm('Are you sure? This will delete all data for this profile. This cannot be undone.')
     if (!confirmed) return
-    localStorage.removeItem(`m-trakData_${activeProfileId}`)
-    localStorage.removeItem(`aulosProfile_${activeProfileId}`)
+    clearProfileData(activeProfileId)
     window.location.reload()
   }
 
