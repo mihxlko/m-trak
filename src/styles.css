@@ -802,6 +802,7 @@ input, button, select, textarea {
   flex-wrap: wrap;
   gap: 16px;
   align-items: flex-start;
+  overflow: visible;
 }
 
 .album-card-wrapper {
@@ -855,7 +856,7 @@ input, button, select, textarea {
   width: 200px;
   border-radius: 8px;
   background: var(--bg-song-block);
-  overflow: hidden;
+  overflow: visible;
   position: relative;
 }
 

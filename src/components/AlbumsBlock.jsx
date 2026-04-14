@@ -29,6 +29,15 @@ export default function AlbumsBlock({ block, editMode, onItemsChange, onSave, on
     onItemsChange(albums.map(a => a.id === id ? { ...a, [field]: value } : a))
   }
 
+  function handleSelectResult(id, result) {
+    const imageUrl = result.image?.find(img => img.size === 'large')?.['#text']
+    const coverUrl = imageUrl && imageUrl.length > 0 ? imageUrl : null
+    onItemsChange(albums.map(a => a.id === id
+      ? { ...a, albumName: result.name, artistName: result.artist, coverUrl }
+      : a
+    ))
+  }
+
   function handleDelete(id) {
     const next = albums.filter(a => a.id !== id)
     onItemsChange(next)
@@ -119,6 +128,7 @@ export default function AlbumsBlock({ block, editMode, onItemsChange, onSave, on
                 album={album}
                 editMode={editMode}
                 onFieldChange={handleFieldChange}
+                onSelectResult={handleSelectResult}
                 onDelete={handleDelete}
                 focusIdRef={focusAlbumIdRef}
                 dragHandleProps={!editMode ? {

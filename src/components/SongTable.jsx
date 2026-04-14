@@ -1,4 +1,7 @@
 import { useState, useRef, useEffect } from 'react'
+import { searchTracks } from '../utils/musicApi.js'
+import { debounce } from '../utils/debounce.js'
+import SearchDropdown from './SearchDropdown.jsx'
 
 function DragIcon() {
   return (
@@ -29,6 +32,65 @@ function uuid() {
 
 function makeBlankSong() {
   return { id: uuid(), track: '', artist: '', album: '', albumArt: null }
+}
+
+function TrackInputCell({ song, onFieldChange, onSelectResult, autoFocusRef }) {
+  const [searchResults, setSearchResults] = useState([])
+  const [dropdownVisible, setDropdownVisible] = useState(false)
+  const dropdownRef = useRef(null)
+
+  const debouncedSearch = useRef(debounce(async (query) => {
+    if (query.length < 2) { setSearchResults([]); setDropdownVisible(false); return }
+    const results = await searchTracks(query)
+    setSearchResults(results)
+    setDropdownVisible(results.length > 0)
+  }, 300)).current
+
+  function handleChange(e) {
+    const val = e.target.value
+    onFieldChange(song.id, 'track', val)
+    debouncedSearch(val)
+  }
+
+  function handleBlur() {
+    setTimeout(() => setDropdownVisible(false), 150)
+  }
+
+  function handleKeyDown(e) {
+    dropdownRef.current?.handleKeyDown(e)
+  }
+
+  function handleSelect(result) {
+    onSelectResult(song.id, result)
+    setDropdownVisible(false)
+    setSearchResults([])
+  }
+
+  return (
+    <div style={{ position: 'relative' }}>
+      <input
+        className="song-input"
+        value={song.track}
+        placeholder="Track Name..."
+        onChange={handleChange}
+        onBlur={handleBlur}
+        onKeyDown={handleKeyDown}
+        ref={el => {
+          if (el && autoFocusRef?.current === song.id) {
+            el.focus()
+            autoFocusRef.current = null
+          }
+        }}
+      />
+      <SearchDropdown
+        ref={dropdownRef}
+        results={searchResults}
+        visible={dropdownVisible}
+        onSelect={handleSelect}
+        onDismiss={() => setDropdownVisible(false)}
+      />
+    </div>
+  )
 }
 
 const VIEW_COLS = '32px 50px 1fr 1fr 1fr 24px'
@@ -200,6 +262,13 @@ export default function SongTable({ songs, editMode, onSongsChange, onViewSongsC
     onSongsChange(songs.map(s => s.id === id ? { ...s, [field]: value } : s))
   }
 
+  function handleSelectResult(songId, result) {
+    onSongsChange(songs.map(s => s.id === songId
+      ? { ...s, track: result.name, artist: result.artist, album: result.album || '' }
+      : s
+    ))
+  }
+
   function handleAddTrack() {
     const blank = makeBlankSong()
     focusTrackIdRef.current = blank.id
@@ -273,17 +342,11 @@ export default function SongTable({ songs, editMode, onSongsChange, onViewSongsC
 
               {editMode ? (
                 <>
-                  <input
-                    className="song-input"
-                    value={song.track}
-                    placeholder="Track Name..."
-                    onChange={e => handleFieldChange(song.id, 'track', e.target.value)}
-                    ref={el => {
-                      if (el && focusTrackIdRef.current === song.id) {
-                        el.focus()
-                        focusTrackIdRef.current = null
-                      }
-                    }}
+                  <TrackInputCell
+                    song={song}
+                    onFieldChange={handleFieldChange}
+                    onSelectResult={handleSelectResult}
+                    autoFocusRef={focusTrackIdRef}
                   />
                   <input
                     className="song-input"
