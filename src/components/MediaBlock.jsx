@@ -36,6 +36,7 @@ export default function MediaBlock({
   editMode = false, onTitleChange,
   onEdit, onDone, onRemove,
   dragHandleProps,
+  headerControls,
 }) {
   const titleRef = useRef(null)
   const [isEditingTitle, setIsEditingTitle] = useState(false)
@@ -119,6 +120,10 @@ export default function MediaBlock({
               </button>
             )}
           </div>
+
+          {headerControls && (
+            <div className="media-block-header-controls">{headerControls}</div>
+          )}
 
           {hasMenu && (
             <div className="media-block-header-menu" ref={menuRef} style={{ position: 'relative' }}>

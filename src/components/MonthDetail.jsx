@@ -2,6 +2,7 @@ import { useState, useRef, useEffect } from 'react'
 import SongTable, { makeBlankSong } from './SongTable.jsx'
 import AlbumsBlock, { makeBlankAlbum } from './AlbumsBlock.jsx'
 import NotesBlock from './NotesBlock.jsx'
+import PhotosBlock from './PhotosBlock.jsx'
 import MediaBlock from './MediaBlock.jsx'
 import Toast from './Toast.jsx'
 
@@ -33,6 +34,16 @@ function DocIcon() {
       <line x1="4" y1="4" x2="8" y2="4" />
       <line x1="4" y1="6.5" x2="8" y2="6.5" />
       <line x1="4" y1="9" x2="6.5" y2="9" />
+    </svg>
+  )
+}
+
+function ImageIcon() {
+  return (
+    <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round">
+      <rect x="1" y="1" width="10" height="10" rx="1.5" />
+      <circle cx="4" cy="4" r="1" />
+      <path d="M1 8l3-3 2.5 2.5L8.5 5 11 8" />
     </svg>
   )
 }
@@ -215,6 +226,8 @@ export default function MonthDetail({ month, year, monthData, onSave, onSaveNote
       ? { id: uuid(), type: 'songs', title: 'Songs', titleVisible: true, items: [makeBlankSong()] }
       : type === 'albums'
       ? { id: uuid(), type: 'albums', title: 'Albums', titleVisible: true, items: [makeBlankAlbum()] }
+      : type === 'photos'
+      ? { id: uuid(), type: 'photos', title: 'Photos', titleVisible: true, columnCount: 3, photos: [] }
       : { id: uuid(), type: 'notes', title: 'Notes', titleVisible: true, content: '' }
     const next = [...(editMode ? draftBlocks : blocks), newBlock]
     setDraftBlocks(next)
@@ -249,9 +262,16 @@ export default function MonthDetail({ month, year, monthData, onSave, onSaveNote
         if (b.type === 'songs') {
           return { ...b, items: b.items.filter(s => s.track.trim() !== '') }
         }
+        if (b.type === 'photos') {
+          return { ...b, photos: (b.photos || []).map(({ data: _data, ...rest }) => rest) }
+        }
         return b
-      }).filter(b => b.type === 'notes' || b.items?.length > 0)
-    onSave(cleaned)
+      }).filter(b => !b.items || b.items.length > 0)
+    try {
+      onSave(cleaned)
+    } catch (e) {
+      console.error('Failed to save:', e)
+    }
     pendingRemovalRef.current = null
     setPendingRemovedId(null)
     clearTimeout(timerRef.current)
@@ -279,6 +299,23 @@ export default function MonthDetail({ month, year, monthData, onSave, onSaveNote
   function handleTitleChange(blockId, newTitle) {
     setDraftBlocks(prev => prev.map(b => b.id === blockId ? { ...b, title: newTitle } : b))
     onSaveTitleDirect?.(blockId, newTitle)
+  }
+
+  function handlePhotosChange(blockId, photos) {
+    // Strip embedded data — binary is stored in IndexedDB, not in profile JSON
+    const stripped = photos.map(({ data: _data, ...rest }) => rest)
+    const updated = liveBlocks.map(b => b.id === blockId ? { ...b, photos: stripped } : b)
+    if (editMode) {
+      setDraftBlocks(updated)
+    } else {
+      onSave(updated)
+    }
+  }
+
+  function handleColumnCountChange(blockId, columnCount) {
+    const updated = liveBlocks.map(b => b.id === blockId ? { ...b, columnCount } : b)
+    if (editMode) setDraftBlocks(updated)
+    onSave(updated)
   }
 
   const hasBlocks = displayBlocks.length > 0
@@ -313,6 +350,14 @@ export default function MonthDetail({ month, year, monthData, onSave, onSaveNote
           >
             <DocIcon />
             Notes
+          </button>
+          <button
+            className="song-row-dropdown-item add-content-item"
+            onMouseDown={e => e.stopPropagation()}
+            onClick={() => handleAddBlock('photos')}
+          >
+            <ImageIcon />
+            Photos
           </button>
         </div>
       )}
@@ -407,6 +452,25 @@ export default function MonthDetail({ month, year, monthData, onSave, onSaveNote
                   onTitleChange={newTitle => handleTitleChange(block.id, newTitle)}
                   onRemove={onRemove}
                   dragHandleProps={dragHandleProps}
+                />
+              )
+            } else if (block.type === 'photos') {
+              const displayBlock = editMode
+                ? (draftBlocks.find(b => b.id === block.id) || block)
+                : block
+              blockEl = (
+                <PhotosBlock
+                  block={displayBlock}
+                  editMode={editMode}
+                  onTitleChange={newTitle => handleTitleChange(block.id, newTitle)}
+                  onEdit={handleEdit}
+                  onDone={handleDone}
+                  onRemove={onRemove}
+                  dragHandleProps={dragHandleProps}
+                  onPhotosChange={photos => handlePhotosChange(block.id, photos)}
+                  onColumnCountChange={columnCount => handleColumnCountChange(block.id, columnCount)}
+                  month={month}
+                  year={year}
                 />
               )
             }

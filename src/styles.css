@@ -702,8 +702,7 @@ input, button, select, textarea {
 .media-block-label-row {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  gap: 2px;
+  gap: 6px;
 }
 
 .media-block-header-menu {
@@ -717,6 +716,8 @@ input, button, select, textarea {
   display: flex;
   align-items: center;
   gap: 5px;
+  flex: 1;
+  min-width: 0;
 }
 
 .block-drag-handle {
@@ -966,6 +967,147 @@ input, button, select, textarea {
 
 .notes-textarea::placeholder {
   color: var(--color-text-muted);
+}
+
+/* ---- PHOTOS BLOCK ---- */
+
+.photos-grid {
+  display: grid;
+  gap: 8px;
+  align-items: start;
+}
+
+.photos-grid[data-columns="2"] { grid-template-columns: repeat(2, 1fr); }
+.photos-grid[data-columns="3"] { grid-template-columns: repeat(3, 1fr); }
+.photos-grid[data-columns="4"] { grid-template-columns: repeat(4, 1fr); }
+
+.photo-item {
+  position: relative;
+  cursor: grab;
+}
+
+.photo-item--dragging {
+  opacity: 0.4;
+}
+
+.photo-item--drop-before {
+  box-shadow: -3px 0 0 0 #88D4C8;
+  border-radius: 4px;
+}
+
+.photo-item--drop-after {
+  box-shadow: 3px 0 0 0 #88D4C8;
+  border-radius: 4px;
+}
+
+.photo-img {
+  width: 100%;
+  height: auto;
+  display: block;
+  border-radius: 4px;
+  object-fit: cover;
+}
+
+.photo-add-btn-wrapper {
+  border-radius: 4px;
+  transition: box-shadow 0.1s;
+}
+
+.photo-add-btn-wrapper--drop {
+  box-shadow: -3px 0 0 0 #88D4C8;
+}
+
+.photo-add-btn {
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  background: var(--bg-image-placeholder);
+  border-radius: 4px;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-text-muted);
+  transition: background 0.1s;
+}
+
+.photo-add-btn:hover {
+  background: var(--bg-image-placeholder);
+  filter: brightness(0.95);
+}
+
+.photo-menu-wrapper {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+}
+
+.photo-menu-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.4);
+  border: none;
+  border-radius: 4px;
+  padding: 4px;
+  cursor: pointer;
+  color: #fff;
+  opacity: 0;
+  transition: opacity 0.1s;
+}
+
+.photo-item:hover .photo-menu-btn {
+  opacity: 1;
+}
+
+.photo-dropdown {
+  min-width: 130px;
+}
+
+/* ---- COLUMN COUNT CONTROLS ---- */
+
+.media-block-header-controls {
+  display: flex;
+  align-items: center;
+}
+
+.column-count-controls {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+}
+
+.column-count-btn {
+  width: 20px;
+  height: 20px;
+  border-radius: 4px;
+  border: none;
+  cursor: pointer;
+  font-size: 10px;
+  font-family: 'Inter', sans-serif;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--bg-song-block);
+  color: var(--color-text-muted);
+  transition: background 0.1s, color 0.1s;
+}
+
+.column-count-btn.active {
+  background: var(--color-button);
+  color: var(--color-button-text);
+}
+
+.column-count-btn:hover:not(.active) {
+  color: var(--color-text-secondary);
+}
+
+.photos-large-warning {
+  font-size: 11px;
+  font-style: italic;
+  color: var(--color-text-muted);
+  margin-top: 6px;
 }
 
 /* ---- SONG TABLE ---- */
