@@ -1,5 +1,5 @@
 export const GUEST_PROFILE_ID = 'guest'
-const GUEST_DISPLAY_NAME = 'Guest User'
+const GUEST_DISPLAY_NAME = 'Alex Smith'
 
 const PROFILES = [
   { id: 'mihxlko', displayName: 'mihxlko', avatar: 'images/avatars/mihvlko.jpg' },

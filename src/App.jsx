@@ -67,6 +67,20 @@ export default function App() {
   const boardRemovalRef = useRef(null) // { month, data, year }
   const boardRemovalTimerRef = useRef(null)
 
+  // ── Info toast (generic messages) ────────────────────────────────────────
+  const [infoToastMessage, setInfoToastMessage] = useState('')
+  const [infoToastVisible, setInfoToastVisible] = useState(false)
+  const [infoToastKey, setInfoToastKey] = useState(0)
+  const infoToastTimerRef = useRef(null)
+
+  function showInfoToast(message) {
+    clearTimeout(infoToastTimerRef.current)
+    setInfoToastMessage(message)
+    setInfoToastKey(k => k + 1)
+    setInfoToastVisible(true)
+    infoToastTimerRef.current = setTimeout(() => setInfoToastVisible(false), 5000)
+  }
+
   // "," shortcut opens settings (when not focused in an input)
   useEffect(() => {
     function onKeyDown(e) {
@@ -301,6 +315,11 @@ export default function App() {
         isOpen={sidebarOpen}
         onToggleSidebar={handleToggleSidebar}
         onOpenSettings={() => setSettingsOpen(true)}
+        onShowToast={showInfoToast}
+        isOwner={isOwner}
+        onCreateYear={() => setShowNewYearOverlay(true)}
+        onCreateMonth={() => setShowNewMonthOverlay(true)}
+        onOpenBoardOverlay={() => setShowNewBoardOverlay(true)}
       />
 
       <div className="main-area">
@@ -314,12 +333,8 @@ export default function App() {
           onNavigateBack={handleNavigateBack}
           viewMode={viewMode}
           onToggleView={handleToggleView}
-          onOpenBoardOverlay={() => setShowNewBoardOverlay(true)}
-          onCreateYear={() => setShowNewYearOverlay(true)}
-          onCreateMonth={() => setShowNewMonthOverlay(true)}
           onToggleSidebar={handleToggleSidebar}
           sidebarOpen={sidebarOpen}
-          isOwner={isOwner}
         />
 
         {currentView === 'timeline' && (
@@ -382,10 +397,14 @@ export default function App() {
         <SettingsOverlay
           activeProfileId={activeProfileId}
           onClose={() => setSettingsOpen(false)}
+          onShowToast={showInfoToast}
         />
       )}
       {boardToastVisible && (
-        <Toast key={boardToastKey} onRestore={handleRestoreBoard} />
+        <Toast key={boardToastKey} message="Moved to Trash" action="Restore" onAction={handleRestoreBoard} />
+      )}
+      {infoToastVisible && (
+        <Toast key={infoToastKey} message={infoToastMessage} />
       )}
     </div>
   )

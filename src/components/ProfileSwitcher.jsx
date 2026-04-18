@@ -16,7 +16,7 @@ function Avatar({ avatar, size = 'normal' }) {
   )
 }
 
-export default function ProfileSwitcher({ activeProfileId, onSwitch }) {
+export default function ProfileSwitcher({ activeProfileId, onSwitch, onClickOverride }) {
   const [open, setOpen] = useState(false)
   const ref = useRef(null)
   const profiles = getProfiles()
@@ -39,9 +39,17 @@ export default function ProfileSwitcher({ activeProfileId, onSwitch }) {
     setOpen(false)
   }
 
+  function handleTriggerClick() {
+    if (onClickOverride) {
+      onClickOverride()
+    } else {
+      setOpen(o => !o)
+    }
+  }
+
   return (
     <div className="profile-switcher" ref={ref}>
-      <div className="profile-switcher-trigger" onClick={() => setOpen(o => !o)}>
+      <div className="profile-switcher-trigger" onClick={handleTriggerClick}>
         <Avatar avatar={activeProfile.avatar} />
         <span className="profile-name">{activeProfile.displayName}</span>
         <svg className="profile-chevron" width="12" height="12" viewBox="0 0 12 12" fill="none">
