@@ -55,6 +55,49 @@ export default function App() {
   const [boardsData, setBoardsData] = useState(() => getBoardsData(getActiveProfile()))
   const [viewMode, setViewMode] = useState(() => getViewPreference()) // 'grid' | 'list'
   const [sidebarOpen, setSidebarOpenState] = useState(() => getSidebarOpen(getActiveProfile()))
+
+  // ── Navigation history (back/forward arrows) ──────────────────────────────
+  const navHistoryRef = useRef([])
+  const navIndexRef = useRef(-1)
+  const [canGoBack, setCanGoBack] = useState(false)
+  const [canGoForward, setCanGoForward] = useState(false)
+
+  function pushNavSnapshot(view, month, year, board) {
+    const entry = { view, month, year, board }
+    const newHistory = [...navHistoryRef.current.slice(0, navIndexRef.current + 1), entry]
+    const newIndex = newHistory.length - 1
+    navHistoryRef.current = newHistory
+    navIndexRef.current = newIndex
+    setCanGoBack(newIndex > 0)
+    setCanGoForward(false)
+  }
+
+  function handleHistoryBack() {
+    if (navIndexRef.current <= 0) return
+    const newIdx = navIndexRef.current - 1
+    const snap = navHistoryRef.current[newIdx]
+    navIndexRef.current = newIdx
+    setCanGoBack(newIdx > 0)
+    setCanGoForward(newIdx < navHistoryRef.current.length - 1)
+    setCurrentView(snap.view)
+    setSelectedMonth(snap.month)
+    setSelectedYear(snap.year)
+    setSelectedBoard(snap.board)
+  }
+
+  function handleHistoryForward() {
+    if (navIndexRef.current >= navHistoryRef.current.length - 1) return
+    const newIdx = navIndexRef.current + 1
+    const snap = navHistoryRef.current[newIdx]
+    navIndexRef.current = newIdx
+    setCanGoBack(newIdx > 0)
+    setCanGoForward(newIdx < navHistoryRef.current.length - 1)
+    setCurrentView(snap.view)
+    setSelectedMonth(snap.month)
+    setSelectedYear(snap.year)
+    setSelectedBoard(snap.board)
+  }
+
   const [showNewBoardOverlay, setShowNewBoardOverlay] = useState(false)
   const [showNewYearOverlay, setShowNewYearOverlay] = useState(false)
   const [showNewMonthOverlay, setShowNewMonthOverlay] = useState(false)
@@ -125,6 +168,10 @@ export default function App() {
     setBoardsData(getBoardsData(profileId))
     setSidebarOpenState(getSidebarOpen(profileId))
     applyTheme(profileId)
+    navHistoryRef.current = []
+    navIndexRef.current = -1
+    setCanGoBack(false)
+    setCanGoForward(false)
   }
 
   function handleYearChange(year) {
@@ -132,39 +179,36 @@ export default function App() {
     if (currentView === 'month') {
       setCurrentView('timeline')
       setSelectedMonth(null)
+      pushNavSnapshot('timeline', null, year, null)
+    } else {
+      pushNavSnapshot(currentView, selectedMonth, year, selectedBoard)
     }
   }
 
   function handleMonthClick(month) {
     setSelectedMonth(month)
     setCurrentView('month')
+    pushNavSnapshot('month', month, selectedYear, selectedBoard)
   }
 
   function handleNavigateToTimeline() {
     setCurrentView('timeline')
     setSelectedMonth(null)
     setSelectedBoard(null)
+    pushNavSnapshot('timeline', null, selectedYear, null)
   }
 
   function handleNavigateToBoards() {
     setCurrentView('yourBoards')
     setSelectedMonth(null)
     setSelectedBoard(null)
-  }
-
-  function handleNavigateBack() {
-    if (currentView === 'month') {
-      setCurrentView('timeline')
-      setSelectedMonth(null)
-    } else if (currentView === 'boardDetail') {
-      setCurrentView('yourBoards')
-      setSelectedBoard(null)
-    }
+    pushNavSnapshot('yourBoards', null, selectedYear, null)
   }
 
   function handleBoardClick(board) {
     setSelectedBoard(board)
     setCurrentView('boardDetail')
+    pushNavSnapshot('boardDetail', null, selectedYear, board)
   }
 
   function handleToggleView() {
@@ -330,11 +374,15 @@ export default function App() {
           selectedBoard={selectedBoard}
           years={years}
           onYearChange={handleYearChange}
-          onNavigateBack={handleNavigateBack}
+          onNavigateToTimeline={handleNavigateToTimeline}
+          onNavigateToBoards={handleNavigateToBoards}
           viewMode={viewMode}
           onToggleView={handleToggleView}
           onToggleSidebar={handleToggleSidebar}
-          sidebarOpen={sidebarOpen}
+          canGoBack={canGoBack}
+          canGoForward={canGoForward}
+          onHistoryBack={handleHistoryBack}
+          onHistoryForward={handleHistoryForward}
         />
 
         {currentView === 'timeline' && (

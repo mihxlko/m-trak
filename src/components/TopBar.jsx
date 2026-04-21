@@ -1,4 +1,24 @@
 import { useState, useEffect, useRef } from 'react'
+import IconList from '../icons/icon-list.jsx'
+import IconGrid from '../icons/icon-grid.jsx'
+import IconBackArrow from '../icons/icon-back-arrow.jsx'
+import IconForwardArrow from '../icons/icon-forward-icon.jsx'
+
+// Inline SVG matching Figma node 197:3318 — two adjacent panels (sidebar layout icon)
+function SidebarToggleIcon() {
+  return (
+    <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+      <path
+        d="M4 3.5 H5.5 V12.5 H4 C2.9 12.5 2 11.6 2 10.5 V5.5 C2 4.4 2.9 3.5 4 3.5 Z"
+        stroke="#82807D" strokeWidth="1" fill="none"
+      />
+      <path
+        d="M5.5 3.5 H12 C13.1 3.5 14 4.4 14 5.5 V10.5 C14 11.6 13.1 12.5 12 12.5 H5.5 V3.5 Z"
+        stroke="#82807D" strokeWidth="1" fill="none"
+      />
+    </svg>
+  )
+}
 
 function YearSwitcher({ years, selectedYear, onYearChange }) {
   const [open, setOpen] = useState(false)
@@ -43,28 +63,6 @@ function YearSwitcher({ years, selectedYear, onYearChange }) {
   )
 }
 
-function ListIcon() {
-  return (
-    <svg width="9" height="9" viewBox="0 0 9 9" fill="none">
-      <rect x="0.5" y="0.5" width="3" height="3" rx="1" stroke="currentColor" strokeWidth="1"/>
-      <rect x="0.5" y="5.5" width="3" height="3" rx="1" stroke="currentColor" strokeWidth="1"/>
-      <line x1="5" y1="2" x2="8.5" y2="2" stroke="currentColor" strokeWidth="1" strokeLinecap="round"/>
-      <line x1="5" y1="7" x2="8.5" y2="7" stroke="currentColor" strokeWidth="1" strokeLinecap="round"/>
-    </svg>
-  )
-}
-
-function GridIcon() {
-  return (
-    <svg width="9" height="9" viewBox="0 0 9 9" fill="none">
-      <rect x="0.5" y="0.5" width="3.5" height="3.5" rx="1" stroke="currentColor" strokeWidth="1"/>
-      <rect x="5" y="0.5" width="3.5" height="3.5" rx="1" stroke="currentColor" strokeWidth="1"/>
-      <rect x="0.5" y="5" width="3.5" height="3.5" rx="1" stroke="currentColor" strokeWidth="1"/>
-      <rect x="5" y="5" width="3.5" height="3.5" rx="1" stroke="currentColor" strokeWidth="1"/>
-    </svg>
-  )
-}
-
 function ViewToggle({ viewMode, onToggle }) {
   return (
     <div className="view-toggle">
@@ -73,25 +71,16 @@ function ViewToggle({ viewMode, onToggle }) {
         onClick={() => viewMode !== 'list' && onToggle()}
         title="List view"
       >
-        <ListIcon />
+        <IconList />
       </button>
       <button
         className={`view-toggle-btn view-toggle-btn--right${viewMode === 'grid' ? ' active' : ''}`}
         onClick={() => viewMode !== 'grid' && onToggle()}
         title="Grid view"
       >
-        <GridIcon />
+        <IconGrid />
       </button>
     </div>
-  )
-}
-
-function PanelLeftIcon() {
-  return (
-    <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-      <rect x="1" y="1" width="14" height="14" rx="2" stroke="currentColor" strokeWidth="1.3"/>
-      <line x1="5" y1="1" x2="5" y2="15" stroke="currentColor" strokeWidth="1.3"/>
-    </svg>
   )
 }
 
@@ -102,41 +91,62 @@ export default function TopBar({
   selectedBoard,
   years,
   onYearChange,
-  onNavigateBack,
+  onNavigateToTimeline,
+  onNavigateToBoards,
   viewMode,
   onToggleView,
   onToggleSidebar,
-  sidebarOpen,
+  canGoBack,
+  canGoForward,
+  onHistoryBack,
+  onHistoryForward,
 }) {
   return (
     <header className="topbar">
       <div className="topbar-left">
-        {!sidebarOpen && (
-          <button className="sidebar-toggle-btn" onClick={onToggleSidebar} title="Open sidebar">
-            <PanelLeftIcon />
+        <div className="topbar-nav-controls">
+          <button className="topbar-sidebar-toggle" onClick={onToggleSidebar} title="Toggle sidebar">
+            <SidebarToggleIcon />
           </button>
-        )}
+          <button
+            className="topbar-back-btn"
+            onClick={onHistoryBack}
+            disabled={!canGoBack}
+            title="Go back"
+          >
+            <IconBackArrow />
+          </button>
+          <button
+            className="topbar-forward-btn"
+            onClick={onHistoryForward}
+            disabled={!canGoForward}
+            title="Go forward"
+          >
+            <IconForwardArrow />
+          </button>
+        </div>
+
         <div className="topbar-breadcrumb">
-        {currentView === 'timeline' && (
-          <span className="topbar-breadcrumb-current">Timeline</span>
-        )}
-        {currentView === 'month' && (
-          <>
-            <span className="topbar-breadcrumb-link" onClick={onNavigateBack}>Timeline</span>
-            <span className="topbar-breadcrumb-sep">›</span>
-            <span className="topbar-breadcrumb-current">{selectedMonth}</span>
-          </>
-        )}
-        {currentView === 'yourBoards' && (
-          <span className="topbar-breadcrumb-current">Your Boards</span>
-        )}
-        {currentView === 'boardDetail' && (
-          <>
-            <span className="topbar-breadcrumb-link" onClick={onNavigateBack}>Your Boards</span>
-            <span className="topbar-breadcrumb-sep">›</span>
-            <span className="topbar-breadcrumb-current">{selectedBoard?.name}</span>
-          </>
-        )}
+          {currentView === 'timeline' && (
+            <span className="topbar-breadcrumb-current">Timeline</span>
+          )}
+          {currentView === 'month' && (
+            <>
+              <span className="topbar-breadcrumb-link" onClick={onNavigateToTimeline}>Timeline</span>
+              <span className="topbar-breadcrumb-sep">/</span>
+              <span className="topbar-breadcrumb-current">{selectedMonth}</span>
+            </>
+          )}
+          {currentView === 'yourBoards' && (
+            <span className="topbar-breadcrumb-current">Your Boards</span>
+          )}
+          {currentView === 'boardDetail' && (
+            <>
+              <span className="topbar-breadcrumb-link" onClick={onNavigateToBoards}>Your Boards</span>
+              <span className="topbar-breadcrumb-sep">/</span>
+              <span className="topbar-breadcrumb-current">{selectedBoard?.name}</span>
+            </>
+          )}
         </div>
       </div>
 

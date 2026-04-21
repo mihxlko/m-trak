@@ -1,43 +1,26 @@
 import { useState, useEffect, useRef } from 'react'
 import ProfileSwitcher from './ProfileSwitcher.jsx'
 import AccountDropdown from './AccountDropdown.jsx'
+import CreateIcon from '../icons/icon-create.jsx'
+import IconGrid from '../icons/icon-grid.jsx'
 
-function CalendarIcon() {
+function CalendarTickIcon() {
   return (
-    <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+    <svg width="18" height="18" viewBox="0 0 14 14" fill="none">
       <rect x="1" y="2.5" width="12" height="10.5" rx="2" stroke="currentColor" strokeWidth="1.3"/>
       <path d="M1 5.5H13" stroke="currentColor" strokeWidth="1.3"/>
       <path d="M4.5 1V3" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round"/>
       <path d="M9.5 1V3" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round"/>
+      <path d="M4.5 9L6.2 10.5L9.5 7.5" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round"/>
     </svg>
   )
 }
 
-function GridIcon() {
+function SidebarGridIcon() {
   return (
-    <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
-      <rect x="1" y="1" width="5" height="5" rx="1.2" stroke="currentColor" strokeWidth="1.3"/>
-      <rect x="8" y="1" width="5" height="5" rx="1.2" stroke="currentColor" strokeWidth="1.3"/>
-      <rect x="1" y="8" width="5" height="5" rx="1.2" stroke="currentColor" strokeWidth="1.3"/>
-      <rect x="8" y="8" width="5" height="5" rx="1.2" stroke="currentColor" strokeWidth="1.3"/>
-    </svg>
-  )
-}
-
-function PanelLeftIcon() {
-  return (
-    <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-      <rect x="1" y="1" width="14" height="14" rx="2" stroke="currentColor" strokeWidth="1.3"/>
-      <line x1="5" y1="1" x2="5" y2="15" stroke="currentColor" strokeWidth="1.3"/>
-    </svg>
-  )
-}
-
-function PlusIcon() {
-  return (
-    <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
-      <path d="M6 2V10M2 6H10" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
-    </svg>
+    <span className="sidebar-nav-grid-icon">
+      <IconGrid />
+    </span>
   )
 }
 
@@ -47,6 +30,17 @@ function MonthIcon() {
       <rect x="1" y="1" width="11" height="11" rx="2" stroke="currentColor" strokeWidth="1.2"/>
       <path d="M1 5H12" stroke="currentColor" strokeWidth="1.2"/>
       <path d="M5 1V5" stroke="currentColor" strokeWidth="1.2"/>
+    </svg>
+  )
+}
+
+function CalendarIcon() {
+  return (
+    <svg width="13" height="13" viewBox="0 0 13 13" fill="none">
+      <rect x="1" y="2" width="11" height="10" rx="2" stroke="currentColor" strokeWidth="1.2"/>
+      <path d="M1 5H12" stroke="currentColor" strokeWidth="1.2"/>
+      <path d="M4 1V3" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round"/>
+      <path d="M9 1V3" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round"/>
     </svg>
   )
 }
@@ -95,10 +89,9 @@ function SidebarCreateMenu({ currentView, onCreateYear, onCreateMonth, onOpenBoa
   const isTimeline = currentView === 'timeline' || currentView === 'month'
 
   return (
-    <div className="create-menu-wrapper" ref={ref}>
-      <button className="sidebar-create-btn" onClick={() => setOpen(o => !o)}>
-        <PlusIcon />
-        <span>Create</span>
+    <div className="sidebar-create-menu-wrapper" ref={ref}>
+      <button className="sidebar-create-icon-btn" onClick={() => setOpen(o => !o)} title="Create">
+        <CreateIcon />
       </button>
       {open && (
         <div className="create-dropdown">
@@ -175,33 +168,31 @@ export default function Sidebar({
             onShowToast={onShowToast}
           />
         )}
-        <button className="sidebar-icon-btn" onClick={onToggleSidebar} title="Collapse sidebar">
-          <PanelLeftIcon />
-        </button>
+        {isOwner && (
+          <SidebarCreateMenu
+            currentView={currentView}
+            onCreateYear={onCreateYear}
+            onCreateMonth={onCreateMonth}
+            onOpenBoardOverlay={onOpenBoardOverlay}
+          />
+        )}
       </div>
 
-      {isOwner && (
-        <SidebarCreateMenu
-          currentView={currentView}
-          onCreateYear={onCreateYear}
-          onCreateMonth={onCreateMonth}
-          onOpenBoardOverlay={onOpenBoardOverlay}
-        />
-      )}
+      <div className="sidebar-section-label">Workspace</div>
 
       <nav className="sidebar-nav">
         <div
           className={`sidebar-nav-item ${isTimelineActive ? 'active' : ''}`}
           onClick={onNavigateToTimeline}
         >
-          <CalendarIcon />
+          <CalendarTickIcon />
           <span>Timeline</span>
         </div>
         <div
           className={`sidebar-nav-item ${isBoardsActive ? 'active' : ''}`}
           onClick={onNavigateToBoards}
         >
-          <GridIcon />
+          <SidebarGridIcon />
           <span>Your Boards</span>
         </div>
       </nav>
