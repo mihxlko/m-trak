@@ -5,11 +5,11 @@ import { savePhoto, getPhoto, deletePhoto } from '../utils/photosDB.js'
 
 function uuid() { return crypto.randomUUID() }
 
-function PlusIcon() {
+function SmallPlusIcon() {
   return (
-    <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round">
-      <line x1="10" y1="4" x2="10" y2="16" />
-      <line x1="4" y1="10" x2="16" y2="10" />
+    <svg width="8" height="8" viewBox="0 0 8 8" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round">
+      <line x1="4" y1="1" x2="4" y2="7" />
+      <line x1="1" y1="4" x2="7" y2="4" />
     </svg>
   )
 }
@@ -77,6 +77,8 @@ export default function PhotosBlock({
   onColumnCountChange,
   month,
   year,
+  focusTitle,
+  onTitleFocused,
 }) {
   const photos = block.photos || []
   const columnCount = block.columnCount || 3
@@ -301,60 +303,57 @@ export default function PhotosBlock({
         onEdit={onEdit}
         onDone={onDone}
         onRemove={onRemove}
-        dragHandleProps={dragHandleProps}
         headerControls={columnControls}
+        focusTitle={focusTitle}
+        onTitleFocused={onTitleFocused}
       >
         <div className="photos-grid" data-columns={columnCount}>
           {displayPhotos.map(photo => {
             const isDragging = dragPhotoId === photo.id
             const isTarget = dropTargetPhotoId === photo.id
             let itemClass = 'photo-item'
-            if (editMode && isDragging) itemClass += ' photo-item--dragging'
-            if (editMode && isTarget) itemClass += dropBefore ? ' photo-item--drop-before' : ' photo-item--drop-after'
+            if (isDragging) itemClass += ' photo-item--dragging'
+            if (isTarget) itemClass += dropBefore ? ' photo-item--drop-before' : ' photo-item--drop-after'
             return (
               <div
                 key={photo.id}
                 className={itemClass}
-                draggable={editMode}
-                onDragStart={editMode ? e => handlePhotoDragStart(e, photo.id) : undefined}
-                onDragOver={editMode ? e => handlePhotoDragOver(e, photo.id) : undefined}
-                onDrop={editMode ? e => handlePhotoDrop(e, photo.id) : undefined}
-                onDragEnd={editMode ? handlePhotoDragEnd : undefined}
+                draggable
+                onDragStart={e => handlePhotoDragStart(e, photo.id)}
+                onDragOver={e => handlePhotoDragOver(e, photo.id)}
+                onDrop={e => handlePhotoDrop(e, photo.id)}
+                onDragEnd={handlePhotoDragEnd}
               >
                 <img
                   src={photoDataMap[photo.id] || photo.data || ''}
                   alt={photo.fileName || ''}
                   className="photo-img"
                 />
-                {!editMode && (
-                  <PhotoMenu onRemove={() => handleRemovePhoto(photo.id)} />
-                )}
+                <PhotoMenu onRemove={() => handleRemovePhoto(photo.id)} />
               </div>
             )
           })}
-          {editMode && (
-            <div
-              className={`photo-add-btn-wrapper${dropTargetPhotoId === '__add__' ? ' photo-add-btn-wrapper--drop' : ''}`}
-              onDragOver={handleAddSlotDragOver}
-              onDrop={handleAddSlotDrop}
-              onDragLeave={() => { if (dropTargetPhotoId === '__add__') setDropTargetPhotoId(null) }}
+          <div
+            className={`photo-add-btn-wrapper${dropTargetPhotoId === '__add__' ? ' photo-add-btn-wrapper--drop' : ''}`}
+            onDragOver={handleAddSlotDragOver}
+            onDrop={handleAddSlotDrop}
+            onDragLeave={() => { if (dropTargetPhotoId === '__add__') setDropTargetPhotoId(null) }}
+          >
+            <button
+              className="photo-add-btn"
+              onClick={() => fileInputRef.current?.click()}
             >
-              <button
-                className="photo-add-btn"
-                onClick={() => fileInputRef.current?.click()}
-              >
-                <PlusIcon />
-              </button>
-              <input
-                ref={fileInputRef}
-                type="file"
-                accept=".jpg,.jpeg,.png,.heic,.webp,image/heic"
-                multiple
-                style={{ display: 'none' }}
-                onChange={handleFileChange}
-              />
-            </div>
-          )}
+              <SmallPlusIcon />
+            </button>
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept=".jpg,.jpeg,.png,.heic,.webp,image/heic"
+              multiple
+              style={{ display: 'none' }}
+              onChange={handleFileChange}
+            />
+          </div>
         </div>
       </MediaBlock>
       {toastVisible && (

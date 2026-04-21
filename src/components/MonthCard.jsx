@@ -66,8 +66,7 @@ export default function MonthCard({ month, monthData, onCardClick, onCoverChange
 
       <div className="month-card-footer">
         <div className="month-card-name-row">
-          <span>{month}</span>
-          {hasContent && <span className="month-dot" />}
+          <span className={hasContent ? 'month-card-name--has-content' : 'month-card-name--empty'}>{month}</span>
         </div>
 
         {isOwner && (

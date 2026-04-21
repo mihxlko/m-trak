@@ -18,25 +18,13 @@ function DotsIcon() {
   )
 }
 
-function DragIcon() {
-  return (
-    <svg width="10" height="14" viewBox="0 0 10 14" fill="currentColor">
-      <circle cx="3" cy="2.5" r="1.1" />
-      <circle cx="7" cy="2.5" r="1.1" />
-      <circle cx="3" cy="7" r="1.1" />
-      <circle cx="7" cy="7" r="1.1" />
-      <circle cx="3" cy="11.5" r="1.1" />
-      <circle cx="7" cy="11.5" r="1.1" />
-    </svg>
-  )
-}
 
 export default function MediaBlock({
   title, titleVisible = true, children,
   editMode = false, onTitleChange,
   onEdit, onDone, onRemove,
-  dragHandleProps,
   headerControls,
+  focusTitle, onTitleFocused,
 }) {
   const titleRef = useRef(null)
   const [isEditingTitle, setIsEditingTitle] = useState(false)
@@ -46,6 +34,19 @@ export default function MediaBlock({
   const menuRef = useRef(null)
 
   const hasMenu = !!(onEdit || onDone || onRemove)
+
+  useEffect(() => {
+    if (!focusTitle || !titleRef.current) return
+    const el = titleRef.current
+    el.focus()
+    const range = document.createRange()
+    const sel = window.getSelection()
+    range.selectNodeContents(el)
+    range.collapse(false)
+    sel.removeAllRanges()
+    sel.addRange(range)
+    onTitleFocused?.()
+  }, [focusTitle]) // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
     if (!menuOpen) return
@@ -99,11 +100,6 @@ export default function MediaBlock({
       {titleVisible && (
         <div className="media-block-label-row">
           <div className="media-block-title-group">
-            {dragHandleProps && (
-              <span className="block-drag-handle" {...dragHandleProps}>
-                <DragIcon />
-              </span>
-            )}
             <span
               ref={titleRef}
               className={`month-detail-sub media-block-title${isEditingTitle ? ' editing' : ''}`}
@@ -135,36 +131,33 @@ export default function MediaBlock({
               </button>
               {menuOpen && (
                 <div className="song-row-dropdown">
-                  {editMode ? (
+                  {onDone && (
                     <button
                       className="song-row-dropdown-item"
                       onMouseDown={e => e.stopPropagation()}
-                      onClick={() => { setMenuOpen(false); onDone?.() }}
+                      onClick={() => { setMenuOpen(false); onDone() }}
                     >
                       Done Editing
                     </button>
-                  ) : (
-                    <>
-                      {onEdit && (
-                        <button
-                          className="song-row-dropdown-item"
-                          onMouseDown={e => e.stopPropagation()}
-                          onClick={() => { setMenuOpen(false); onEdit() }}
-                        >
-                          Edit Block
-                        </button>
-                      )}
-                      {onEdit && onRemove && <div className="dropdown-divider" />}
-                      {onRemove && (
-                        <button
-                          className="song-row-dropdown-item song-row-dropdown-item--danger"
-                          onMouseDown={e => e.stopPropagation()}
-                          onClick={() => { setMenuOpen(false); onRemove() }}
-                        >
-                          Remove Block
-                        </button>
-                      )}
-                    </>
+                  )}
+                  {!editMode && onEdit && (
+                    <button
+                      className="song-row-dropdown-item"
+                      onMouseDown={e => e.stopPropagation()}
+                      onClick={() => { setMenuOpen(false); onEdit() }}
+                    >
+                      Edit Block
+                    </button>
+                  )}
+                  {onRemove && (onDone || (!editMode && onEdit)) && <div className="dropdown-divider" />}
+                  {onRemove && (
+                    <button
+                      className="song-row-dropdown-item song-row-dropdown-item--danger"
+                      onMouseDown={e => e.stopPropagation()}
+                      onClick={() => { setMenuOpen(false); onRemove() }}
+                    >
+                      Remove Block
+                    </button>
                   )}
                 </div>
               )}

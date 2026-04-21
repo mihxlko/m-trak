@@ -48,13 +48,66 @@ function ImageIcon() {
   )
 }
 
+function SmallPlusIcon() {
+  return (
+    <svg width="8" height="8" viewBox="0 0 8 8" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round">
+      <line x1="4" y1="1" x2="4" y2="7" />
+      <line x1="1" y1="4" x2="7" y2="4" />
+    </svg>
+  )
+}
+
+function TitleIcon() {
+  return (
+    <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round">
+      <line x1="2" y1="2.5" x2="10" y2="2.5" />
+      <line x1="6" y1="2.5" x2="6" y2="9.5" />
+    </svg>
+  )
+}
+
+function BlockDragIcon() {
+  return (
+    <svg width="6" height="11" viewBox="0 0 6 11" fill="#a3a09d">
+      <circle cx="1.5" cy="1.5" r="1.5" />
+      <circle cx="4.5" cy="1.5" r="1.5" />
+      <circle cx="1.5" cy="5.5" r="1.5" />
+      <circle cx="4.5" cy="5.5" r="1.5" />
+      <circle cx="1.5" cy="9.5" r="1.5" />
+      <circle cx="4.5" cy="9.5" r="1.5" />
+    </svg>
+  )
+}
+
+function DuplicateIcon() {
+  return (
+    <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round">
+      <rect x="4" y="4" width="7" height="7" rx="1" />
+      <path d="M8 4V2.5C8 1.67 7.33 1 6.5 1H2.5C1.67 1 1 1.67 1 2.5v4C1 7.33 1.67 8 2.5 8H4" />
+    </svg>
+  )
+}
+
+function TrashIcon() {
+  return (
+    <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M1 3h10" />
+      <path d="M4 3V2h4v1" />
+      <path d="M2 3l.8 7.2A1 1 0 0 0 3.8 11h4.4a1 1 0 0 0 1-.8L10 3" />
+    </svg>
+  )
+}
+
+const BLOCK_TYPES = [
+  { type: 'songs',  label: 'Songs',  Icon: MusicNoteIcon },
+  { type: 'albums', label: 'Albums', Icon: GridIcon },
+  { type: 'notes',  label: 'Notes',  Icon: DocIcon },
+  { type: 'photos', label: 'Photos', Icon: ImageIcon },
+]
+
 export default function MonthDetail({ month, year, monthData, onSave, onSaveNotesDirect, onSaveTitleDirect, onSaveBlocksDirect, isOwner }) {
   const blocks = monthData?.blocks || []
-  const [editMode, setEditMode] = useState(false)
-  const [draftBlocks, setDraftBlocks] = useState(blocks)
-  const [addContentOpen, setAddContentOpen] = useState(false)
   const [justCreatedBlock, setJustCreatedBlock] = useState(null)
-  const addContentRef = useRef(null)
   const notesTimers = useRef({})
 
   // ── Pending block removal ────────────────────────────────────────────────
@@ -70,6 +123,18 @@ export default function MonthDetail({ month, year, monthData, onSave, onSaveNote
   const [dropBlockBefore, setDropBlockBefore] = useState(true)
   const dragBlockIdRef = useRef(null)
   const monthBlocksRef = useRef(null)
+
+  // ── Block insertion menu ─────────────────────────────────────────────────
+  const [insertMenuBlockId, setInsertMenuBlockId] = useState(null)
+  const [insertMenuAbove, setInsertMenuAbove] = useState(false)
+  const insertMenuRef = useRef(null)
+
+  // ── Block move menu ──────────────────────────────────────────────────────
+  const [moveMenuBlockId, setMoveMenuBlockId] = useState(null)
+  const moveMenuRef = useRef(null)
+
+  // ── Title focus ──────────────────────────────────────────────────────────
+  const [titleFocusId, setTitleFocusId] = useState(null)
 
   function handleBlockDragStart(e, blockId) {
     dragBlockIdRef.current = blockId
@@ -108,19 +173,14 @@ export default function MonthDetail({ month, year, monthData, onSave, onSaveNote
       setDropTargetBlockId(null)
       return
     }
-    const source = editMode ? draftBlocks : blocks
-    const dragged = source.find(b => b.id === dragId)
+    const dragged = blocks.find(b => b.id === dragId)
     if (!dragged) { setDragBlockId(null); setDropTargetBlockId(null); return }
-    const rest = source.filter(b => b.id !== dragId)
+    const rest = blocks.filter(b => b.id !== dragId)
     const targetIdx = rest.findIndex(b => b.id === dropTargetBlockId)
     const insertAt = targetIdx === -1 ? rest.length : dropBlockBefore ? targetIdx : targetIdx + 1
     const next = [...rest]
     next.splice(insertAt, 0, dragged)
-    if (editMode) {
-      setDraftBlocks(next)
-    } else {
-      onSave(next)
-    }
+    onSave(next)
     setDragBlockId(null)
     setDropTargetBlockId(null)
   }
@@ -156,25 +216,19 @@ export default function MonthDetail({ month, year, monthData, onSave, onSaveNote
   }
 
   function handleRemoveBlock(blockId) {
-    // Commit any previous pending removal first
     if (pendingRemovalRef.current) {
       clearTimeout(timerRef.current)
       const prev = pendingRemovalRef.current
       onSave(blocks.filter(b => b.id !== prev.block.id))
       pendingRemovalRef.current = null
     }
-
     const idx = blocks.findIndex(b => b.id === blockId)
     pendingRemovalRef.current = { block: blocks[idx], index: idx }
     setPendingRemovedId(blockId)
-
-    // Show toast with 5-second timer
     clearTimeout(timerRef.current)
     setToastKey(k => k + 1)
     setToastVisible(true)
-    timerRef.current = setTimeout(() => {
-      commitPendingRemoval()
-    }, 5000)
+    timerRef.current = setTimeout(() => { commitPendingRemoval() }, 5000)
   }
 
   function handleRestoreBlock() {
@@ -184,29 +238,25 @@ export default function MonthDetail({ month, year, monthData, onSave, onSaveNote
     setToastVisible(false)
   }
 
-  // Sync only when the month/year identity changes
+  // Sync when the month/year identity changes
   const [prevMonth, setPrevMonth] = useState(month)
   const [prevYear, setPrevYear] = useState(year)
   if (month !== prevMonth || year !== prevYear) {
     setPrevMonth(month)
     setPrevYear(year)
-    setDraftBlocks(monthData?.blocks || [])
-    setEditMode(false)
-    // Clear toast/pending (cleanup effect handles the save)
     setPendingRemovedId(null)
     setToastVisible(false)
   }
 
-  // Close add-content dropdown on outside click / Escape
+  // Close block dropdowns on outside click / Escape
   useEffect(() => {
-    if (!addContentOpen) return
+    if (!insertMenuBlockId && !moveMenuBlockId) return
     function onMouseDown(e) {
-      if (addContentRef.current && !addContentRef.current.contains(e.target)) {
-        setAddContentOpen(false)
-      }
+      if (insertMenuRef.current && !insertMenuRef.current.contains(e.target)) setInsertMenuBlockId(null)
+      if (moveMenuRef.current && !moveMenuRef.current.contains(e.target)) setMoveMenuBlockId(null)
     }
     function onKeyDown(e) {
-      if (e.key === 'Escape') setAddContentOpen(false)
+      if (e.key === 'Escape') { setInsertMenuBlockId(null); setMoveMenuBlockId(null) }
     }
     document.addEventListener('mousedown', onMouseDown)
     document.addEventListener('keydown', onKeyDown)
@@ -214,82 +264,76 @@ export default function MonthDetail({ month, year, monthData, onSave, onSaveNote
       document.removeEventListener('mousedown', onMouseDown)
       document.removeEventListener('keydown', onKeyDown)
     }
-  }, [addContentOpen])
+  }, [insertMenuBlockId, moveMenuBlockId])
 
-  const liveBlocks = editMode ? draftBlocks : blocks
-  // Filter out any pending-removed block from display
-  const displayBlocks = liveBlocks.filter(b => b.id !== pendingRemovedId)
+  const displayBlocks = blocks.filter(b => b.id !== pendingRemovedId)
 
-  function handleAddBlock(type) {
-    setAddContentOpen(false)
+  function handleAddTitle(blockId) {
+    setInsertMenuBlockId(null)
+    onSave(blocks.map(b => b.id === blockId ? { ...b, titleVisible: true } : b))
+    setTitleFocusId(blockId)
+  }
+
+  function handleInsertBlock(type, refBlockId, above) {
+    setInsertMenuBlockId(null)
     const newBlock = type === 'songs'
-      ? { id: uuid(), type: 'songs', title: 'Songs', titleVisible: true, items: [makeBlankSong()] }
+      ? { id: uuid(), type: 'songs',  title: 'Songs',  titleVisible: false, items: [makeBlankSong()] }
       : type === 'albums'
-      ? { id: uuid(), type: 'albums', title: 'Albums', titleVisible: true, items: [makeBlankAlbum()] }
+      ? { id: uuid(), type: 'albums', title: 'Albums', titleVisible: false, items: [makeBlankAlbum()] }
       : type === 'photos'
-      ? { id: uuid(), type: 'photos', title: 'Photos', titleVisible: true, columnCount: 3, photos: [] }
-      : { id: uuid(), type: 'notes', title: 'Notes', titleVisible: true, content: '' }
-    const next = [...(editMode ? draftBlocks : blocks), newBlock]
-    setDraftBlocks(next)
+      ? { id: uuid(), type: 'photos', title: 'Photos', titleVisible: false, columnCount: 3, photos: [] }
+      : { id: uuid(), type: 'notes',  title: 'Notes',  titleVisible: false, content: '' }
+
     setJustCreatedBlock(newBlock)
-    setEditMode(true)
-  }
 
-  function handleEdit() {
-    // Commit any pending removal before entering edit mode
-    clearTimeout(timerRef.current)
-    const pending = pendingRemovalRef.current
-    const currentBlocks = pending ? blocks.filter(b => b.id !== pending.block.id) : blocks
-    if (pending) {
-      onSave(currentBlocks)
-      pendingRemovalRef.current = null
-      setPendingRemovedId(null)
-      setToastVisible(false)
+    if (!refBlockId) {
+      onSave([...blocks, newBlock])
+      return
     }
-    setDraftBlocks(currentBlocks)
-    setEditMode(true)
+    const refIdx = blocks.findIndex(b => b.id === refBlockId)
+    const insertAt = above ? refIdx : refIdx + 1
+    const next = [...blocks]
+    next.splice(insertAt, 0, newBlock)
+    onSave(next)
   }
 
-  function handleCancel() {
-    setDraftBlocks(blocks)
-    setEditMode(false)
+  function handleInsertBtnClick(e, blockId) {
+    e.stopPropagation()
+    const above = e.altKey
+    setInsertMenuAbove(above)
+    setMoveMenuBlockId(null)
+    setInsertMenuBlockId(prev => prev === blockId ? null : blockId)
   }
 
-  function handleDone() {
-    const cleaned = draftBlocks
-      .filter(b => b.id !== pendingRemovedId)
-      .map(b => {
-        if (b.type === 'songs') {
-          return { ...b, items: b.items.filter(s => s.track.trim() !== '') }
-        }
-        if (b.type === 'photos') {
-          return { ...b, photos: (b.photos || []).map(({ data: _data, ...rest }) => rest) }
-        }
-        return b
-      }).filter(b => !b.items || b.items.length > 0)
-    try {
-      onSave(cleaned)
-    } catch (e) {
-      console.error('Failed to save:', e)
-    }
-    pendingRemovalRef.current = null
-    setPendingRemovedId(null)
-    clearTimeout(timerRef.current)
-    setToastVisible(false)
-    setEditMode(false)
+  function handleMoveBtnClick(e, blockId) {
+    e.stopPropagation()
+    setInsertMenuBlockId(null)
+    setMoveMenuBlockId(prev => prev === blockId ? null : blockId)
+  }
+
+  function deepCloneBlock(block) {
+    const cloned = { ...block, id: uuid() }
+    if (cloned.items) cloned.items = cloned.items.map(item => ({ ...item, id: uuid() }))
+    if (cloned.photos) cloned.photos = cloned.photos.map(photo => ({ ...photo, id: uuid() }))
+    return cloned
+  }
+
+  function handleDuplicateBlock(blockId) {
+    setMoveMenuBlockId(null)
+    const block = blocks.find(b => b.id === blockId)
+    if (!block) return
+    const cloned = deepCloneBlock(block)
+    const idx = blocks.findIndex(b => b.id === blockId)
+    const next = [...blocks]
+    next.splice(idx + 1, 0, cloned)
+    onSave(next)
   }
 
   function handleBlockItemsChange(blockId, items) {
-    setDraftBlocks(prev => prev.map(b => b.id === blockId ? { ...b, items } : b))
-  }
-
-  function handleAlbumSaveImmediate(blockId, items) {
-    const cleaned = blocks.map(b => b.id === blockId ? { ...b, items } : b)
-    onSave(cleaned)
+    onSave(blocks.map(b => b.id === blockId ? { ...b, items } : b))
   }
 
   function handleNotesChange(blockId, content) {
-    setDraftBlocks(prev => prev.map(b => b.id === blockId ? { ...b, content } : b))
     clearTimeout(notesTimers.current[blockId])
     notesTimers.current[blockId] = setTimeout(() => {
       onSaveNotesDirect(blockId, content)
@@ -297,72 +341,86 @@ export default function MonthDetail({ month, year, monthData, onSave, onSaveNote
   }
 
   function handleTitleChange(blockId, newTitle) {
-    setDraftBlocks(prev => prev.map(b => b.id === blockId ? { ...b, title: newTitle } : b))
     onSaveTitleDirect?.(blockId, newTitle)
   }
 
   function handlePhotosChange(blockId, photos) {
-    // Strip embedded data — binary is stored in IndexedDB, not in profile JSON
     const stripped = photos.map(({ data: _data, ...rest }) => rest)
-    const updated = liveBlocks.map(b => b.id === blockId ? { ...b, photos: stripped } : b)
-    if (editMode) {
-      setDraftBlocks(updated)
-    } else {
-      onSave(updated)
-    }
+    onSave(blocks.map(b => b.id === blockId ? { ...b, photos: stripped } : b))
   }
 
   function handleColumnCountChange(blockId, columnCount) {
-    const updated = liveBlocks.map(b => b.id === blockId ? { ...b, columnCount } : b)
-    if (editMode) setDraftBlocks(updated)
-    onSave(updated)
+    onSave(blocks.map(b => b.id === blockId ? { ...b, columnCount } : b))
   }
 
-  const hasBlocks = displayBlocks.length > 0
+  function renderInsertDropdown(refBlockId, above, block) {
+    return (
+      <div className="block-dropdown">
+        {BLOCK_TYPES.map(({ type, label, Icon }) => (
+          <button
+            key={type}
+            className="block-dropdown-item"
+            onMouseDown={e => e.stopPropagation()}
+            onClick={() => handleInsertBlock(type, refBlockId, above)}
+          >
+            <Icon />
+            {label}
+          </button>
+        ))}
+        {block && !block.titleVisible && (
+          <button
+            className="block-dropdown-item"
+            onMouseDown={e => e.stopPropagation()}
+            onClick={() => handleAddTitle(block.id)}
+          >
+            <TitleIcon />
+            Add title
+          </button>
+        )}
+        <div className="dropdown-divider" />
+        <button
+          className="block-dropdown-item block-dropdown-item--close"
+          onMouseDown={e => e.stopPropagation()}
+          onClick={() => setInsertMenuBlockId(null)}
+        >
+          <span>Close menu</span>
+          <kbd className="kbd-badge">esc</kbd>
+        </button>
+      </div>
+    )
+  }
 
-  const addContentDropdown = (
-    <div className="add-content-wrapper" ref={addContentRef}>
-      <button className="btn" onClick={() => setAddContentOpen(v => !v)}>
-        Add Content +
-      </button>
-      {addContentOpen && (
-        <div className="song-row-dropdown add-content-dropdown">
-          <button
-            className="song-row-dropdown-item add-content-item"
-            onMouseDown={e => e.stopPropagation()}
-            onClick={() => handleAddBlock('songs')}
-          >
-            <MusicNoteIcon />
-            Songs
-          </button>
-          <button
-            className="song-row-dropdown-item add-content-item"
-            onMouseDown={e => e.stopPropagation()}
-            onClick={() => handleAddBlock('albums')}
-          >
-            <GridIcon />
-            Albums
-          </button>
-          <button
-            className="song-row-dropdown-item add-content-item"
-            onMouseDown={e => e.stopPropagation()}
-            onClick={() => handleAddBlock('notes')}
-          >
-            <DocIcon />
-            Notes
-          </button>
-          <button
-            className="song-row-dropdown-item add-content-item"
-            onMouseDown={e => e.stopPropagation()}
-            onClick={() => handleAddBlock('photos')}
-          >
-            <ImageIcon />
-            Photos
-          </button>
-        </div>
-      )}
-    </div>
-  )
+  function renderMoveDropdown(blockId) {
+    return (
+      <div className="block-dropdown">
+        <button
+          className="block-dropdown-item"
+          onMouseDown={e => e.stopPropagation()}
+          onClick={() => handleDuplicateBlock(blockId)}
+        >
+          <DuplicateIcon />
+          Duplicate
+        </button>
+        <button
+          className="block-dropdown-item block-dropdown-item--danger"
+          onMouseDown={e => e.stopPropagation()}
+          onClick={() => { setMoveMenuBlockId(null); handleRemoveBlock(blockId) }}
+        >
+          <TrashIcon />
+          Delete
+        </button>
+        <div className="dropdown-divider" />
+        <button
+          className="block-dropdown-item block-dropdown-item--close"
+          onMouseDown={e => e.stopPropagation()}
+          onClick={() => setMoveMenuBlockId(null)}
+        >
+          <span>Close menu</span>
+          <kbd className="kbd-badge">esc</kbd>
+        </button>
+      </div>
+    )
+  }
 
   return (
     <div className="month-detail-content">
@@ -370,21 +428,25 @@ export default function MonthDetail({ month, year, monthData, onSave, onSaveNote
         <div className="month-detail-title-group">
           <h1 className="month-detail-title">{month}, {year}</h1>
         </div>
-        <div className="month-detail-actions">
-          {isOwner && (editMode ? (
-            <>
-              <button className="btn btn-red" onClick={handleCancel}>Cancel</button>
-              <button className="btn" onClick={handleDone}>Done</button>
-            </>
-          ) : hasBlocks ? (
-            <button className="text-btn" onClick={handleEdit}>Edit</button>
-          ) : null)}
-        </div>
+        <div className="month-detail-actions" />
       </div>
 
-      {!hasBlocks && !editMode ? (
+      {displayBlocks.length === 0 ? (
         <div className="month-empty-state">
-          {isOwner && addContentDropdown}
+          {isOwner && (
+            <div
+              className="block-insert-btn-wrapper"
+              ref={insertMenuBlockId === '__empty__' ? insertMenuRef : null}
+            >
+              <button
+                className="block-insert-btn block-insert-btn--empty"
+                onClick={e => { e.stopPropagation(); setMoveMenuBlockId(null); setInsertMenuBlockId(prev => prev === '__empty__' ? null : '__empty__') }}
+              >
+                <SmallPlusIcon />
+              </button>
+              {insertMenuBlockId === '__empty__' && renderInsertDropdown(null, false, null)}
+            </div>
+          )}
         </div>
       ) : (
         <div
@@ -394,12 +456,9 @@ export default function MonthDetail({ month, year, monthData, onSave, onSaveNote
           onDrop={handleBlocksContainerDrop}
         >
           {displayBlocks.map(block => {
-            const onRemove = isOwner && !editMode ? () => handleRemoveBlock(block.id) : undefined
-            const dragHandleProps = isOwner ? {
-              draggable: true,
-              onDragStart: e => handleBlockDragStart(e, block.id),
-              onDragEnd: handleBlockDragEnd,
-            } : undefined
+            const onRemove = isOwner ? () => handleRemoveBlock(block.id) : undefined
+
+            const isTitleFocused = titleFocusId === block.id
 
             let blockEl = null
             if (block.type === 'songs') {
@@ -407,18 +466,17 @@ export default function MonthDetail({ month, year, monthData, onSave, onSaveNote
                 <MediaBlock
                   title={block.title}
                   titleVisible={block.titleVisible}
-                  editMode={editMode}
+                  editMode={true}
                   onTitleChange={newTitle => handleTitleChange(block.id, newTitle)}
-                  onEdit={handleEdit}
-                  onDone={handleDone}
                   onRemove={onRemove}
-                  dragHandleProps={dragHandleProps}
+                  focusTitle={isTitleFocused}
+                  onTitleFocused={() => setTitleFocusId(null)}
                 >
                   <SongTable
-                    songs={editMode ? (draftBlocks.find(b => b.id === block.id)?.items || []) : block.items}
-                    editMode={editMode}
+                    songs={block.items}
+                    editMode={true}
                     onSongsChange={items => handleBlockItemsChange(block.id, items)}
-                    onViewSongsChange={items => onSave(blocks.map(b => b.id === block.id ? { ...b, items } : b))}
+                    onViewSongsChange={items => handleBlockItemsChange(block.id, items)}
                     initialFocusId={justCreatedBlock?.id === block.id ? justCreatedBlock.items?.[0]?.id : null}
                   />
                 </MediaBlock>
@@ -426,51 +484,44 @@ export default function MonthDetail({ month, year, monthData, onSave, onSaveNote
             } else if (block.type === 'albums') {
               blockEl = (
                 <AlbumsBlock
-                  block={editMode ? (draftBlocks.find(b => b.id === block.id) || block) : block}
-                  editMode={editMode}
+                  block={block}
+                  editMode={true}
                   onItemsChange={items => handleBlockItemsChange(block.id, items)}
-                  onSave={items => handleAlbumSaveImmediate(block.id, items)}
-                  onEdit={handleEdit}
-                  onDone={handleDone}
+                  onSave={items => handleBlockItemsChange(block.id, items)}
                   onRemove={onRemove}
                   initialFocusId={justCreatedBlock?.id === block.id ? justCreatedBlock.items?.[0]?.id : null}
                   onTitleChange={newTitle => handleTitleChange(block.id, newTitle)}
-                  dragHandleProps={dragHandleProps}
                   blockDragActive={!!dragBlockId}
+                  focusTitle={isTitleFocused}
+                  onTitleFocused={() => setTitleFocusId(null)}
                 />
               )
             } else if (block.type === 'notes') {
-              const displayBlock = editMode
-                ? (draftBlocks.find(b => b.id === block.id) || block)
-                : block
               blockEl = (
                 <NotesBlock
-                  block={displayBlock}
+                  block={block}
                   onContentChange={content => handleNotesChange(block.id, content)}
                   autoFocus={justCreatedBlock?.id === block.id}
-                  editMode={editMode}
+                  editMode={true}
                   onTitleChange={newTitle => handleTitleChange(block.id, newTitle)}
                   onRemove={onRemove}
-                  dragHandleProps={dragHandleProps}
+                  focusTitle={isTitleFocused}
+                  onTitleFocused={() => setTitleFocusId(null)}
                 />
               )
             } else if (block.type === 'photos') {
-              const displayBlock = editMode
-                ? (draftBlocks.find(b => b.id === block.id) || block)
-                : block
               blockEl = (
                 <PhotosBlock
-                  block={displayBlock}
-                  editMode={editMode}
+                  block={block}
+                  editMode={true}
                   onTitleChange={newTitle => handleTitleChange(block.id, newTitle)}
-                  onEdit={handleEdit}
-                  onDone={handleDone}
                   onRemove={onRemove}
-                  dragHandleProps={dragHandleProps}
                   onPhotosChange={photos => handlePhotosChange(block.id, photos)}
                   onColumnCountChange={columnCount => handleColumnCountChange(block.id, columnCount)}
                   month={month}
                   year={year}
+                  focusTitle={isTitleFocused}
+                  onTitleFocused={() => setTitleFocusId(null)}
                 />
               )
             }
@@ -487,15 +538,43 @@ export default function MonthDetail({ month, year, monthData, onSave, onSaveNote
                   dropTargetBlockId === block.id && !dropBlockBefore ? 'block-drop-after' : '',
                 ].filter(Boolean).join(' ')}
               >
+                {isOwner && (
+                  <div className="block-controls">
+                    <div
+                      className="block-move-btn-wrapper"
+                      ref={moveMenuBlockId === block.id ? moveMenuRef : null}
+                    >
+                      <button
+                        className="block-controls-drag"
+                        draggable
+                        onDragStart={e => handleBlockDragStart(e, block.id)}
+                        onDragEnd={handleBlockDragEnd}
+                        onClick={e => handleMoveBtnClick(e, block.id)}
+                        title="Drag to reorder or click for options"
+                      >
+                        <BlockDragIcon />
+                      </button>
+                      {moveMenuBlockId === block.id && renderMoveDropdown(block.id)}
+                    </div>
+                    <div
+                      className="block-insert-btn-wrapper"
+                      ref={insertMenuBlockId === block.id ? insertMenuRef : null}
+                    >
+                      <button
+                        className="block-insert-btn"
+                        onClick={e => handleInsertBtnClick(e, block.id)}
+                        title="Insert block (Option+click to insert above)"
+                      >
+                        <SmallPlusIcon />
+                      </button>
+                      {insertMenuBlockId === block.id && renderInsertDropdown(block.id, insertMenuAbove, block)}
+                    </div>
+                  </div>
+                )}
                 {blockEl}
               </div>
             )
           })}
-          {isOwner && editMode && (
-            <div className="month-add-content-row">
-              {addContentDropdown}
-            </div>
-          )}
         </div>
       )}
 

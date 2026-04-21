@@ -1,7 +1,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap');
 
 :root {
-  --bg-app: #F3F3F2;
+  --bg-app: #F9F9F8;
   --bg-main: #FDFDFD;
   --bg-song-block: #F9F9F8;
   --bg-image-placeholder: #E8E6E5;
@@ -10,10 +10,11 @@
   --color-text-dark: #222323;
   --color-text-secondary: #615F5E;
   --color-text-muted: #A3A09D;
+  --shadow-block: 0px 0px 1px 0px rgba(97, 95, 94, 0.07);
 }
 
 [data-theme="light"] {
-  --bg-app: #F3F3F2;
+  --bg-app: #F9F9F8;
   --bg-main: #FDFDFD;
   --bg-song-block: #F9F9F8;
   --bg-image-placeholder: #E8E6E5;
@@ -22,6 +23,7 @@
   --color-text-muted: #A3A09D;
   --color-button: #88D4C8;
   --color-button-text: #174941;
+  --shadow-block: 0px 0px 1px 0px rgba(97, 95, 94, 0.07);
 }
 
 [data-theme="dark"] {
@@ -34,6 +36,7 @@
   --color-text-muted: #71717a;
   --color-button: #88D4C8;
   --color-button-text: #174941;
+  --shadow-block: 0px 0px 1px 0px rgba(97, 95, 94, 0.07);
 }
 
 @media (prefers-color-scheme: dark) {
@@ -66,7 +69,7 @@ body {
   font-family: 'Inter', sans-serif;
   font-weight: 500;
   font-size: 12px;
-  letter-spacing: -0.03em;
+  letter-spacing: 0em;
   color: var(--color-text-dark);
   background: var(--bg-app);
   -webkit-font-smoothing: antialiased;
@@ -77,7 +80,7 @@ input, button, select, textarea {
   font-family: 'Inter', sans-serif;
   font-weight: 500;
   font-size: 12px;
-  letter-spacing: -0.03em;
+  letter-spacing: 0em;
 }
 
 /* ---- APP LAYOUT ---- */
@@ -96,7 +99,7 @@ input, button, select, textarea {
   width: 240px;
   flex-shrink: 0;
   background: var(--bg-app);
-  border-right: 1px solid #E8E6E5;
+  border-right: 1px solid #F3F3F2;
   display: flex;
   flex-direction: column;
   padding: 16px 12px;
@@ -130,12 +133,12 @@ input, button, select, textarea {
 }
 
 .sidebar-nav-item:hover {
-  background: rgba(0,0,0,0.04);
+  background: #F3F3F2;
 }
 
 .sidebar-nav-item.active {
   color: var(--color-text-dark);
-  background: rgba(0,0,0,0.05);
+  background: #F3F3F2;
 }
 
 .sidebar-nav-item svg {
@@ -177,7 +180,7 @@ input, button, select, textarea {
 }
 
 .sidebar-icon-btn:hover {
-  background: rgba(0,0,0,0.06);
+  background: #F3F3F2;
   color: var(--color-text-dark);
 }
 
@@ -198,7 +201,7 @@ input, button, select, textarea {
   font-family: 'Inter', sans-serif;
   font-weight: 500;
   font-size: 12px;
-  letter-spacing: -0.03em;
+  letter-spacing: 0em;
   text-align: left;
   transition: opacity 0.1s;
 }
@@ -330,8 +333,8 @@ input, button, select, textarea {
   justify-content: space-between;
   padding: 10px 16px;
   flex-shrink: 0;
-  background: var(--bg-app);
-  border-bottom: 1px solid #E8E6E5;
+  background: var(--bg-main);
+  border-bottom: 1px solid #F3F3F2;
 }
 
 .topbar-left {
@@ -397,11 +400,11 @@ input, button, select, textarea {
   gap: 2px;
   padding: 4px 8px;
   border-radius: 6px;
-  border: 1px solid #DCDAD7;
+  border: 1px solid #E8E6E5;
   background: var(--bg-main);
   cursor: pointer;
   user-select: none;
-  color: var(--color-text-muted);
+  color: var(--color-text-secondary);
   transition: opacity 0.1s;
 }
 
@@ -515,8 +518,10 @@ input, button, select, textarea {
   border-radius: 8px;
   cursor: pointer;
   background: transparent;
+  box-shadow: var(--shadow-block);
   border: 1px solid #F3F3F2;
   padding: 8px;
+  box-shadow: 0px 0px 1px 0px rgba(97, 95, 94, 0.05);
   transition: background 0.1s;
 }
 
@@ -551,15 +556,14 @@ input, button, select, textarea {
   display: flex;
   align-items: center;
   gap: 6px;
+}
+
+.month-card-name--has-content {
   color: var(--color-text-dark);
 }
 
-.month-dot {
-  width: 5px;
-  height: 5px;
-  border-radius: 50%;
-  background: var(--color-text-muted);
-  flex-shrink: 0;
+.month-card-name--empty {
+  color: var(--color-text-muted);
 }
 
 .month-card-menu-wrapper {
@@ -653,7 +657,7 @@ input, button, select, textarea {
 .month-detail-title {
   font-size: 18px;
   font-weight: 500;
-  letter-spacing: -0.03em;
+  letter-spacing: 0em;
   color: var(--color-text-dark);
 }
 
@@ -682,7 +686,7 @@ input, button, select, textarea {
   font-family: 'Inter', sans-serif;
   font-weight: 500;
   font-size: 12px;
-  letter-spacing: -0.03em;
+  letter-spacing: 0em;
   transition: opacity 0.1s;
   white-space: nowrap;
 }
@@ -708,7 +712,7 @@ input, button, select, textarea {
   font-family: 'Inter', sans-serif;
   font-weight: 500;
   font-size: 12px;
-  letter-spacing: -0.03em;
+  letter-spacing: 0em;
   transition: background 0.1s, color 0.1s;
 }
 
@@ -722,7 +726,8 @@ input, button, select, textarea {
 .month-empty-state {
   display: flex;
   align-items: center;
-  justify-content: flex-start;
+  justify-content: center;
+  padding: 48px 0;
 }
 
 /* ---- MONTH BLOCKS ---- */
@@ -773,13 +778,15 @@ input, button, select, textarea {
   display: flex;
   flex-direction: column;
   gap: 10px;
+  box-shadow: var(--shadow-block);
   border: 1px solid #F3F3F2;
   border-radius: 8px;
+  box-shadow: 0px 0px 1px 0px rgba(97, 95, 94, 0.05);
   padding: 16px;
 }
 
 .media-block-label-row {
-  display: none;
+  display: flex;
   align-items: center;
   gap: 6px;
 }
@@ -815,9 +822,6 @@ input, button, select, textarea {
   cursor: grabbing;
 }
 
-.media-block-label-row:hover .block-drag-handle {
-  opacity: 1;
-}
 
 .media-block-title[contenteditable="true"] {
   outline: none;
@@ -937,6 +941,7 @@ input, button, select, textarea {
   background: transparent;
   border: 1px solid #F3F3F2;
   padding: 8px;
+  box-shadow: 0px 0px 1px 0px rgba(97, 95, 94, 0.05);
   overflow: visible;
   position: relative;
   transition: background 0.1s;
@@ -968,7 +973,7 @@ input, button, select, textarea {
   font-family: 'Inter', sans-serif;
   font-weight: 500;
   font-size: 12px;
-  letter-spacing: -0.03em;
+  letter-spacing: 0em;
   width: 100%;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -987,7 +992,7 @@ input, button, select, textarea {
   font-family: 'Inter', sans-serif;
   font-weight: 500;
   font-size: 12px;
-  letter-spacing: -0.03em;
+  letter-spacing: 0em;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -1047,7 +1052,7 @@ input, button, select, textarea {
   font-family: 'Inter', sans-serif;
   font-weight: 500;
   font-size: 12px;
-  letter-spacing: -0.03em;
+  letter-spacing: 0em;
   color: var(--color-text-dark);
   line-height: 1.5;
   overflow: hidden;
@@ -1103,15 +1108,16 @@ input, button, select, textarea {
 }
 
 .photo-add-btn-wrapper--drop {
-  box-shadow: -3px 0 0 0 #88D4C8;
+  box-shadow: -3px 0 0 0 #F3F3F2;
 }
 
 .photo-add-btn {
   width: 100%;
-  aspect-ratio: 1 / 1;
-  background: var(--bg-image-placeholder);
-  border-radius: 4px;
-  border: none;
+  aspect-ratio: 4 / 3;
+  background: #F3F3F2;
+  border: 1px solid #E8E6E5;
+  border-radius: 8px;
+  padding: 5px;
   cursor: pointer;
   display: flex;
   align-items: center;
@@ -1121,8 +1127,7 @@ input, button, select, textarea {
 }
 
 .photo-add-btn:hover {
-  background: var(--bg-image-placeholder);
-  filter: brightness(0.95);
+  background: #ECEAE9;
 }
 
 .photo-menu-wrapper {
@@ -1204,13 +1209,14 @@ input, button, select, textarea {
 .song-table {
   width: 100%;
   background: transparent;
+  box-shadow: 0px 0px 1px 0px rgba(97, 95, 94, 0.05);
   border-radius: 0;
   padding: 0;
 }
 
 .song-table-header {
   display: grid;
-  grid-template-columns: 32px 50px 1fr 1fr 1fr;
+  grid-template-columns: 32px 50px 1fr 1fr 1fr 24px;
   gap: 10px;
   align-items: center;
   padding: 0 10px 8px 10px;
@@ -1227,7 +1233,7 @@ input, button, select, textarea {
 
 .song-row {
   display: grid;
-  grid-template-columns: 32px 50px 1fr 1fr 1fr;
+  grid-template-columns: 32px 50px 1fr 1fr 1fr 24px;
   gap: 10px;
   align-items: center;
   padding: 6px 10px;
@@ -1387,6 +1393,10 @@ input, button, select, textarea {
   display: block;
 }
 
+.song-track-cell {
+  position: relative;
+}
+
 .song-input {
   background: transparent;
   border: none;
@@ -1414,7 +1424,7 @@ input, button, select, textarea {
 
 .add-track-row {
   margin-top: 8px;
-  padding: 0 12px;
+  padding: 0;
 }
 
 /* ---- LIST VIEW ---- */
@@ -1487,7 +1497,7 @@ input, button, select, textarea {
   font-family: 'Inter', sans-serif;
   font-weight: 500;
   font-size: 12px;
-  letter-spacing: -0.03em;
+  letter-spacing: 0em;
   transition: background 0.1s;
 }
 
@@ -1715,7 +1725,7 @@ input, button, select, textarea {
   font-size: 100px;
   font-weight: 500;
   font-family: 'Inter', sans-serif;
-  letter-spacing: -0.03em;
+  letter-spacing: 0em;
   color: var(--color-text-dark);
   border: none;
   border-bottom: 2px solid rgba(0, 0, 0, 0.1);
@@ -2362,7 +2372,7 @@ input, button, select, textarea {
   font-size: 12px;
   font-weight: 500;
   font-family: 'Inter', sans-serif;
-  letter-spacing: -0.03em;
+  letter-spacing: 0em;
   color: #fff;
   background: none;
   border: none;
@@ -2384,4 +2394,197 @@ input, button, select, textarea {
 @keyframes toast-countdown {
   from { width: 100%; }
   to { width: 0%; }
+}
+
+/* ---- BLOCK INSERTION ---- */
+
+.block-controls {
+  position: absolute;
+  right: 100%;
+  top: 50%;
+  transform: translateY(-50%);
+  padding-right: 8px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 8px;
+  padding-top: 1px;
+  padding-bottom: 1px;
+  opacity: 0;
+  transition: opacity 0.1s;
+  z-index: 10;
+}
+
+.month-block-wrapper:hover .block-controls,
+.block-controls:hover {
+  opacity: 1;
+}
+
+.block-controls-drag {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: none;
+  cursor: grab;
+  padding: 5px;
+  border-radius: 8px;
+  transition: background 0.1s;
+  line-height: 1;
+}
+
+.block-controls-drag:hover {
+  background: #F3F3F2;
+}
+
+.block-controls-drag:active {
+  cursor: grabbing;
+}
+
+.block-insert-btn-wrapper {
+  position: relative;
+}
+
+.block-insert-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  color: var(--color-text-muted);
+  padding: 5px;
+  border-radius: 8px;
+  transition: background 0.1s, color 0.1s;
+  line-height: 1;
+}
+
+.block-insert-btn:hover {
+  background: #F3F3F2;
+  color: var(--color-text-secondary);
+}
+
+.block-insert-btn--empty {
+  background: #F3F3F2;
+  border: 1px solid #E8E6E5;
+  padding: 10px 16px;
+  color: var(--color-text-muted);
+  opacity: 1;
+}
+
+.block-insert-btn--empty:hover {
+  background: #ECEAE9;
+}
+
+/* ---- BLOCK DROPDOWNS ---- */
+
+.block-move-btn-wrapper {
+  position: relative;
+}
+
+.block-dropdown {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  background: var(--bg-app);
+  border-radius: 8px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+  z-index: 200;
+  min-width: 160px;
+  padding: 4px 0;
+}
+
+.block-dropdown-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  background: none;
+  border: none;
+  padding: 8px 12px;
+  cursor: pointer;
+  color: var(--color-text-dark);
+  text-align: left;
+  white-space: nowrap;
+}
+
+.block-dropdown-item:hover {
+  background: rgba(0, 0, 0, 0.04);
+}
+
+.block-dropdown-item--danger {
+  color: #E53E3E;
+}
+
+.block-dropdown-item--danger:hover {
+  background: rgba(229, 62, 62, 0.06);
+}
+
+.block-dropdown-item--close {
+  justify-content: space-between;
+  color: var(--color-text-muted);
+}
+
+.kbd-badge {
+  background: #EFEFEE;
+  border: 1px solid #E8E6E5;
+  border-radius: 4px;
+  font-size: 11px;
+  padding: 1px 5px;
+  color: #9B9896;
+  font-family: monospace;
+  letter-spacing: 0;
+}
+
+/* Add row button — shared visual style for song / album / photo */
+.add-row-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #F3F3F2;
+  border: 1px solid #E8E6E5;
+  border-radius: 8px;
+  padding: 5px;
+  cursor: pointer;
+  color: var(--color-text-muted);
+  transition: background 0.1s;
+}
+
+.add-row-btn:hover {
+  background: #ECEAE9;
+}
+
+.add-row-btn-song {
+  width: 100%;
+  margin-top: 8px;
+}
+
+/* Album add button — flex sibling inside albums-grid */
+.album-add-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 166px;
+  min-height: 195px;
+  background: #F3F3F2;
+  border: 1px solid #E8E6E5;
+  border-radius: 8px;
+  padding: 5px;
+  cursor: pointer;
+  color: var(--color-text-muted);
+  transition: background 0.1s;
+  flex-shrink: 0;
+}
+
+.album-add-btn:hover {
+  background: #ECEAE9;
+}
+
+/* Song drag handles always on row hover (not gated to view-mode) */
+.song-table .song-row:hover .song-drag-handle {
+  opacity: 1;
+}
+
+.song-table .song-row:hover .song-row-menu-btn {
+  opacity: 1;
 }

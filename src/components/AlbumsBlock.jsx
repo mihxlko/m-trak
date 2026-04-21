@@ -6,11 +6,20 @@ function uuid() {
   return crypto.randomUUID()
 }
 
+function SmallPlusIcon() {
+  return (
+    <svg width="8" height="8" viewBox="0 0 8 8" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round">
+      <line x1="4" y1="1" x2="4" y2="7" />
+      <line x1="1" y1="4" x2="7" y2="4" />
+    </svg>
+  )
+}
+
 export function makeBlankAlbum() {
   return { id: uuid(), albumName: '', artistName: '', albumArtUrl: null }
 }
 
-export default function AlbumsBlock({ block, editMode, onItemsChange, onSave, onEdit, onDone, initialFocusId, onTitleChange, onRemove, dragHandleProps, blockDragActive }) {
+export default function AlbumsBlock({ block, editMode, onItemsChange, onSave, onEdit, onDone, initialFocusId, onTitleChange, onRemove, dragHandleProps, blockDragActive, focusTitle, onTitleFocused }) {
   const [dragId, setDragId] = useState(null)
   const [dropTargetId, setDropTargetId] = useState(null)
   const [dropBefore, setDropBefore] = useState(true)
@@ -47,7 +56,9 @@ export default function AlbumsBlock({ block, editMode, onItemsChange, onSave, on
   function handleAddAlbum() {
     const blank = makeBlankAlbum()
     focusAlbumIdRef.current = blank.id
-    onItemsChange([...albums, blank])
+    const next = [...albums, blank]
+    onItemsChange(next)
+    onSave(next)
   }
 
   // ── Drag reorder ────────────────────────────────────────────────────────
@@ -102,14 +113,15 @@ export default function AlbumsBlock({ block, editMode, onItemsChange, onSave, on
       onEdit={onEdit}
       onDone={onDone}
       onRemove={onRemove}
-      dragHandleProps={dragHandleProps}
+      focusTitle={focusTitle}
+      onTitleFocused={onTitleFocused}
     >
       <div
         className="albums-grid"
         ref={containerRef}
-        onDragOver={!editMode && !blockDragActive ? handleDragOver : undefined}
-        onDrop={!editMode && !blockDragActive ? handleDrop : undefined}
-        onDragLeave={!editMode && !blockDragActive ? () => setDropTargetId(null) : undefined}
+        onDragOver={!blockDragActive ? handleDragOver : undefined}
+        onDrop={!blockDragActive ? handleDrop : undefined}
+        onDragLeave={!blockDragActive ? () => setDropTargetId(null) : undefined}
       >
         {albums.map(album => {
           const isDropTarget = dropTargetId === album.id
@@ -131,7 +143,7 @@ export default function AlbumsBlock({ block, editMode, onItemsChange, onSave, on
                 onSelectResult={handleSelectResult}
                 onDelete={handleDelete}
                 focusIdRef={focusAlbumIdRef}
-                dragHandleProps={!editMode ? {
+                dragHandleProps={!blockDragActive ? {
                   draggable: true,
                   onDragStart: e => handleDragStart(e, album),
                   onDragEnd: handleDragEnd,
@@ -140,9 +152,9 @@ export default function AlbumsBlock({ block, editMode, onItemsChange, onSave, on
             </div>
           )
         })}
-        {editMode && (
-          <button className="btn" onClick={handleAddAlbum}>Add Album +</button>
-        )}
+        <button className="album-add-btn" onClick={handleAddAlbum}>
+          <SmallPlusIcon />
+        </button>
       </div>
     </MediaBlock>
   )
