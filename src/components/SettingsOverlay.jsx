@@ -121,9 +121,10 @@ export default function SettingsOverlay({ activeProfileId, onClose, onShowToast 
     reader.readAsDataURL(file)
   }
 
-  const avatarSrc = isGuest ? guestAvatar : profile.avatar
+  const avatarSrc = isGuest ? (guestAvatar || profile.avatar) : profile.avatar
 
   function handleFeatureDisabled() {
+    if (isGuest) return
     onShowToast('This feature is disabled in trial mode.')
   }
 

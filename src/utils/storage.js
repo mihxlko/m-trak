@@ -3,7 +3,7 @@ const GUEST_DISPLAY_NAME = 'Alex Smith'
 
 const PROFILES = [
   { id: 'mihxlko', displayName: 'mihxlko', avatar: 'images/avatars/avatar-mihxlko.png' },
-  { id: GUEST_PROFILE_ID, displayName: GUEST_DISPLAY_NAME, avatar: null },
+  { id: GUEST_PROFILE_ID, displayName: GUEST_DISPLAY_NAME, avatar: `images/avatars/avatar-test-user-1.png` },
 ]
 
 const MONTHS = [
@@ -31,6 +31,11 @@ export function getProfiles() {
 }
 
 export function getActiveProfile() {
+  if (!sessionStorage.getItem('m-trakSessionStarted')) {
+    sessionStorage.setItem('m-trakSessionStarted', 'true')
+    localStorage.setItem(ACTIVE_PROFILE_KEY, GUEST_PROFILE_ID)
+    return GUEST_PROFILE_ID
+  }
   return localStorage.getItem(ACTIVE_PROFILE_KEY) || GUEST_PROFILE_ID
 }
 

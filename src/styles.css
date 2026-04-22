@@ -756,8 +756,8 @@ input, button, select, textarea {
 .month-empty-state {
   display: flex;
   align-items: center;
-  justify-content: center;
-  padding: 48px 0;
+  justify-content: flex-start;
+  padding: 10px 0;
 }
 
 /* ---- MONTH BLOCKS ---- */
@@ -2473,6 +2473,7 @@ input, button, select, textarea {
 
 .block-insert-btn-wrapper {
   position: relative;
+  justify-content: start;
 }
 
 .block-insert-btn {

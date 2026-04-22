@@ -166,6 +166,7 @@ export default function Sidebar({
             onClose={() => setShowAccountDropdown(false)}
             onOpenSettings={() => { setShowAccountDropdown(false); onOpenSettings() }}
             onShowToast={onShowToast}
+            onSwitchProfile={(id) => { onSwitchProfile(id); setShowAccountDropdown(false) }}
           />
         )}
         {isOwner && (

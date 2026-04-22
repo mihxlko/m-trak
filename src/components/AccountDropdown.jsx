@@ -9,7 +9,7 @@ function SmallPlusIcon() {
   )
 }
 
-export default function AccountDropdown({ activeProfileId, onClose, onOpenSettings, onShowToast }) {
+export default function AccountDropdown({ activeProfileId, onClose, onOpenSettings, onShowToast, onSwitchProfile }) {
   const ref = useRef(null)
   const [downloadTooltipVisible, setDownloadTooltipVisible] = useState(false)
   const tooltipTimerRef = useRef(null)
@@ -18,6 +18,7 @@ export default function AccountDropdown({ activeProfileId, onClose, onOpenSettin
   const activeProfile = profiles.find(p => p.id === activeProfileId) || profiles[0]
   const profileInfo = getProfileInfo(activeProfileId)
   const otherProfiles = profiles.filter(p => p.id !== activeProfileId)
+  const isGuest = activeProfileId === GUEST_PROFILE_ID
 
   useEffect(() => {
     function onMouseDown(e) {
@@ -44,6 +45,7 @@ export default function AccountDropdown({ activeProfileId, onClose, onOpenSettin
   }
 
   function handleDisabledFeature() {
+    if (isGuest) return
     onShowToast('This feature is disabled in trial mode.')
     onClose()
   }
@@ -72,7 +74,7 @@ export default function AccountDropdown({ activeProfileId, onClose, onOpenSettin
           {otherProfiles.map(p => {
             const isGuest = p.id === GUEST_PROFILE_ID
             return (
-              <div key={p.id} className="account-dropdown-account-item" onClick={handleDisabledFeature}>
+              <div key={p.id} className="account-dropdown-account-item" onClick={() => onSwitchProfile(p.id)}>
                 {isGuest ? (
                   <div className="account-dropdown-gradient-avatar">
                     <span className="account-dropdown-gradient-initials">AS</span>
