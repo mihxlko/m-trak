@@ -90,7 +90,7 @@ input, button, select, textarea {
   height: 100%;
   width: 100%;
   min-width: 750px;
-  padding: 8px 8px 8px 0;
+  padding: 8px;
 }
 
 
@@ -102,7 +102,7 @@ input, button, select, textarea {
   background: var(--bg-app);
   display: flex;
   flex-direction: column;
-  padding: 12px 8px;
+  padding: 2px 8px 12px 0px;
   gap: 16px;
   overflow: hidden;
   transition: width 200ms ease, padding 200ms ease, opacity 200ms ease;
@@ -140,7 +140,6 @@ input, button, select, textarea {
 .sidebar-nav-item.active {
   color: var(--color-text-secondary);
   background: #F3F3F2;
-  padding: 4px;
 }
 
 .sidebar-nav-item svg {
@@ -209,7 +208,7 @@ input, button, select, textarea {
   display: flex;
   align-items: center;
   gap: 8px;
-  padding: 7px 10px;
+  padding: 4px;
   border-radius: 6px;
   cursor: pointer;
   user-select: none;
@@ -314,7 +313,7 @@ input, button, select, textarea {
   min-width: 0;
   border-radius: 10px;
   border: 1px solid #F3F3F2;
-  box-shadow: 0 4px 24px rgba(63, 63, 62, 0.1);
+  box-shadow: 0 2px 1px rgba(63, 63, 62, 0.1);
 }
 
 /* ---- TOP BAR ---- */
@@ -323,8 +322,8 @@ input, button, select, textarea {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  height: 32px;
-  padding: 0 16px;
+  height: 36px;
+  padding: 0 16px 0px 10px;
   flex-shrink: 0;
   background: var(--bg-main);
   border-bottom: 1px solid #F3F3F2;
@@ -353,20 +352,31 @@ input, button, select, textarea {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 16px;
-  height: 16px;
-  border-radius: 3px;
+  border-radius: 6px;
   background: transparent;
   border: none;
   cursor: pointer;
-  padding: 0;
+  padding: 2px;
   flex-shrink: 0;
   transition: background 0.1s;
 }
 
+.topbar-sidebar-toggle svg {
+  width: 24px;
+  height: 20px;
+}
+
+
 .topbar-sidebar-toggle:hover {
   background: #F3F3F2;
 }
+
+.topbar-back-btn svg,
+.topbar-forward-btn svg {
+  width: 20px;
+  height: 22px;
+}
+
 
 .topbar-back-btn:hover:not(:disabled),
 .topbar-forward-btn:hover:not(:disabled) {
@@ -378,6 +388,7 @@ input, button, select, textarea {
   cursor: default;
   opacity: 0.3;
 }
+
 
 .topbar-breadcrumb {
   display: flex;

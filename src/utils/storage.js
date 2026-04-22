@@ -2,7 +2,7 @@ export const GUEST_PROFILE_ID = 'guest'
 const GUEST_DISPLAY_NAME = 'Alex Smith'
 
 const PROFILES = [
-  { id: 'mihxlko', displayName: 'mihxlko', avatar: 'images/avatars/mihvlko.jpg' },
+  { id: 'mihxlko', displayName: 'mihxlko', avatar: 'images/avatars/avatar-mihxlko.png' },
   { id: GUEST_PROFILE_ID, displayName: GUEST_DISPLAY_NAME, avatar: null },
 ]
 
