@@ -2,19 +2,7 @@ import { useState, useRef, useEffect } from 'react'
 import { searchTracks } from '../utils/musicApi.js'
 import { debounce } from '../utils/debounce.js'
 import SearchDropdown from './SearchDropdown.jsx'
-
-function DragIcon() {
-  return (
-    <svg width="8" height="12" viewBox="0 0 8 12" fill="currentColor">
-      <circle cx="2" cy="2" r="1.2" />
-      <circle cx="6" cy="2" r="1.2" />
-      <circle cx="2" cy="6" r="1.2" />
-      <circle cx="6" cy="6" r="1.2" />
-      <circle cx="2" cy="10" r="1.2" />
-      <circle cx="6" cy="10" r="1.2" />
-    </svg>
-  )
-}
+import MoveIcon from '../icons/move-icon.jsx'
 
 function DotsIcon() {
   return (
@@ -307,7 +295,7 @@ export default function SongTable({ songs, editMode, onSongsChange, onViewSongsC
                   onDragStart={e => handleDragStart(e, song)}
                   onDragEnd={handleDragEnd}
                 >
-                  <DragIcon />
+                  <MoveIcon />
                 </span>
               </div>
 

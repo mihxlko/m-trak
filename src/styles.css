@@ -1319,13 +1319,24 @@ input, button, select, textarea {
 
 .song-drag-handle {
   position: absolute;
-  right: calc(100% + 10px);
+  right: calc(100% + 4px);
   display: flex;
   align-items: center;
   color: var(--color-text-muted);
+  padding: 4px 2px 4px 2px;
+  border-radius: 2px;
   cursor: grab;
   opacity: 0;
   transition: opacity 0.1s;
+}
+
+.song-drag-handle:hover {
+  background: #F3F3F2;
+}
+
+.song-drag-handle svg { /* move icon */
+  width: 12px;
+  height: 12px;
 }
 
 .song-table.view-mode .song-row:hover .song-drag-handle {
@@ -2431,13 +2442,12 @@ input, button, select, textarea {
 .block-controls {
   position: absolute;
   right: 100%;
-  top: 50%;
-  transform: translateY(-50%);
+  top: 0%;
   padding-right: 8px;
   display: flex;
   flex-direction: row;
   align-items: center;
-  gap: 8px;
+  gap: 2px;
   padding-top: 1px;
   padding-bottom: 1px;
   opacity: 0;
@@ -2457,8 +2467,9 @@ input, button, select, textarea {
   background: transparent;
   border: none;
   cursor: grab;
-  padding: 5px;
-  border-radius: 8px;
+  padding: 4px 2px 4px 2px;
+  border-radius: 2px;
+  color: var(--color-text-muted);
   transition: background 0.1s;
   line-height: 1;
 }
@@ -2469,6 +2480,16 @@ input, button, select, textarea {
 
 .block-controls-drag:active {
   cursor: grabbing;
+}
+
+.block-controls-drag svg { /* move icon */
+  width: 12px;
+  height: 12px;
+}
+
+.block-insert-btn svg { /* add icon */
+  width: 12px;
+  height: 12px;
 }
 
 .block-insert-btn-wrapper {
@@ -2484,8 +2505,8 @@ input, button, select, textarea {
   border: none;
   cursor: pointer;
   color: var(--color-text-muted);
-  padding: 5px;
-  border-radius: 8px;
+  padding: 4px;
+  border-radius: 2px;
   transition: background 0.1s, color 0.1s;
   line-height: 1;
 }

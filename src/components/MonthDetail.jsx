@@ -5,6 +5,8 @@ import NotesBlock from './NotesBlock.jsx'
 import PhotosBlock from './PhotosBlock.jsx'
 import MediaBlock from './MediaBlock.jsx'
 import Toast from './Toast.jsx'
+import AddIcon from '../icons/add-icon.jsx'
+import MoveIcon from '../icons/move-icon.jsx'
 
 function uuid() { return crypto.randomUUID() }
 
@@ -48,14 +50,6 @@ function ImageIcon() {
   )
 }
 
-function SmallPlusIcon() {
-  return (
-    <svg width="8" height="8" viewBox="0 0 8 8" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round">
-      <line x1="4" y1="1" x2="4" y2="7" />
-      <line x1="1" y1="4" x2="7" y2="4" />
-    </svg>
-  )
-}
 
 function TitleIcon() {
   return (
@@ -66,18 +60,6 @@ function TitleIcon() {
   )
 }
 
-function BlockDragIcon() {
-  return (
-    <svg width="6" height="11" viewBox="0 0 6 11" fill="#a3a09d">
-      <circle cx="1.5" cy="1.5" r="1.5" />
-      <circle cx="4.5" cy="1.5" r="1.5" />
-      <circle cx="1.5" cy="5.5" r="1.5" />
-      <circle cx="4.5" cy="5.5" r="1.5" />
-      <circle cx="1.5" cy="9.5" r="1.5" />
-      <circle cx="4.5" cy="9.5" r="1.5" />
-    </svg>
-  )
-}
 
 function DuplicateIcon() {
   return (
@@ -442,7 +424,7 @@ export default function MonthDetail({ month, year, monthData, onSave, onSaveNote
                 className="block-insert-btn block-insert-btn--empty"
                 onClick={e => { e.stopPropagation(); setMoveMenuBlockId(null); setInsertMenuBlockId(prev => prev === '__empty__' ? null : '__empty__') }}
               >
-                <SmallPlusIcon />
+                <AddIcon />
               </button>
               {insertMenuBlockId === '__empty__' && renderInsertDropdown(null, false, null)}
             </div>
@@ -541,6 +523,19 @@ export default function MonthDetail({ month, year, monthData, onSave, onSaveNote
                 {isOwner && (
                   <div className="block-controls">
                     <div
+                      className="block-insert-btn-wrapper"
+                      ref={insertMenuBlockId === block.id ? insertMenuRef : null}
+                    >
+                      <button
+                        className="block-insert-btn"
+                        onClick={e => handleInsertBtnClick(e, block.id)}
+                        title="Insert block (Option+click to insert above)"
+                      >
+                        <AddIcon />
+                      </button>
+                      {insertMenuBlockId === block.id && renderInsertDropdown(block.id, insertMenuAbove, block)}
+                    </div>
+                    <div
                       className="block-move-btn-wrapper"
                       ref={moveMenuBlockId === block.id ? moveMenuRef : null}
                     >
@@ -552,22 +547,9 @@ export default function MonthDetail({ month, year, monthData, onSave, onSaveNote
                         onClick={e => handleMoveBtnClick(e, block.id)}
                         title="Drag to reorder or click for options"
                       >
-                        <BlockDragIcon />
+                        <MoveIcon />
                       </button>
                       {moveMenuBlockId === block.id && renderMoveDropdown(block.id)}
-                    </div>
-                    <div
-                      className="block-insert-btn-wrapper"
-                      ref={insertMenuBlockId === block.id ? insertMenuRef : null}
-                    >
-                      <button
-                        className="block-insert-btn"
-                        onClick={e => handleInsertBtnClick(e, block.id)}
-                        title="Insert block (Option+click to insert above)"
-                      >
-                        <SmallPlusIcon />
-                      </button>
-                      {insertMenuBlockId === block.id && renderInsertDropdown(block.id, insertMenuAbove, block)}
                     </div>
                   </div>
                 )}
