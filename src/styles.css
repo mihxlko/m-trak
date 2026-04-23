@@ -1851,7 +1851,7 @@ input, button, select, textarea {
   max-height: 90vh;
   min-width: 800px;
   background: #F9F9F8;
-  border-radius: 12px;
+  border-radius: 10px;
   display: flex;
   flex-direction: column;
   overflow: hidden; /* important */
@@ -1860,7 +1860,7 @@ input, button, select, textarea {
 .settings-overlay-header {
   display: flex;
   align-items: center;
-  gap: 5px;
+  gap: 4px;
   padding: 16px 16px 10px 16px;
   flex-shrink: 0;
 }
@@ -1888,7 +1888,8 @@ input, button, select, textarea {
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 4px 6px;
+  padding: 3px 5px;
+  background: var(--bg-main);
   border: 1px solid #E8E6E5;
   border-radius: 4px;
   font-size: 8px;
@@ -1902,7 +1903,7 @@ input, button, select, textarea {
   display: flex;
   flex-direction: column;
   gap: 32px;
-  padding: 0 144px 64px;
+  padding: 22px 144px 64px 144px;
   overflow-y: auto;
 }
 
@@ -2406,31 +2407,38 @@ input, button, select, textarea {
   transform: translateX(-50%);
   z-index: 500;
   border-radius: 8px;
+  border: 0.5px solid #E8E6E5;
   overflow: hidden;
-  box-shadow: 0 4px 20px rgba(0,0,0,0.22), 0 1px 6px rgba(0,0,0,0.1);
+  box-shadow: 0 0 3px 0 rgba(63, 63, 62, 0.1);
 }
 
 .toast {
   display: flex;
   align-items: center;
-  gap: 16px;
-  background: var(--color-text-dark);
+  gap: 8px;
+  background: var(--bg-main);
   padding: 10px 16px;
+}
+
+.toast-divider {
+  width: 1px;
+  align-self: stretch;
+  background: #E8E6E5;
 }
 
 .toast-text {
   font-size: 12px;
   font-weight: 500;
-  color: #fff;
+  color: var(--color-text-dark);
   white-space: nowrap;
 }
 
 .toast-restore-btn {
   font-size: 12px;
-  font-weight: 500;
+  font-weight: 700;
   font-family: 'Inter', sans-serif;
   letter-spacing: 0em;
-  color: #fff;
+  color: var(--color-text-dark);
   background: none;
   border: none;
   cursor: pointer;
@@ -2439,19 +2447,9 @@ input, button, select, textarea {
 }
 
 .toast-restore-btn:hover {
-  text-decoration: underline;
+  color: var(--color-text-secondary);
 }
 
-.toast-progress {
-  height: 3px;
-  background: var(--color-button);
-  animation: toast-countdown 5s linear forwards;
-}
-
-@keyframes toast-countdown {
-  from { width: 100%; }
-  to { width: 0%; }
-}
 
 /* ---- BLOCK INSERTION ---- */
 
