@@ -129,7 +129,8 @@ export default function SettingsOverlay({ activeProfileId, onClose, onShowToast 
   }
 
   return (
-    <div className="settings-overlay-page">
+  <div className="settings-overlay-page">
+    <div className="settings-modal">
       <div className="settings-overlay-header">
         <button className="settings-back-btn" onClick={onClose}>
           <ArrowLeftIcon />
@@ -174,6 +175,7 @@ export default function SettingsOverlay({ activeProfileId, onClose, onShowToast 
                 </>
               )}
             </div>
+
             <div className="settings-display-name-field">
               <div className="settings-display-name-label">Display Name</div>
               <div className="settings-display-name-value">{profile.displayName}</div>
@@ -190,21 +192,29 @@ export default function SettingsOverlay({ activeProfileId, onClose, onShowToast 
                 <span className="settings-security-label">Email</span>
                 <span className="settings-security-sublabel">{profileInfo.email || 'Not set'}</span>
               </div>
-              <button className="settings-action-btn" onClick={handleFeatureDisabled}>Change Email</button>
+              <button className="settings-action-btn" onClick={handleFeatureDisabled}>
+                Change Email
+              </button>
             </div>
+
             <div className="settings-security-row">
               <div className="settings-security-label-group">
                 <span className="settings-security-label">Full Name</span>
                 <span className="settings-security-sublabel">{profileInfo.fullName || 'Not set'}</span>
               </div>
-              <button className="settings-action-btn" onClick={handleFeatureDisabled}>Change Full Name</button>
+              <button className="settings-action-btn" onClick={handleFeatureDisabled}>
+                Change Full Name
+              </button>
             </div>
+
             <div className="settings-security-row settings-security-row--last">
               <div className="settings-security-label-group">
                 <span className="settings-security-label">Password</span>
                 <span className="settings-security-sublabel">Set a password for your account</span>
               </div>
-              <button className="settings-action-btn" onClick={handleFeatureDisabled}>Change Password</button>
+              <button className="settings-action-btn" onClick={handleFeatureDisabled}>
+                Change Password
+              </button>
             </div>
           </div>
         </div>
@@ -230,14 +240,18 @@ export default function SettingsOverlay({ activeProfileId, onClose, onShowToast 
             <div className="settings-appearance-row">
               <div className="settings-security-label-group">
                 <span className="settings-security-label">Delete my account</span>
-                <span className="settings-security-sublabel">Permanently delete this account, including boards and all other content</span>
+                <span className="settings-security-sublabel">
+                  Permanently delete this account, including boards and all other content
+                </span>
               </div>
-              <button className="settings-delete-account-btn" onClick={handleFeatureDisabled}>Delete my account</button>
+              <button className="settings-delete-account-btn" onClick={handleFeatureDisabled}>
+                Delete my account
+              </button>
             </div>
           </div>
         </div>
-
       </div>
     </div>
-  )
-}
+  </div>
+  );
+};
