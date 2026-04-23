@@ -3,6 +3,7 @@ import { searchTracks } from '../utils/musicApi.js'
 import { debounce } from '../utils/debounce.js'
 import SearchDropdown from './SearchDropdown.jsx'
 import MoveIcon from '../icons/move-icon.jsx'
+import AddIcon from '../icons/add-icon.jsx'
 
 function DotsIcon() {
   return (
@@ -10,15 +11,6 @@ function DotsIcon() {
       <circle cx="6" cy="1.5" r="1.2" />
       <circle cx="6" cy="6" r="1.2" />
       <circle cx="6" cy="10.5" r="1.2" />
-    </svg>
-  )
-}
-
-function SmallPlusIcon() {
-  return (
-    <svg width="8" height="8" viewBox="0 0 8 8" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round">
-      <line x1="4" y1="1" x2="4" y2="7" />
-      <line x1="1" y1="4" x2="7" y2="4" />
     </svg>
   )
 }
@@ -253,107 +245,108 @@ export default function SongTable({ songs, editMode, onSongsChange, onViewSongsC
   }
 
   return (
-    <div className="song-table" ref={tableRef}>
-      <div className="song-table-header">
-        <span>#</span>
-        <span />
-        <span>Track</span>
-        <span>Artist</span>
-        <span>Album</span>
-        <span />
+    <div className="song-table-wrapper">
+      <div className="song-table" ref={tableRef}>
+        <div className="song-table-header">
+          <span>#</span>
+          <span />
+          <span>Track</span>
+          <span>Artist</span>
+          <span>Album</span>
+          <span />
+        </div>
+
+        <div
+          className="song-table-rows"
+          onDragOver={handleDragOver}
+          onDrop={handleDrop}
+          onDragLeave={handleDragLeave}
+        >
+          {localSongs.map((song, idx) => {
+            const isDragging = dragIds.has(song.id)
+            const isDropTarget = dropTargetId === song.id
+            const menuOpen = openMenuId === song.id
+
+            const rowClass = [
+              'song-row',
+              isDragging && 'dragging',
+              isDropTarget && dropBefore && 'drop-before',
+              isDropTarget && !dropBefore && 'drop-after',
+            ].filter(Boolean).join(' ')
+
+            return (
+              <div
+                key={song.id}
+                data-song-id={song.id}
+                className={rowClass}
+              >
+                <div className="song-num-cell">
+                  <span className="song-row-num">{String(idx + 1).padStart(2, '0')}</span>
+                  <span
+                    className="song-drag-handle"
+                    draggable
+                    onDragStart={e => handleDragStart(e, song)}
+                    onDragEnd={handleDragEnd}
+                  >
+                    <MoveIcon />
+                  </span>
+                </div>
+
+                <div className="song-row-art">
+                  {song.albumArt && <img src={song.albumArt} alt="" />}
+                </div>
+
+                <TrackInputCell
+                  song={song}
+                  onFieldChange={handleFieldChange}
+                  onSelectResult={handleSelectResult}
+                  onBlurRow={handleRowBlur}
+                  autoFocusRef={focusTrackIdRef}
+                />
+                <input
+                  className="song-input"
+                  value={song.artist}
+                  placeholder="Artist Name..."
+                  onChange={e => handleFieldChange(song.id, 'artist', e.target.value)}
+                  onBlur={() => handleRowBlur(song.id)}
+                />
+                <input
+                  className="song-input"
+                  value={song.album}
+                  placeholder="Album Name..."
+                  onChange={e => handleFieldChange(song.id, 'album', e.target.value)}
+                  onBlur={() => handleRowBlur(song.id)}
+                />
+
+                <div className="song-row-menu">
+                  <button
+                    className="song-row-menu-btn"
+                    onClick={e => { e.stopPropagation(); setOpenMenuId(menuOpen ? null : song.id) }}
+                  >
+                    <DotsIcon />
+                  </button>
+                  {menuOpen && (
+                    <div className="song-row-dropdown">
+                      <button
+                        className="song-row-dropdown-item song-row-dropdown-item--danger"
+                        onMouseDown={e => e.stopPropagation()}
+                        onClick={e => { e.stopPropagation(); handleRemove(song.id) }}
+                      >
+                        Remove track
+                      </button>
+                    </div>
+                  )}
+                </div>
+              </div>
+            )
+          })}
+        </div>
       </div>
 
-      <div
-        className="song-table-rows"
-        onDragOver={handleDragOver}
-        onDrop={handleDrop}
-        onDragLeave={handleDragLeave}
-      >
-        {localSongs.map((song, idx) => {
-          const isDragging = dragIds.has(song.id)
-          const isDropTarget = dropTargetId === song.id
-          const menuOpen = openMenuId === song.id
-
-          const rowClass = [
-            'song-row',
-            isDragging && 'dragging',
-            isDropTarget && dropBefore && 'drop-before',
-            isDropTarget && !dropBefore && 'drop-after',
-          ].filter(Boolean).join(' ')
-
-          return (
-            <div
-              key={song.id}
-              data-song-id={song.id}
-              className={rowClass}
-            >
-              <div className="song-num-cell">
-                <span className="song-row-num">{String(idx + 1).padStart(2, '0')}</span>
-                <span
-                  className="song-drag-handle"
-                  draggable
-                  onDragStart={e => handleDragStart(e, song)}
-                  onDragEnd={handleDragEnd}
-                >
-                  <MoveIcon />
-                </span>
-              </div>
-
-              <div className="song-row-art">
-                {song.albumArt && <img src={song.albumArt} alt="" />}
-              </div>
-
-              <TrackInputCell
-                song={song}
-                onFieldChange={handleFieldChange}
-                onSelectResult={handleSelectResult}
-                onBlurRow={handleRowBlur}
-                autoFocusRef={focusTrackIdRef}
-              />
-              <input
-                className="song-input"
-                value={song.artist}
-                placeholder="Artist Name..."
-                onChange={e => handleFieldChange(song.id, 'artist', e.target.value)}
-                onBlur={() => handleRowBlur(song.id)}
-              />
-              <input
-                className="song-input"
-                value={song.album}
-                placeholder="Album Name..."
-                onChange={e => handleFieldChange(song.id, 'album', e.target.value)}
-                onBlur={() => handleRowBlur(song.id)}
-              />
-
-              <div className="song-row-menu">
-                <button
-                  className="song-row-menu-btn"
-                  onClick={e => { e.stopPropagation(); setOpenMenuId(menuOpen ? null : song.id) }}
-                >
-                  <DotsIcon />
-                </button>
-                {menuOpen && (
-                  <div className="song-row-dropdown">
-                    <button
-                      className="song-row-dropdown-item song-row-dropdown-item--danger"
-                      onMouseDown={e => e.stopPropagation()}
-                      onClick={e => { e.stopPropagation(); handleRemove(song.id) }}
-                    >
-                      Remove track
-                    </button>
-                  </div>
-                )}
-              </div>
-            </div>
-          )
-        })}
-      </div>
-
-      <div className="add-track-row">
-        <button className="add-row-btn add-row-btn-song" onClick={handleAddTrack}>
-          <SmallPlusIcon />
-        </button>
-      </div>
+      <div className="song-table-hover-zone" />
+      <button className="add-row-btn add-row-btn-song" onClick={handleAddTrack}>
+        <AddIcon />
+      </button>
     </div>
   )
 }

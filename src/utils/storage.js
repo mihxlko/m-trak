@@ -2,8 +2,8 @@ export const GUEST_PROFILE_ID = 'guest'
 const GUEST_DISPLAY_NAME = 'Alex Smith'
 
 const PROFILES = [
-  { id: 'mihxlko', displayName: 'mihxlko', avatar: 'images/avatars/avatar-mihxlko.png' },
-  { id: GUEST_PROFILE_ID, displayName: GUEST_DISPLAY_NAME, avatar: `images/avatars/avatar-test-user-1.png` },
+  { id: 'mihxlko', displayName: 'mihxlko', email: 'mihxlko@email.com', avatar: 'images/avatars/avatar-mihxlko.png' },
+  { id: GUEST_PROFILE_ID, displayName: GUEST_DISPLAY_NAME, email: 'example@email.com', avatar: `images/avatars/avatar-test-user-1.png` },
 ]
 
 const MONTHS = [
@@ -231,9 +231,15 @@ export function clearProfileData(profileId) {
 // ── Profile info (email, birthday) ───────────────────────────────────────────
 
 export function getProfileInfo(profileId) {
+  const fallbackEmail = PROFILES.find(p => p.id === profileId)?.email || ''
   const raw = storageFor(profileId).getItem(`aulosProfile_${profileId}`)
-  if (!raw) return { email: '', birthday: { month: '', day: '' } }
-  try { return JSON.parse(raw) } catch { return { email: '', birthday: { month: '', day: '' } } }
+  if (!raw) return { email: fallbackEmail, birthday: { month: '', day: '' } }
+  try {
+    const parsed = JSON.parse(raw)
+    return { ...parsed, email: parsed.email || fallbackEmail }
+  } catch {
+    return { email: fallbackEmail, birthday: { month: '', day: '' } }
+  }
 }
 
 export function saveProfileInfo(profileId, info) {

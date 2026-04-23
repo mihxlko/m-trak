@@ -217,7 +217,7 @@ input, button, select, textarea {
 }
 
 .profile-switcher-trigger:hover {
-  background: rgba(0,0,0,0.04);
+  background: var(--bg-app);
 }
 
 .profile-avatar {
@@ -669,7 +669,7 @@ input, button, select, textarea {
   padding: 32px 64px;
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 32px;
 }
 
 .month-detail-header {
@@ -1463,9 +1463,11 @@ input, button, select, textarea {
   color: var(--color-text-secondary);
 }
 
-.add-track-row {
-  margin-top: 8px;
-  padding: 0;
+/* song container */
+.song-table-wrapper {
+  position: relative;
+  display: grid;
+  grid-template-columns: 1fr;
 }
 
 /* ---- LIST VIEW ---- */
@@ -2191,7 +2193,7 @@ input, button, select, textarea {
   left: 0;
   right: 0;
   z-index: 100;
-  padding-left: 8px;
+  padding-left: 0px;
 }
 
 .account-dropdown {
@@ -2310,7 +2312,7 @@ input, button, select, textarea {
 }
 
 .account-dropdown-account-name {
-  font-size: 10px;
+  font-size: 11px;
   font-weight: 500;
   font-family: 'Inter', sans-serif;
   color: #3F3F3E;
@@ -2328,7 +2330,7 @@ input, button, select, textarea {
 }
 
 .account-dropdown-add-text {
-  font-size: 10px;
+  font-size: 11px;
   font-weight: 500;
   font-family: 'Inter', sans-serif;
   color: #82807D;
@@ -2347,7 +2349,7 @@ input, button, select, textarea {
   padding: 4px 6px;
   border-radius: 4px;
   cursor: pointer;
-  font-size: 10px;
+  font-size: 11px;
   font-weight: 500;
   font-family: 'Inter', sans-serif;
   color: #82807D;
@@ -2370,7 +2372,7 @@ input, button, select, textarea {
   transform: translateX(-50%);
   background: var(--color-text-dark);
   color: #fff;
-  font-size: 10px;
+  font-size: 11px;
   font-weight: 500;
   font-family: 'Inter', sans-serif;
   padding: 4px 8px;
@@ -2593,10 +2595,10 @@ input, button, select, textarea {
   display: flex;
   align-items: center;
   justify-content: center;
-  background: #F3F3F2;
+  background: var(--bg-main);
   border: 1px solid #E8E6E5;
-  border-radius: 8px;
-  padding: 5px;
+  border-radius: 6px;
+  padding: 6px;
   cursor: pointer;
   color: var(--color-text-muted);
   transition: background 0.1s;
@@ -2606,9 +2608,44 @@ input, button, select, textarea {
   background: #ECEAE9;
 }
 
+/* Add row button — svg icon sizing */
+.add-row-btn svg {
+  width: 10px;
+  height: 10px;
+}
+
+.song-table-hover-zone {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: calc(-1 * (4px + 30px));
+  height: calc(64px + 4px + 30px);
+  pointer-events: all;
+  background: transparent;
+  z-index: 2;
+}
+
+/* Add song button */
 .add-row-btn-song {
-  width: 100%;
-  margin-top: 8px;
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  right: 0;
+  padding: 6px 0px;
+  opacity: 0;
+  pointer-events: none;
+  z-index: 3;
+  transition: opacity 0.15s ease;
+}
+
+.song-table-hover-zone:hover ~ .add-row-btn-song,
+.add-row-btn-song:hover {
+  opacity: 1;
+  pointer-events: all;
+}
+
+.add-row-btn-song:hover {
+  background: #F3F3F2;
 }
 
 /* Album add button — flex sibling inside albums-grid */
