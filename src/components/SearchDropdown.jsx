@@ -34,21 +34,8 @@ const SearchDropdown = forwardRef(function SearchDropdown(
   return (
     <div
       role="listbox"
+      className="search-dropdown"
       onKeyDown={onKeyDown}
-      style={{
-        position: 'absolute',
-        width: '400px',
-        top: 'calc(100% + 4px)',
-        left: 0,
-        zIndex: 100,
-        background: '#F9F9F8',
-        border: '1px solid #E8E6E5',
-        borderRadius: '6px',
-        padding: '10px',
-        display: 'flex',
-        flexDirection: 'column',
-        gap: '0px',
-      }}
     >
       {results.map((result, i) => {
         const imageUrl = result.image?.find(img => img.size === 'large')?.['#text']
@@ -59,18 +46,10 @@ const SearchDropdown = forwardRef(function SearchDropdown(
             key={`${result.name}-${result.artist}-${i}`}
             role="option"
             aria-selected={isActive}
+            className={`search-dropdown-item${isActive ? ' active' : ''}`}
             onMouseDown={e => { e.preventDefault(); onSelect(result) }}
             onMouseEnter={() => setActiveIndex(i)}
             onMouseLeave={() => setActiveIndex(-1)}
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: '10px',
-              padding: '8px 10px',
-              borderRadius: '4px',
-              cursor: 'pointer',
-              background: isActive ? '#F3F3F2' : 'transparent',
-            }}
           >
             {hasImage ? (
               <img
@@ -79,15 +58,11 @@ const SearchDropdown = forwardRef(function SearchDropdown(
                 style={{ width: 32, height: 32, borderRadius: 3, objectFit: 'cover', flexShrink: 0 }}
               />
             ) : (
-              <div style={{ width: 32, height: 32, borderRadius: 3, background: '#E8E6E5', flexShrink: 0 }} />
+              <div className="search-dropdown-thumb" />
             )}
-            <div style={{ display: 'flex', flexDirection: 'column', minWidth: 0 }}>
-              <span style={{ fontSize: 13, color: '#222323', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
-                {result.name}
-              </span>
-              <span style={{ fontSize: 12, color: '#D0CDCA', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
-                {result.artist}
-              </span>
+            <div className="search-dropdown-info">
+              <span className="search-dropdown-title">{result.name}</span>
+              <span className="search-dropdown-artist">{result.artist}</span>
             </div>
           </div>
         )

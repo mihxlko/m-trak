@@ -10,11 +10,11 @@ function SidebarToggleIcon() {
     <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
       <path
         d="M4 3.5 H5.5 V12.5 H4 C2.9 12.5 2 11.6 2 10.5 V5.5 C2 4.4 2.9 3.5 4 3.5 Z"
-        stroke="#82807D" strokeWidth="1" fill="none"
+        stroke="currentColor" strokeWidth="1" fill="none"
       />
       <path
         d="M5.5 3.5 H12 C13.1 3.5 14 4.4 14 5.5 V10.5 C14 11.6 13.1 12.5 12 12.5 H5.5 V3.5 Z"
-        stroke="#82807D" strokeWidth="1" fill="none"
+        stroke="currentColor" strokeWidth="1" fill="none"
       />
     </svg>
   )
