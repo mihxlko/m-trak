@@ -2,17 +2,9 @@ import { useState, useRef, useEffect } from 'react'
 import MediaBlock from './MediaBlock.jsx'
 import Toast from './Toast.jsx'
 import { savePhoto, getPhoto, deletePhoto } from '../utils/photosDB.js'
+import AddIcon from '../icons/add-icon.jsx'
 
 function uuid() { return crypto.randomUUID() }
-
-function SmallPlusIcon() {
-  return (
-    <svg width="8" height="8" viewBox="0 0 8 8" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round">
-      <line x1="4" y1="1" x2="4" y2="7" />
-      <line x1="1" y1="4" x2="7" y2="4" />
-    </svg>
-  )
-}
 
 function DotsIcon() {
   return (
@@ -343,7 +335,7 @@ export default function PhotosBlock({
               className="photo-add-btn"
               onClick={() => fileInputRef.current?.click()}
             >
-              <SmallPlusIcon />
+              <AddIcon />
             </button>
             <input
               ref={fileInputRef}

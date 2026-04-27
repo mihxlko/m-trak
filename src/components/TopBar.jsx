@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from 'react'
 import IconList from '../icons/icon-list.jsx'
 import IconGrid from '../icons/icon-grid.jsx'
 import IconBackArrow from '../icons/icon-back-arrow.jsx'
-import IconForwardArrow from '../icons/icon-forward-icon.jsx'
+import IconForwardArrow from '../icons/icon-forward-arrow.jsx'
 
 // Inline SVG matching Figma node 197:3318 — two adjacent panels (sidebar layout icon)
 function SidebarToggleIcon() {

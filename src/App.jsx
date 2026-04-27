@@ -286,7 +286,11 @@ export default function App() {
   function handleCoverChange(month, base64) {
     const monthData = profileData?.years?.[selectedYear]?.[month] || { blocks: [], coverImage: null }
     const updated = { ...monthData, coverImage: base64 }
-    saveMonthData(activeProfileId, selectedYear, month, updated)
+    try {
+      saveMonthData(activeProfileId, selectedYear, month, updated)
+    } catch {
+      return
+    }
     refreshProfileData(activeProfileId)
   }
 

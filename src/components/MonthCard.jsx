@@ -42,7 +42,22 @@ export default function MonthCard({ month, monthData, onCardClick, onCoverChange
     if (!file) return
     const reader = new FileReader()
     reader.onload = evt => {
-      onCoverChange(month, evt.target.result)
+      const dataUrl = evt.target.result
+      const img = new Image()
+      img.onload = () => {
+        const MAX = 800
+        const scale = Math.min(1, MAX / Math.max(img.width, img.height))
+        const canvas = document.createElement('canvas')
+        canvas.width = Math.round(img.width * scale)
+        canvas.height = Math.round(img.height * scale)
+        const ctx = canvas.getContext('2d')
+        ctx.fillStyle = '#ffffff'
+        ctx.fillRect(0, 0, canvas.width, canvas.height)
+        ctx.drawImage(img, 0, 0, canvas.width, canvas.height)
+        onCoverChange(month, canvas.toDataURL('image/jpeg', 0.82))
+      }
+      img.onerror = () => onCoverChange(month, dataUrl)
+      img.src = dataUrl
     }
     reader.readAsDataURL(file)
     e.target.value = ''

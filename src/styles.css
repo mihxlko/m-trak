@@ -17,10 +17,14 @@
   --neutral-400: #D0CDCA;
   --neutral-500: #C5C1BD;
   --neutral-600: #9E9A97;
-  --neutral-700: #767471;
-  --neutral-800: #4F4D4C;
-  --neutral-900: #272726;
-  --neutral-950: #141313;
+  --neutral-700: #5A5957;
+  --neutral-800: #424140;
+  --neutral-825: #3B3A39;
+  --neutral-850: #383736;
+  --neutral-875: #2E2D2C;
+  --neutral-900: #232221;
+  --neutral-925: #1E1D1C;
+  --neutral-950: #161514;
   --neutral-997: #060606;
 
   /* brand colors */
@@ -33,7 +37,8 @@
   --surface-default: var(--neutral-50);     /* main app background */
   --surface-subtle: var(--neutral-75);      /* sidebar, topbar */
   --surface-muted: var(--neutral-100);      /* block borders, dividers */
-  --surface-recessed: var(--neutral-200);   /* deeper background areas */
+  --surface-recessed: var(--neutral-150);   /* deeper background areas */
+  --surface-sunken: var(--neutral-200);   /* for even deeper background areas */
 
   /* text — ordered from strongest to weakest */
   --text-primary: var(--neutral-900);
@@ -48,75 +53,79 @@
   --hover-main: var(--neutral-100);         /* on default app area */
 
   /* borders */
-  --border-subtle: var(--neutral-100);      /* lightest dividers */
+  --border-subtle: var(--neutral-150);      /* lightest dividers */
   --border-default: var(--neutral-200);     /* standard borders */
   --border-strong: var(--neutral-300);      /* emphasized borders */
 
-  --bg-app: var(--neutral-100);
-  --bg-main: var(--neutral-03);
-  --bg-settings: var(--neutral-50);
-
-  --bg-song-block: var(--neutral-03);
-  --bg-image-placeholder: var(--neutral-100);
-  --bg-hover: var(--neutral-100);
-
-  --color-button: #88D4C8;
-  --color-button-text: #174941;
-  --color-text-dark: var(--neutral-900);
-  --color-text-secondary: var(--neutral-700);
-  --color-text-muted: var(--neutral-600);
-
-  /* effects */
-  --border-strong: var(--neutral-300);
-  --border-subtle: var(--neutral-200);
-  --border-subdued: var(--neutral-100);
-  --shadow-block: 0px 0px 1px 0px rgba(97, 95, 94, 0.07);
-
   /* spacing */
   --add-row-gap: 4px;
-  --add-row-btn-height: 30px;
+  --add-row-btn-height: 24px;
   --add-row-hover-extension: 64px;
+
+  /* button */
+  --color-button: #88D4C8;
+  --color-button-text: #174941;
 }
 
 [data-theme="light"] {
+  /* surfaces */
   --surface-raised: var(--neutral-03);
   --surface-default: var(--neutral-50);
   --surface-subtle: var(--neutral-75);
   --surface-muted: var(--neutral-100);
-  --surface-recessed: var(--neutral-200);
+  --surface-recessed: var(--neutral-150);
+  --surface-sunken: var(--neutral-200);
+
+  /* text */
   --text-primary: var(--neutral-900);
   --text-secondary: var(--neutral-800);
   --text-tertiary: var(--neutral-700);
   --text-muted: var(--neutral-600);
   --text-placeholder: var(--neutral-500);
+
+  /* hover states */
   --hover-surface: var(--neutral-50);
   --hover-sidebar: var(--neutral-150);
   --hover-main: var(--neutral-100);
+
+  /* borders */
   --border-subtle: var(--neutral-100);
   --border-default: var(--neutral-200);
   --border-strong: var(--neutral-300);
+
+  /* buttons */
   --color-button: #88D4C8;
   --color-button-text: #174941;
   --shadow-block: 0px 0px 1px 0px rgba(97, 95, 94, 0.07);
 }
 
 [data-theme="dark"] {
-  --surface-raised: var(--neutral-997);
-  --surface-default: var(--neutral-900);
-  --surface-subtle: var(--neutral-800);
-  --surface-muted: var(--neutral-900);
-  --surface-recessed: var(--neutral-800);
-  --text-primary: var(--neutral-50);
-  --text-secondary: var(--neutral-75);
-  --text-tertiary: var(--neutral-300);
-  --text-muted: var(--neutral-400);
-  --text-placeholder: var(--neutral-500);
-  --hover-surface: var(--neutral-900);
-  --hover-sidebar: var(--neutral-800);
-  --hover-main: var(--neutral-900);
-  --border-subtle: var(--neutral-900);
-  --border-default: var(--neutral-800);
-  --border-strong: var(--neutral-700);
+  /* surfaces — raised is LIGHTEST, recessed is DARKEST in dark mode */
+    --surface-raised: var(--neutral-900);
+    --surface-default: var(--neutral-925);
+    --surface-subtle: var(--neutral-900);
+    --surface-muted: var(--neutral-875);
+    --surface-recessed: var(--neutral-850);
+    --surface-sunken: var(--neutral-825);
+
+  /* text */
+  --text-primary:     var(--neutral-50);
+  --text-secondary:   var(--neutral-100);
+  --text-tertiary:    var(--neutral-300);
+  --text-muted:       var(--neutral-500);
+  --text-placeholder: var(--neutral-600);
+
+  /* hover states */
+  --hover-surface:  var(--neutral-875);
+  --hover-sidebar:  var(--neutral-875);
+  --hover-main:     var(--neutral-850);
+
+  /* borders */
+  --border-subtle:  var(--neutral-900);
+  --border-default: var(--neutral-875);
+  --border-strong:  var(--neutral-800);
+
+  /* buttons */
   --color-button: #88D4C8;
   --color-button-text: #174941;
   --shadow-block: 0px 0px 1px 0px rgba(97, 95, 94, 0.07);
@@ -124,22 +133,35 @@
 
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme]) {
-    --surface-raised: var(--neutral-997);
-    --surface-default: var(--neutral-900);
-    --surface-subtle: var(--neutral-800);
-    --surface-muted: var(--neutral-900);
-    --surface-recessed: var(--neutral-800);
+    /* surfaces */
+    --surface-raised: var(--neutral-900);
+    --surface-default: var(--neutral-925);
+    --surface-subtle: var(--neutral-900);
+    --surface-muted: var(--neutral-875);
+    --surface-recessed: var(--neutral-850);
+    --surface-sunken: var(--neutral-825);
+
+    /* text */
     --text-primary: var(--neutral-50);
     --text-secondary: var(--neutral-75);
     --text-tertiary: var(--neutral-300);
     --text-muted: var(--neutral-400);
     --text-placeholder: var(--neutral-500);
-    --hover-surface: var(--neutral-900);
-    --hover-sidebar: var(--neutral-800);
-    --hover-main: var(--neutral-900);
+
+    /* hover states */
+    --hover-surface: var(--neutral-875);
+    --hover-sidebar: var(--neutral-875);
+    --hover-main: var(--neutral-850);
+
+    /* borders */
     --border-subtle: var(--neutral-900);
-    --border-default: var(--neutral-800);
-    --border-strong: var(--neutral-700);
+    --border-default: var(--neutral-875);
+    --border-strong: var(--neutral-800);
+
+    /* buttons */
+    --color-button: #88D4C8;
+    --color-button-text: #174941;
+    --shadow-block: 0px 0px 1px 0px rgba(97, 95, 94, 0.07);
   }
 }
 
@@ -181,6 +203,7 @@ input, button, select, textarea {
   width: 100%;
   min-width: 750px;
   padding: 8px;
+  background: var(--surface-subtle);
 }
 
 
@@ -189,7 +212,6 @@ input, button, select, textarea {
 .sidebar {
   width: 240px;
   flex-shrink: 0;
-  background: var(--surface-muted);
   display: flex;
   flex-direction: column;
   padding: 2px 8px 12px 0px;
@@ -215,7 +237,7 @@ input, button, select, textarea {
   align-items: center;
   gap: 8px;
   padding: 6px 4px;
-  border-radius: 6px;
+  border-radius: 8px;
   color: var(--text-muted);
   cursor: pointer;
   user-select: none;
@@ -223,13 +245,13 @@ input, button, select, textarea {
 }
 
 .sidebar-nav-item:hover {
-  background: var(--surface-recessed);
+  background: var(--hover-sidebar);
   color: var(--text-tertiary);
 }
 
 .sidebar-nav-item.active {
-  background: var(--surface-recessed);
-  color: var(--text-tertiary);
+  background: var(--surface-sunken);
+  color: var(--text-secondary);
 }
 
 .sidebar-nav-item svg {
@@ -275,7 +297,7 @@ input, button, select, textarea {
   align-items: center;
   justify-content: center;
   background: var(--surface-raised);
-  border: 1px solid var(--border-subtle);
+  border: 0.5px solid var(--border-strong);
   border-radius: 6px;
   cursor: pointer;
   padding: 7px;
@@ -287,11 +309,11 @@ input, button, select, textarea {
 .sidebar-create-icon-btn svg {
   width: 16px;
   height: 16px;
-  color: var(--text-tertiary);
+  color: var(--text-secondary);
 }
 
 .sidebar-create-icon-btn:hover {
-  background: var(--hover-main);
+  background: var(--hover-surface);
 }
 
 /* ---- PROFILE SWITCHER ---- */
@@ -313,7 +335,8 @@ input, button, select, textarea {
 }
 
 .profile-switcher-trigger:hover {
-  background: var(--surface-muted);
+  background: var(--surface-subtle);
+  color: var(--text-primary);
 }
 
 .profile-avatar {
@@ -369,7 +392,7 @@ input, button, select, textarea {
   top: calc(100% + 4px);
   left: 0;
   right: 0;
-  background: var(--surface-muted);
+  background: var(--surface-subtle);
   border-radius: 8px;
   box-shadow: 0 4px 16px rgba(0,0,0,0.12), 0 1px 4px rgba(0,0,0,0.06);
   z-index: 100;
@@ -402,14 +425,14 @@ input, button, select, textarea {
 
 .main-area {
   flex: 1;
-  background: var(--surface-raised);
+  background: var(--surface-default);
   display: flex;
   flex-direction: column;
   overflow: hidden;
   min-width: 0;
   border-radius: 10px;
-  border: 1px solid var(--border-subtle);
-  box-shadow: 0 2px 2px rgba(63, 63, 62, 0.1);
+  border: 0.5px solid var(--border-default);
+  box-shadow: 0 1px 1px rgba(63, 63, 62, 0.05);
 }
 
 /* ---- TOP BAR ---- */
@@ -421,8 +444,8 @@ input, button, select, textarea {
   height: 36px;
   padding: 0 16px 0px 10px;
   flex-shrink: 0;
-  background: var(--surface-raised);
-  border-bottom: 1px solid var(--border-subtle);
+  background: var(--surface-default);
+  border-bottom: 0.5px solid var(--border-default);
   border-radius: 10px 10px 0 0;
 }
 
@@ -438,7 +461,7 @@ input, button, select, textarea {
   align-items: center;
   gap: 2px;
   height: 100%;
-  border-right: 1px solid var(--border-subtle);
+  border-right: 0.5px solid var(--border-default);
   padding-right: 5px;
 }
 
@@ -463,15 +486,14 @@ input, button, select, textarea {
   height: 20px;
 }
 
-
 .topbar-sidebar-toggle:hover {
   background: var(--hover-main);
 }
 
 .topbar-back-btn svg,
 .topbar-forward-btn svg {
-  width: 20px;
-  height: 22px;
+  width: 22px;
+  height: 24px;
 }
 
 
@@ -485,7 +507,6 @@ input, button, select, textarea {
   cursor: default;
   opacity: 0.3;
 }
-
 
 .topbar-breadcrumb {
   display: flex;
@@ -525,9 +546,9 @@ input, button, select, textarea {
   display: flex;
   align-items: center;
   gap: 2px;
-  padding: 4px 8px;
+  padding: 4px 8px 4.5px 8px;
   border-radius: 6px;
-  border: 1px solid var(--border-subtle);
+  border: 0.5px solid var(--border-default);
   background: var(--surface-raised);
   cursor: pointer;
   user-select: none;
@@ -537,13 +558,15 @@ input, button, select, textarea {
 
 .year-switcher-trigger:hover {
   opacity: 0.8;
+  background: var(--surface-muted);
+  color: var(--text-primary);
 }
 
 .year-dropdown {
   position: absolute;
   top: calc(100% + 4px);
   right: 0;
-  background: var(--surface-muted);
+  background: var(--surface-raised);
   border-radius: 8px;
   box-shadow: 0 4px 16px rgba(0,0,0,0.12), 0 1px 4px rgba(0,0,0,0.06);
   z-index: 100;
@@ -561,12 +584,12 @@ input, button, select, textarea {
   border-radius: 6px;
   cursor: pointer;
   user-select: none;
-  color: var(--text-primary);
+  color: var(--text-secondary);
   transition: background 0.1s;
 }
 
 .year-dropdown-item:hover {
-  background: var(--hover-main);
+  background: var(--surface-muted);
 }
 
 .icon-btn {
@@ -603,7 +626,7 @@ input, button, select, textarea {
   align-items: center;
   justify-content: center;
   padding: 0 6px;
-  border: 1px solid var(--border-strong);
+  border: 0.5px solid var(--border-strong);
   background: transparent;
   cursor: pointer;
   color: var(--text-tertiary);
@@ -611,12 +634,12 @@ input, button, select, textarea {
 }
 
 .view-toggle-btn--left {
-  border-right-width: 0.5px;
+  border-right-width: 0.25px;
   border-radius: 4px 0 0 4px;
 }
 
 .view-toggle-btn--right {
-  border-left-width: 0.5px;
+  border-left-width: 0.25px;
   border-radius: 0 4px 4px 0;
 }
 
@@ -630,7 +653,7 @@ input, button, select, textarea {
 .timeline-grid-content {
   flex: 1;
   overflow-y: auto;
-  padding: 10px 6px 32px;
+  padding: 10px 16px 16px 16px;
 }
 
 .month-grid {
@@ -644,23 +667,23 @@ input, button, select, textarea {
 .month-card {
   border-radius: 8px;
   cursor: pointer;
-  background: transparent;
-  color: var(--white);
+  background: var(--surface-raised);
   box-shadow: var(--shadow-block);
-  border: 1px solid var(--border-subtle);
+  border: 0.5px solid var(--border-default);
   padding: 8px;
   box-shadow: 0px 0px 1px 0px rgba(97, 95, 94, 0.05);
   transition: background 0.1s;
 }
 
 .month-card:hover {
-  background: var(--hover-main);
+  background: var(--hover-surface);
 }
 
 .month-card-image-area {
   position: relative;
   aspect-ratio: 1/1;
   background: var(--surface-muted);
+  border: 0.5px solid var(--border-default);
   overflow: hidden;
   border-radius: 6px;
 }
@@ -767,7 +790,7 @@ input, button, select, textarea {
   padding: 32px 64px;
   display: flex;
   flex-direction: column;
-  gap: 32px;
+  gap: 16px;
 }
 
 .month-detail-header {
@@ -863,7 +886,7 @@ input, button, select, textarea {
 .month-blocks {
   display: flex;
   flex-direction: column;
-  gap: 32px;
+  gap: 48px;
 }
 
 .month-block-wrapper {
@@ -907,10 +930,10 @@ input, button, select, textarea {
   flex-direction: column;
   gap: 10px;
   box-shadow: var(--shadow-block);
-  border: 1px solid var(--border-subtle);
+  border: 0.5px solid var(--border-default);
   border-radius: 8px;
   box-shadow: 0px 0px 1px 0px rgba(97, 95, 94, 0.05);
-  background-color: var(--white)
+  background-color: var(--surface-raised);
 }
 
 .media-block-label-row {
@@ -1012,6 +1035,7 @@ input, button, select, textarea {
   display: flex;
   flex-wrap: wrap;
   gap: 16px;
+  padding: 16px;
   align-items: flex-start;
   overflow: visible;
 }
@@ -1067,7 +1091,7 @@ input, button, select, textarea {
   width: 166px;
   border-radius: 8px;
   background: transparent;
-  border: 1px solid var(--border-subtle);
+  border: 0.5px solid var(--border-strong);
   padding: 8px;
   box-shadow: 0px 0px 1px 0px rgba(97, 95, 94, 0.05);
   overflow: visible;
@@ -1083,6 +1107,7 @@ input, button, select, textarea {
   width: 150px;
   height: 150px;
   background: var(--surface-muted);
+  border: 0.5px solid var(--border-strong);
   border-radius: 6px;
   overflow: hidden;
 }
@@ -1176,7 +1201,7 @@ input, button, select, textarea {
   box-shadow: none;
   background: transparent;
   border-radius: 5px;
-  padding: 0;
+  padding: 16px;
   font-family: 'Inter', sans-serif;
   font-weight: 500;
   font-size: 12px;
@@ -1197,6 +1222,7 @@ input, button, select, textarea {
   display: grid;
   gap: 8px;
   align-items: start;
+  padding: 16px;
 }
 
 .photos-grid[data-columns="2"] { grid-template-columns: repeat(2, 1fr); }
@@ -1242,8 +1268,8 @@ input, button, select, textarea {
 .photo-add-btn {
   width: 100%;
   aspect-ratio: 4 / 3;
-  background: var(--surface-muted);
-  border: 1px solid var(--border-subtle);
+  background: var(--surface-raised);
+  border: 0.5px solid var(--border-strong);
   border-radius: 8px;
   padding: 5px;
   cursor: pointer;
@@ -1255,7 +1281,12 @@ input, button, select, textarea {
 }
 
 .photo-add-btn:hover {
-  background: var(--surface-recessed);
+  background: var(--hover-surface);
+}
+
+.photo-add-btn svg {
+  width: 10px;
+  height: 10px;
 }
 
 .photo-menu-wrapper {
@@ -1338,7 +1369,7 @@ input, button, select, textarea {
   width: 100%;
   background: var(--surface-raised);
   box-shadow: 0px 0px 1px 0px rgba(97, 95, 94, 0.05);
-  border-radius: 0;
+  border-radius: 8px;
   padding: 16px 16px 8px 16px;
   display: flex;
   flex-direction: column;
@@ -1352,7 +1383,7 @@ input, button, select, textarea {
   align-items: center;
   padding: 0 10px 8px 10px;
   color: var(--text-muted);
-  border-bottom: 1px solid var(--border-subtle);
+  border-bottom: 0.5px solid var(--border-default);
   margin-bottom: 4px;
 }
 
@@ -1991,7 +2022,7 @@ input, button, select, textarea {
   justify-content: center;
   padding: 3px 5px;
   background: var(--surface-raised);
-  border: 1px solid var(--border-subtle);
+  border: 0.5px solid var(--border-subtle);
   border-radius: 4px;
   font-size: 8px;
   font-weight: 500;
@@ -2091,7 +2122,7 @@ input, button, select, textarea {
 
 .settings-display-name-value {
   background: var(--surface-raised);
-  border: 1px solid var(--border-subtle);
+  border: 0.5px solid var(--border-default);
   border-radius: 6px;
   padding: 8px 10px;
   width: 200px;
@@ -2107,7 +2138,7 @@ input, button, select, textarea {
 
 .settings-security-body {
   background: var(--surface-raised);
-  border: 1px solid var(--border-subtle);
+  border: 0.5px solid var(--border-default);
   border-radius: 10px;
   padding: 10px 16px;
   display: flex;
@@ -2120,7 +2151,7 @@ input, button, select, textarea {
   align-items: center;
   justify-content: space-between;
   padding-bottom: 10px;
-  border-bottom: 1px solid var(--border-subtle);
+  border-bottom: 0.5px solid var(--border-default);
 }
 
 .settings-security-row--last {
@@ -2154,7 +2185,7 @@ input, button, select, textarea {
 
 .settings-action-btn {
   background: var(--surface-raised);
-  border: 1px solid var(--border-subtle);
+  border: 0.5px solid var(--border-default);
   border-radius: 6px;
   padding: 8px 10px;
   font-size: 12px;
@@ -2169,14 +2200,14 @@ input, button, select, textarea {
 }
 
 .settings-action-btn:hover {
-  background: var(--hover-main);
+  background: var(--surface-subtle);
 }
 
 /* Appearance section */
 
 .settings-appearance-body {
   background: var(--surface-raised);
-  border: 1px solid var(--border-subtle);
+  border: 0.5px solid var(--border-default);
   border-radius: 10px;
   padding: 10px 16px;
 }
@@ -2192,7 +2223,7 @@ input, button, select, textarea {
 }
 
 .settings-theme-toggle {
-  border: 1px solid var(--border-subtle);
+  border: 0.5px solid var(--border-default);
   border-radius: 6px;
   display: flex;
   align-items: center;
@@ -2204,12 +2235,12 @@ input, button, select, textarea {
 }
 
 .settings-theme-toggle:hover {
-  background: var(--hover-main);
+  background: var(--surface-subtle);
 }
 
 .settings-theme-indicator {
   background: var(--surface-raised);
-  border: 1px solid var(--border-subtle);
+  border: 0.5px solid var(--border-default);
   border-radius: 4px;
   padding: 4px 6px;
   display: flex;
@@ -2228,7 +2259,7 @@ input, button, select, textarea {
   font-size: 10px;
   font-weight: 500;
   font-family: 'Inter', sans-serif;
-  color: var(--text-tertiary);
+  color: var(--text-primary);
   letter-spacing: 0;
 }
 
@@ -2236,7 +2267,7 @@ input, button, select, textarea {
   font-size: 12px;
   font-weight: 500;
   font-family: 'Inter', sans-serif;
-  color: var(--text-tertiary);
+  color: var(--text-primary);
   letter-spacing: 0;
 }
 
@@ -2245,7 +2276,7 @@ input, button, select, textarea {
   top: calc(100% + 4px);
   right: 0;
   background: var(--surface-raised);
-  border: 0.5px solid var(--border-subtle);
+  border: 0.5px solid var(--border-default);
   border-radius: 8px;
   box-shadow: 0 2px 8px rgba(63,63,62,0.1);
   overflow: hidden;
@@ -2262,21 +2293,22 @@ input, button, select, textarea {
   font-size: 12px;
   font-weight: 500;
   font-family: 'Inter', sans-serif;
-  color: var(--text-primary);
+  color: var(--text-secondary);
   cursor: pointer;
   border-radius: 4px;
   letter-spacing: 0;
 }
 
 .settings-theme-menu-item:hover {
-  background: var(--hover-main);
+  background: var(--surface-muted);
+  color: var(--text-primary);
 }
 
 /* Danger Zone section */
 
 .settings-danger-body {
   background: var(--surface-raised);
-  border: 1px solid var(--border-subtle);
+  border: 0.5px solid var(--border-default);
   border-radius: 10px;
   padding: 16px;
 }
@@ -2314,7 +2346,7 @@ input, button, select, textarea {
 
 .account-dropdown {
   background: var(--surface-raised);
-  border: 0.5px solid var(--border-subtle);
+  border: 0.5px solid var(--border-strong);
   border-radius: 8px;
   box-shadow: 0px 1px 4px 0px rgba(63,63,62,0.1);
   overflow: hidden;
@@ -2326,7 +2358,7 @@ input, button, select, textarea {
   align-items: center;
   gap: 8px;
   padding: 0 8px 8px;
-  border-bottom: 1px solid var(--border-subtle);
+  border-bottom: 0.5px solid var(--border-strong);
 }
 
 .account-dropdown-profile-info {
@@ -2370,8 +2402,8 @@ input, button, select, textarea {
   font-size: 12px;
   font-weight: 500;
   font-family: 'Inter', sans-serif;
-  color: var(--text-tertiary);
-  line-height: 14.4px;
+  color: var(--text-primary);
+  line-height: 14px;
   letter-spacing: 0;
 }
 
@@ -2379,7 +2411,7 @@ input, button, select, textarea {
   font-size: 10px;
   font-weight: 500;
   font-family: 'Inter', sans-serif;
-  color: var(--text-muted);
+  color: var(--text-tertiary);
   line-height: 12px;
   letter-spacing: 0;
 }
@@ -2401,8 +2433,15 @@ input, button, select, textarea {
 }
 
 .account-dropdown-account-item:hover {
-  background: var(--hover-main);
+  background: var(--surface-muted);
+  color: var(--text-primary);
 }
+
+.account-dropdown-account-item:hover .account-dropdown-account-name,                                                                  
+.account-dropdown-account-item:hover .account-dropdown-add-text,                                                                      
+.account-dropdown-account-item:hover .account-dropdown-add-icon {                                                                     
+  color: var(--text-primary);                                                                                                         
+}  
 
 .account-dropdown-gradient-avatar {
   width: 18px;
@@ -2431,7 +2470,7 @@ input, button, select, textarea {
   font-size: 11px;
   font-weight: 500;
   font-family: 'Inter', sans-serif;
-  color: var(--text-muted);
+  color: var(--text-secondary);
   letter-spacing: 0;
 }
 
@@ -2442,14 +2481,14 @@ input, button, select, textarea {
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
-  color: var(--text-tertiary);
+  color: var(--text-secondary);
 }
 
 .account-dropdown-add-text {
   font-size: 11px;
   font-weight: 500;
   font-family: 'Inter', sans-serif;
-  color: var(--text-tertiary);
+  color: var(--text-secondary);
   letter-spacing: 0;
 }
 
@@ -2468,7 +2507,7 @@ input, button, select, textarea {
   font-size: 11px;
   font-weight: 500;
   font-family: 'Inter', sans-serif;
-  color: var(--text-tertiary);
+  color: var(--text-secondary);
   background: none;
   border: none;
   text-align: left;
@@ -2478,7 +2517,8 @@ input, button, select, textarea {
 }
 
 .account-dropdown-item:hover {
-  background: var(--hover-main);
+  background: var(--surface-subtle);
+  color: var(--text-primary);
 }
 
 .account-dropdown-tooltip {
@@ -2633,7 +2673,7 @@ input, button, select, textarea {
 
 .block-insert-btn--empty {
   background: var(--surface-muted);
-  border: 1px solid var(--border-subtle);
+  border: 0.5px solid var(--border-subtle);
   padding: 10px 16px;
   color: var(--text-muted);
   opacity: 1;
@@ -2694,7 +2734,7 @@ input, button, select, textarea {
 
 .kbd-badge {
   background: var(--surface-muted);
-  border: 1px solid var(--border-subtle);
+  border: 0.5px solid var(--border-subtle);
   border-radius: 4px;
   font-size: 11px;
   padding: 1px 5px;
@@ -2709,7 +2749,7 @@ input, button, select, textarea {
   align-items: center;
   justify-content: center;
   background: var(--surface-raised);
-  border: 1px solid var(--border-subtle);
+  border: 0.5px solid var(--border-strong);
   border-radius: 6px;
   padding: 6px 0 6px 0;
   cursor: pointer;
@@ -2718,7 +2758,7 @@ input, button, select, textarea {
 }
 
 .add-row-btn:hover {
-  background: var(--surface-recessed);
+  background: var(--hover-surface);
 }
 
 /* Add row button — svg icon sizing */
@@ -2758,7 +2798,7 @@ input, button, select, textarea {
 }
 
 .add-row-btn-song:hover {
-  background: var(--hover-main);
+  background: var(--hover-surface);
 }
 
 /* Album add button — flex sibling inside albums-grid */
@@ -2767,9 +2807,9 @@ input, button, select, textarea {
   align-items: center;
   justify-content: center;
   width: 166px;
-  min-height: 195px;
-  background: var(--surface-muted);
-  border: 1px solid var(--border-subtle);
+  align-self: stretch;
+  background: var(--surface-raised);
+  border: 0.5px solid var(--border-strong);
   border-radius: 8px;
   padding: 5px;
   cursor: pointer;
@@ -2779,7 +2819,12 @@ input, button, select, textarea {
 }
 
 .album-add-btn:hover {
-  background: var(--surface-recessed);
+  background: var(--hover-surface);
+}
+
+.album-add-btn svg {
+  width: 10px;
+  height: 10px;
 }
 
 /* Song drag handles always on row hover (not gated to view-mode) */
@@ -2800,7 +2845,7 @@ input, button, select, textarea {
   left: 0;
   z-index: 100;
   background: var(--surface-default);
-  border: 1px solid var(--border-subtle);
+  border: 0.5px solid var(--border-subtle);
   border-radius: 6px;
   padding: 10px;
   display: flex;
