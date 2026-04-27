@@ -152,7 +152,9 @@ export default function TopBar({
 
       <div className="topbar-controls">
         <YearSwitcher years={years} selectedYear={selectedYear} onYearChange={onYearChange} />
-        <ViewToggle viewMode={viewMode} onToggle={onToggleView} />
+        {(currentView === 'timeline' || currentView === 'yourBoards') && (
+          <ViewToggle viewMode={viewMode} onToggle={onToggleView} />
+        )}
       </div>
     </header>
   )

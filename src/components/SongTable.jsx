@@ -5,6 +5,8 @@ import SearchDropdown from './SearchDropdown.jsx'
 import MoveIcon from '../icons/move-icon.jsx'
 import AddIcon from '../icons/add-icon.jsx'
 
+const ADD_ALBUM_ART_LABEL = 'Add Album Art'
+
 function DotsIcon() {
   return (
     <svg width="12" height="12" viewBox="0 0 12 12" fill="currentColor">
@@ -108,6 +110,8 @@ export default function SongTable({ songs, editMode, onSongsChange, onViewSongsC
   const [openMenuId, setOpenMenuId] = useState(null)
   const tableRef = useRef(null)
   const focusTrackIdRef = useRef(initialFocusId || null)
+  const albumArtInputRef = useRef(null)
+  const activeArtSongIdRef = useRef(null)
 
   // Click outside table: close menu
   useEffect(() => {
@@ -244,6 +248,39 @@ export default function SongTable({ songs, editMode, onSongsChange, onViewSongsC
     onSongsChange(next)
   }
 
+  function handleAlbumArtFileChange(e) {
+    const file = e.target.files?.[0]
+    if (!file) return
+    const songId = activeArtSongIdRef.current
+    const reader = new FileReader()
+    reader.onload = evt => {
+      const img = new Image()
+      img.onload = () => {
+        const MAX = 800
+        const scale = Math.min(1, MAX / Math.max(img.width, img.height))
+        const canvas = document.createElement('canvas')
+        canvas.width = Math.round(img.width * scale)
+        canvas.height = Math.round(img.height * scale)
+        const ctx = canvas.getContext('2d')
+        ctx.fillStyle = '#ffffff'
+        ctx.fillRect(0, 0, canvas.width, canvas.height)
+        ctx.drawImage(img, 0, 0, canvas.width, canvas.height)
+        const dataUrl = canvas.toDataURL('image/jpeg', 0.82)
+        const next = localSongsRef.current.map(s => s.id === songId ? { ...s, albumArt: dataUrl } : s)
+        setLocalSongs(next)
+        onSongsChange(next)
+      }
+      img.onerror = () => {
+        const next = localSongsRef.current.map(s => s.id === songId ? { ...s, albumArt: evt.target.result } : s)
+        setLocalSongs(next)
+        onSongsChange(next)
+      }
+      img.src = evt.target.result
+    }
+    reader.readAsDataURL(file)
+    e.target.value = ''
+  }
+
   return (
     <div className="song-table-wrapper">
       <div className="song-table" ref={tableRef}>
@@ -328,6 +365,18 @@ export default function SongTable({ songs, editMode, onSongsChange, onViewSongsC
                   {menuOpen && (
                     <div className="song-row-dropdown">
                       <button
+                        className="song-row-dropdown-item"
+                        onMouseDown={e => {
+                          e.stopPropagation()
+                          setOpenMenuId(null)
+                          activeArtSongIdRef.current = song.id
+                          albumArtInputRef.current?.click()
+                        }}
+                      >
+                        {ADD_ALBUM_ART_LABEL}
+                      </button>
+                      <div className="dropdown-divider" />
+                      <button
                         className="song-row-dropdown-item song-row-dropdown-item--danger"
                         onMouseDown={e => e.stopPropagation()}
                         onClick={e => { e.stopPropagation(); handleRemove(song.id) }}
@@ -347,6 +396,13 @@ export default function SongTable({ songs, editMode, onSongsChange, onViewSongsC
       <button className="add-row-btn add-row-btn-song" onClick={handleAddTrack}>
         <AddIcon />
       </button>
+      <input
+        ref={albumArtInputRef}
+        type="file"
+        accept="image/*"
+        style={{ display: 'none' }}
+        onChange={handleAlbumArtFileChange}
+      />
     </div>
   )
 }
