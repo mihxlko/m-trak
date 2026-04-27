@@ -45,6 +45,10 @@ export default function AlbumsBlock({ block, editMode, onItemsChange, onSave, on
     onSave(next)
   }
 
+  function handleAlbumArtChange(id, dataUrl) {
+    handleFieldChange(id, 'coverUrl', dataUrl)
+  }
+
   function handleAddAlbum() {
     const blank = makeBlankAlbum()
     focusAlbumIdRef.current = blank.id
@@ -134,6 +138,7 @@ export default function AlbumsBlock({ block, editMode, onItemsChange, onSave, on
                 onFieldChange={handleFieldChange}
                 onSelectResult={handleSelectResult}
                 onDelete={handleDelete}
+                onAlbumArtChange={handleAlbumArtChange}
                 focusIdRef={focusAlbumIdRef}
                 dragHandleProps={!blockDragActive ? {
                   draggable: true,
