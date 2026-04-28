@@ -152,38 +152,36 @@ export default function AlbumCard({ album, editMode, onFieldChange, onSelectResu
               </>
             )}
           </div>
-          {!editMode && (
-            <div className="album-card-menu" ref={menuRef}>
-              <button
-                className="album-card-menu-btn"
-                onClick={e => { e.stopPropagation(); setMenuOpen(v => !v) }}
-              >
-                <Icon3DotVerticalSettings />
-              </button>
-              {menuOpen && (
-                <div className="song-row-dropdown album-card-dropdown">
-                  <button
-                    className="song-row-dropdown-item"
-                    onMouseDown={e => {
-                      e.stopPropagation()
-                      setMenuOpen(false)
-                      albumArtInputRef.current?.click()
-                    }}
-                  >
-                    {ADD_ALBUM_ART_LABEL}
-                  </button>
-                  <div className="dropdown-divider" />
-                  <button
-                    className="song-row-dropdown-item song-row-dropdown-item--danger"
-                    onMouseDown={e => e.stopPropagation()}
-                    onClick={e => { e.stopPropagation(); setMenuOpen(false); onDelete(album.id) }}
-                  >
-                    Delete Album
-                  </button>
-                </div>
-              )}
-            </div>
-          )}
+          <div className="album-card-menu" ref={menuRef}>
+            <button
+              className="album-card-menu-btn"
+              onClick={e => { e.stopPropagation(); setMenuOpen(v => !v) }}
+            >
+              <Icon3DotVerticalSettings />
+            </button>
+            {menuOpen && (
+              <div className="song-row-dropdown album-card-dropdown">
+                <button
+                  className="song-row-dropdown-item"
+                  onMouseDown={e => {
+                    e.stopPropagation()
+                    setMenuOpen(false)
+                    albumArtInputRef.current?.click()
+                  }}
+                >
+                  {ADD_ALBUM_ART_LABEL}
+                </button>
+                <div className="dropdown-divider" />
+                <button
+                  className="song-row-dropdown-item song-row-dropdown-item--danger"
+                  onMouseDown={e => e.stopPropagation()}
+                  onClick={e => { e.stopPropagation(); setMenuOpen(false); onDelete(album.id) }}
+                >
+                  Delete Album
+                </button>
+              </div>
+            )}
+          </div>
         </div>
       </div>
       <input

@@ -39,6 +39,7 @@
   --surface-muted: var(--neutral-100);      /* block borders, dividers */
   --surface-recessed: var(--neutral-150);   /* deeper background areas */
   --surface-sunken: var(--neutral-200);   /* for even deeper background areas */
+  --surface-account-dropdown: var(--neutral-50); /* account dropdown background */
 
   /* text — ordered from strongest to weakest */
   --text-primary: var(--neutral-900);
@@ -51,6 +52,7 @@
   --hover-surface: var(--neutral-50);       /* on white/raised surfaces */
   --hover-sidebar: var(--neutral-150);      /* on subtle surfaces */
   --hover-main: var(--neutral-100);         /* on default app area */
+  --hover-account-dropdown: var(--neutral-150); /* on account dropdown */
 
   /* borders */
   --border-subtle: var(--neutral-150);      /* lightest dividers */
@@ -75,6 +77,7 @@
   --surface-muted: var(--neutral-100);
   --surface-recessed: var(--neutral-150);
   --surface-sunken: var(--neutral-200);
+  --surface-account-dropdown: var(--neutral-50);
 
   /* text */
   --text-primary: var(--neutral-900);
@@ -87,6 +90,7 @@
   --hover-surface: var(--neutral-50);
   --hover-sidebar: var(--neutral-150);
   --hover-main: var(--neutral-100);
+  --hover-account-dropdown: var(--neutral-150);
 
   /* borders */
   --border-subtle: var(--neutral-100);
@@ -107,6 +111,7 @@
     --surface-muted: var(--neutral-875);
     --surface-recessed: var(--neutral-850);
     --surface-sunken: var(--neutral-825);
+    --surface-account-dropdown: var(--neutral-875);
 
   /* text */
   --text-primary:     var(--neutral-50);
@@ -118,7 +123,8 @@
   /* hover states */
   --hover-surface:  var(--neutral-875);
   --hover-sidebar:  var(--neutral-875);
-  --hover-main:     var(--neutral-850);
+  --hover-main:     var(--neutral-875);
+  --hover-account-dropdown: var(--neutral-850);
 
   /* borders */
   --border-subtle:  var(--neutral-900);
@@ -140,6 +146,7 @@
     --surface-muted: var(--neutral-875);
     --surface-recessed: var(--neutral-850);
     --surface-sunken: var(--neutral-825);
+    --surface-account-dropdown: var(--neutral-875);
 
     /* text */
     --text-primary: var(--neutral-50);
@@ -151,7 +158,8 @@
     /* hover states */
     --hover-surface: var(--neutral-875);
     --hover-sidebar: var(--neutral-875);
-    --hover-main: var(--neutral-850);
+    --hover-main: var(--neutral-875);
+    --hover-account-dropdown: var(--neutral-850);
 
     /* borders */
     --border-subtle: var(--neutral-900);
@@ -301,7 +309,7 @@ input, button, select, textarea {
   border-radius: 6px;
   cursor: pointer;
   padding: 7px;
-  box-shadow: 0px 0px 4px rgba(130, 128, 125, 0.25);
+  box-shadow: 0px 0px 2px rgba(130, 128, 125, 0.1);
   line-height: 0;
   transition: opacity 0.1s;
 }
@@ -392,7 +400,7 @@ input, button, select, textarea {
   top: calc(100% + 4px);
   left: 0;
   right: 0;
-  background: var(--surface-subtle);
+  background: var(--surface-raised);
   border-radius: 8px;
   box-shadow: 0 4px 16px rgba(0,0,0,0.12), 0 1px 4px rgba(0,0,0,0.06);
   z-index: 100;
@@ -465,7 +473,20 @@ input, button, select, textarea {
   padding-right: 5px;
 }
 
-.topbar-sidebar-toggle,
+.topbar-sidebar-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 6px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 4px 2px 4px 2px;
+  flex-shrink: 0;
+  color: var(--text-tertiary);
+  transition: background 0.1s;
+}
+
 .topbar-back-btn,
 .topbar-forward-btn {
   display: flex;
@@ -548,7 +569,7 @@ input, button, select, textarea {
   gap: 2px;
   padding: 4px 8px 4.5px 8px;
   border-radius: 6px;
-  border: 0.5px solid var(--border-default);
+  border: 0.5px solid var(--border-strong);
   background: var(--surface-raised);
   cursor: pointer;
   user-select: none;
@@ -617,7 +638,7 @@ input, button, select, textarea {
   display: flex;
   height: 24px;
   align-items: stretch;
-  background: var(--surface-raised);
+  background: var(--surface-default);
   border-radius: 4px;
 }
 
@@ -633,6 +654,11 @@ input, button, select, textarea {
   transition: background 0.1s;
 }
 
+.view-toggle-btn:hover {
+  background: var(--hover-surface);
+  color: var(--text-primary);
+}
+
 .view-toggle-btn--left {
   border-right-width: 0.25px;
   border-radius: 4px 0 0 4px;
@@ -644,7 +670,7 @@ input, button, select, textarea {
 }
 
 .view-toggle-btn.active {
-  background: var(--hover-main);
+  background: var(--surface-muted);
   color: var(--text-tertiary);
 }
 
@@ -677,6 +703,7 @@ input, button, select, textarea {
 
 .month-card:hover {
   background: var(--hover-surface);
+  border: 0.5px solid var(--border-strong);
 }
 
 .month-card-image-area {
@@ -686,6 +713,9 @@ input, button, select, textarea {
   border: 0.5px solid var(--border-default);
   overflow: hidden;
   border-radius: 6px;
+}
+
+.month-card-image-area:hover {
 }
 
 .month-card-image-area img {
@@ -1093,6 +1123,8 @@ input, button, select, textarea {
   background: transparent;
   border: 0.5px solid var(--border-strong);
   padding: 8px;
+  display: flex;
+  flex-direction: column;
   box-shadow: 0px 0px 1px 0px rgba(97, 95, 94, 0.05);
   overflow: visible;
   position: relative;
@@ -1114,12 +1146,12 @@ input, button, select, textarea {
 
 .album-card-footer {
   display: flex;
-  align-items: center;
+  align-items: start;
   gap: 4px;
 }
 
 .album-card-fields {
-  padding: 4px 5px 0;
+  padding: 6px 2px 0px 2px;
   display: flex;
   flex-direction: column;
   gap: 2px;
@@ -1176,7 +1208,7 @@ input, button, select, textarea {
 .album-card-menu {
   position: relative;
   flex-shrink: 0;
-  width: 16px;
+  padding: 6px 0 0 0;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -1185,13 +1217,18 @@ input, button, select, textarea {
 .album-card-menu-btn {
   background: none;
   border: none;
-  padding: 4px;
+  padding: 2px;
   cursor: pointer;
   color: var(--text-secondary);
   opacity: 0;
   transition: opacity 0.1s;
   display: flex;
   align-items: center;
+}
+
+.album-card-menu svg {
+  width: 10px;
+  height: 10px;
 }
 
 .album-card-wrapper:hover .album-card-menu-btn {
@@ -1995,6 +2032,7 @@ input, button, select, textarea {
   max-height: 90vh;
   min-width: 800px;
   background: var(--surface-default);
+  border: 0.5px solid var(--border-strong);
   border-radius: 10px;
   display: flex;
   flex-direction: column;
@@ -2004,7 +2042,7 @@ input, button, select, textarea {
 .settings-overlay-header {
   display: flex;
   align-items: center;
-  gap: 4px;
+  gap: 6px;
   padding: 16px 16px 10px 16px;
   flex-shrink: 0;
 }
@@ -2034,7 +2072,7 @@ input, button, select, textarea {
   justify-content: center;
   padding: 3px 5px;
   background: var(--surface-raised);
-  border: 0.5px solid var(--border-subtle);
+  border: 0.5px solid var(--border-default);
   border-radius: 4px;
   font-size: 8px;
   font-weight: 500;
@@ -2197,7 +2235,7 @@ input, button, select, textarea {
 
 .settings-action-btn {
   background: var(--surface-raised);
-  border: 0.5px solid var(--border-default);
+  border: 0.5px solid var(--border-strong);
   border-radius: 6px;
   padding: 8px 10px;
   font-size: 12px;
@@ -2212,7 +2250,7 @@ input, button, select, textarea {
 }
 
 .settings-action-btn:hover {
-  background: var(--surface-subtle);
+  background: var(--hover-surface);
 }
 
 /* Appearance section */
@@ -2235,7 +2273,7 @@ input, button, select, textarea {
 }
 
 .settings-theme-toggle {
-  border: 0.5px solid var(--border-default);
+  border: 0.5px solid var(--border-strong);
   border-radius: 6px;
   display: flex;
   align-items: center;
@@ -2247,12 +2285,12 @@ input, button, select, textarea {
 }
 
 .settings-theme-toggle:hover {
-  background: var(--surface-subtle);
+  background: var(--hover-surface);
 }
 
 .settings-theme-indicator {
   background: var(--surface-raised);
-  border: 0.5px solid var(--border-default);
+  border: 0.5px solid var(--border-strong);
   border-radius: 4px;
   padding: 4px 6px;
   display: flex;
@@ -2357,7 +2395,7 @@ input, button, select, textarea {
 }
 
 .account-dropdown {
-  background: var(--surface-raised);
+  background: var(--surface-account-dropdown);
   border: 0.5px solid var(--border-strong);
   border-radius: 8px;
   box-shadow: 0px 1px 4px 0px rgba(63,63,62,0.1);
@@ -2445,7 +2483,7 @@ input, button, select, textarea {
 }
 
 .account-dropdown-account-item:hover {
-  background: var(--hover-surface);
+  background: var(--hover-account-dropdown);
   color: var(--text-primary);
 }
 
@@ -2529,7 +2567,7 @@ input, button, select, textarea {
 }
 
 .account-dropdown-item:hover {
-  background: var(--hover-surface);
+  background: var(--hover-account-dropdown);
   color: var(--text-primary);
 }
 

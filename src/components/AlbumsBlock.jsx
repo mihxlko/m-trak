@@ -8,7 +8,7 @@ function uuid() {
 }
 
 export function makeBlankAlbum() {
-  return { id: uuid(), albumName: '', artistName: '', albumArtUrl: null }
+  return { id: uuid(), albumName: '', artistName: '', coverUrl: null }
 }
 
 export default function AlbumsBlock({ block, editMode, onItemsChange, onSave, onEdit, onDone, initialFocusId, onTitleChange, onRemove, dragHandleProps, blockDragActive, focusTitle, onTitleFocused }) {
