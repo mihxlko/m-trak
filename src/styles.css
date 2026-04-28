@@ -30,6 +30,15 @@
   /* brand colors */
   --primary: #51A0EA;
 
+  /* functional colors */
+  --red-10: #FFEAEA; 
+  --red-300: #FED3D3;
+  --red-400: #F97A74;
+  --red-500: #F75951;
+  --red-600: #C64741;
+  --red-700: #573940;
+  --red-800: #3B272C;
+
   /* semantic colors */
 
   /* surfaces — ordered from foreground to recessed */
@@ -47,12 +56,15 @@
   --text-tertiary: var(--neutral-700);
   --text-muted: var(--neutral-600);
   --text-placeholder: var(--neutral-500);
+  --text-error: var(--red-500);
 
   /* hover states */
   --hover-surface: var(--neutral-50);       /* on white/raised surfaces */
   --hover-sidebar: var(--neutral-150);      /* on subtle surfaces */
   --hover-main: var(--neutral-100);         /* on default app area */
   --hover-account-dropdown: var(--neutral-150); /* on account dropdown */
+  --hover-error: var(--red-300); /* for error states */ 
+  --hover-text-error: var(--red-600); /* for error text hover */
 
   /* borders */
   --border-subtle: var(--neutral-150);      /* lightest dividers */
@@ -67,6 +79,7 @@
   /* button */
   --color-button: #88D4C8;
   --color-button-text: #174941;
+  --color-button-error: var(--red-10);
 }
 
 [data-theme="light"] {
@@ -85,12 +98,15 @@
   --text-tertiary: var(--neutral-700);
   --text-muted: var(--neutral-600);
   --text-placeholder: var(--neutral-500);
+  --text-error: var(--red-500);
 
   /* hover states */
   --hover-surface: var(--neutral-50);
   --hover-sidebar: var(--neutral-150);
   --hover-main: var(--neutral-100);
   --hover-account-dropdown: var(--neutral-150);
+  --hover-error: var(--red-300);
+  --hover-text-error: var(--red-600); /* for error text hover */
 
   /* borders */
   --border-subtle: var(--neutral-100);
@@ -101,6 +117,7 @@
   --color-button: #88D4C8;
   --color-button-text: #174941;
   --shadow-block: 0px 0px 1px 0px rgba(97, 95, 94, 0.07);
+  --color-button-error: var(--red-10);
 }
 
 [data-theme="dark"] {
@@ -119,12 +136,15 @@
   --text-tertiary:    var(--neutral-300);
   --text-muted:       var(--neutral-500);
   --text-placeholder: var(--neutral-600);
+  --text-error: var(--red-500);
 
   /* hover states */
   --hover-surface:  var(--neutral-875);
   --hover-sidebar:  var(--neutral-875);
   --hover-main:     var(--neutral-875);
   --hover-account-dropdown: var(--neutral-850);
+  --hover-error: var(--red-700);
+  --hover-text-error: var(--red-400);
 
   /* borders */
   --border-subtle:  var(--neutral-900);
@@ -134,6 +154,7 @@
   /* buttons */
   --color-button: #88D4C8;
   --color-button-text: #174941;
+  --color-button-error: var(--red-800);
   --shadow-block: 0px 0px 1px 0px rgba(97, 95, 94, 0.07);
 }
 
@@ -154,12 +175,15 @@
     --text-tertiary: var(--neutral-300);
     --text-muted: var(--neutral-400);
     --text-placeholder: var(--neutral-500);
+    --text-error: var(--red-500);
 
     /* hover states */
     --hover-surface: var(--neutral-875);
     --hover-sidebar: var(--neutral-875);
     --hover-main: var(--neutral-875);
     --hover-account-dropdown: var(--neutral-850);
+    --hover-error: var(--red-700);
+    --hover-text-error: var(--red-400);
 
     /* borders */
     --border-subtle: var(--neutral-900);
@@ -169,6 +193,7 @@
     /* buttons */
     --color-button: #88D4C8;
     --color-button-text: #174941;
+    --color-button-error: var(--red-800);
     --shadow-block: 0px 0px 1px 0px rgba(97, 95, 94, 0.07);
   }
 }
@@ -477,7 +502,7 @@ input, button, select, textarea {
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: 6px;
+  border-radius: 4px;
   background: transparent;
   border: none;
   cursor: pointer;
@@ -492,7 +517,7 @@ input, button, select, textarea {
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: 6px;
+  border-radius: 4px;
   background: transparent;
   border: none;
   cursor: pointer;
@@ -799,11 +824,11 @@ input, button, select, textarea {
 }
 
 .month-card-dropdown-item--danger {
-  color: #E53E3E;
+  color: var(--text-error);
 }
 
 .month-card-dropdown-item--danger:hover {
-  background: rgba(229, 62, 62, 0.06);
+  background: var(--hover-error);
 }
 
 .month-card-dropdown-divider {
@@ -877,7 +902,7 @@ input, button, select, textarea {
 }
 
 .btn-red {
-  background: #FFABAB;
+  background: var(--color-button-error);
 }
 
 .text-btn {
@@ -1577,11 +1602,11 @@ input, button, select, textarea {
 }
 
 .song-row-dropdown-item--danger {
-  color: #E53E3E;
+  color: var(--text-error);
 }
 
 .song-row-dropdown-item--danger:hover {
-  background: rgba(229, 62, 62, 0.06);
+  background: var(--hover-error);
 }
 
 .dropdown-divider {
@@ -1967,7 +1992,7 @@ input, button, select, textarea {
 }
 
 .overlay-error {
-  color: #E53E3E;
+  color: var(--text-error);
   margin-top: 8px;
   font-size: 12px;
 }
@@ -2043,7 +2068,7 @@ input, button, select, textarea {
   display: flex;
   align-items: center;
   gap: 6px;
-  padding: 16px 16px 10px 16px;
+  padding: 10px 16px 10px 12px;
   flex-shrink: 0;
 }
 
@@ -2054,7 +2079,8 @@ input, button, select, textarea {
   background: none;
   border: none;
   cursor: pointer;
-  padding: 0;
+  padding: 8px 6px 8px 4px;
+  border-radius: 8px;
   color: var(--text-muted);
   font-size: 10px;
   font-weight: 500;
@@ -2064,6 +2090,7 @@ input, button, select, textarea {
 
 .settings-back-btn:hover {
   color: var(--text-secondary);
+  background: var(--hover-surface);
 }
 
 .settings-esc-badge {
@@ -2079,6 +2106,7 @@ input, button, select, textarea {
   font-family: 'Inter', sans-serif;
   color: var(--text-muted);
   letter-spacing: 0;
+  opacity: 0;
 }
 
 .settings-overlay-content {
@@ -2364,14 +2392,14 @@ input, button, select, textarea {
 }
 
 .settings-delete-account-btn {
-  background: #FFEAEA;
+  background: var(--color-button-error);
   border: none;
   border-radius: 6px;
   padding: 8px 10px;
   font-size: 12px;
   font-weight: 500;
   font-family: 'Inter', sans-serif;
-  color: #F75951;
+  color: var(--text-error);
   cursor: pointer;
   white-space: nowrap;
   letter-spacing: 0;
@@ -2380,7 +2408,7 @@ input, button, select, textarea {
 }
 
 .settings-delete-account-btn:hover {
-  background: #FFD5D5;
+  background: var(--hover-error);
 }
 
 /* ---- ACCOUNT DROPDOWN ---- */
@@ -2770,11 +2798,11 @@ input, button, select, textarea {
 }
 
 .block-dropdown-item--danger {
-  color: #E53E3E;
+  color: var(--text-error);
 }
 
 .block-dropdown-item--danger:hover {
-  background: rgba(229, 62, 62, 0.06);
+  background: var(--hover-error);
 }
 
 .block-dropdown-item--close {
