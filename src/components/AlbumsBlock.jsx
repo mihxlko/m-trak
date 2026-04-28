@@ -119,22 +119,45 @@ export default function AlbumsBlock({ block, editMode, onItemsChange, onSave, on
         onDrop={!blockDragActive ? handleDrop : undefined}
         onDragLeave={!blockDragActive ? () => setDropTargetId(null) : undefined}
       >
-        {albums.map(album => {
+        {albums.map((album, index) => {
+          const isLast = index === albums.length - 1
           const isDropTarget = dropTargetId === album.id
+          const wrapperClassName = [
+            'album-card-wrapper',
+            dragId === album.id ? 'dragging' : '',
+            isDropTarget && dropBefore ? 'drop-before' : '',
+            isDropTarget && !dropBefore ? 'drop-after' : '',
+          ].filter(Boolean).join(' ')
+
+          if (isLast) {
+            return (
+              <div key={album.id} className="album-add-zone-wrapper">
+                <div data-album-id={album.id} className={wrapperClassName}>
+                  <AlbumCard
+                    album={album}
+                    onFieldChange={handleFieldChange}
+                    onSelectResult={handleSelectResult}
+                    onDelete={handleDelete}
+                    onAlbumArtChange={handleAlbumArtChange}
+                    focusIdRef={focusAlbumIdRef}
+                    dragHandleProps={!blockDragActive ? {
+                      draggable: true,
+                      onDragStart: e => handleDragStart(e, album),
+                      onDragEnd: handleDragEnd,
+                    } : {}}
+                  />
+                </div>
+                <button className="album-add-btn" onClick={handleAddAlbum}>
+                  <AddIcon />
+                </button>
+              </div>
+            )
+          }
+
           return (
-            <div
-              key={album.id}
-              data-album-id={album.id}
-              className={[
-                'album-card-wrapper',
-                dragId === album.id ? 'dragging' : '',
-                isDropTarget && dropBefore ? 'drop-before' : '',
-                isDropTarget && !dropBefore ? 'drop-after' : '',
-              ].filter(Boolean).join(' ')}
-            >
+            <div key={album.id} data-album-id={album.id} className={wrapperClassName}>
               <AlbumCard
                 album={album}
-                editMode={editMode}
                 onFieldChange={handleFieldChange}
                 onSelectResult={handleSelectResult}
                 onDelete={handleDelete}
@@ -149,9 +172,11 @@ export default function AlbumsBlock({ block, editMode, onItemsChange, onSave, on
             </div>
           )
         })}
-        <button className="album-add-btn" onClick={handleAddAlbum}>
-          <AddIcon />
-        </button>
+        {albums.length === 0 && (
+          <button className="album-add-btn" onClick={handleAddAlbum}>
+            <AddIcon />
+          </button>
+        )}
       </div>
     </MediaBlock>
   )

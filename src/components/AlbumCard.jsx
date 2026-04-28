@@ -19,7 +19,7 @@ function DragIcon() {
   )
 }
 
-export default function AlbumCard({ album, editMode, onFieldChange, onSelectResult, onDelete, onAlbumArtChange, dragHandleProps, focusIdRef }) {
+export default function AlbumCard({ album, onFieldChange, onSelectResult, onDelete, onAlbumArtChange, dragHandleProps, focusIdRef }) {
   const [menuOpen, setMenuOpen] = useState(false)
   const menuRef = useRef(null)
   const albumArtInputRef = useRef(null)
@@ -96,11 +96,9 @@ export default function AlbumCard({ album, editMode, onFieldChange, onSelectResu
 
   return (
     <>
-      {!editMode && (
-        <div className="album-drag-handle" {...dragHandleProps}>
-          <DragIcon />
-        </div>
-      )}
+      <div className="album-drag-handle" {...dragHandleProps}>
+        <DragIcon />
+      </div>
       <div className="album-card">
         <div className="album-card-image">
           {album.coverUrl && (
@@ -109,48 +107,35 @@ export default function AlbumCard({ album, editMode, onFieldChange, onSelectResu
         </div>
         <div className="album-card-footer">
           <div className="album-card-fields">
-            {editMode ? (
-              <>
-                <div style={{ position: 'relative' }}>
-                  <input
-                    className="album-card-input album-name-input"
-                    value={album.albumName}
-                    placeholder="Album Name..."
-                    onChange={handleAlbumNameChange}
-                    onBlur={handleAlbumNameBlur}
-                    onKeyDown={handleAlbumNameKeyDown}
-                    ref={el => {
-                      if (el && focusIdRef?.current === album.id) {
-                        el.focus()
-                        focusIdRef.current = null
-                      }
-                    }}
-                  />
-                  <SearchDropdown
-                    ref={dropdownRef}
-                    results={searchResults}
-                    visible={dropdownVisible}
-                    onSelect={handleSelect}
-                    onDismiss={() => setDropdownVisible(false)}
-                  />
-                </div>
-                <input
-                  className="album-card-input artist-name-input"
-                  value={album.artistName}
-                  placeholder="Artist Name..."
-                  onChange={e => onFieldChange(album.id, 'artistName', e.target.value)}
-                />
-              </>
-            ) : (
-              <>
-                <span className={`album-card-text album-name-text${!album.albumName ? ' muted' : ''}`}>
-                  {album.albumName || 'Album Name...'}
-                </span>
-                <span className={`album-card-text artist-name-text${!album.artistName ? ' muted' : ''}`}>
-                  {album.artistName || 'Artist Name...'}
-                </span>
-              </>
-            )}
+            <div style={{ position: 'relative' }}>
+              <input
+                className="album-card-input album-name-input"
+                value={album.albumName}
+                placeholder="Album Name..."
+                onChange={handleAlbumNameChange}
+                onBlur={handleAlbumNameBlur}
+                onKeyDown={handleAlbumNameKeyDown}
+                ref={el => {
+                  if (el && focusIdRef?.current === album.id) {
+                    el.focus()
+                    focusIdRef.current = null
+                  }
+                }}
+              />
+              <SearchDropdown
+                ref={dropdownRef}
+                results={searchResults}
+                visible={dropdownVisible}
+                onSelect={handleSelect}
+                onDismiss={() => setDropdownVisible(false)}
+              />
+            </div>
+            <input
+              className="album-card-input artist-name-input"
+              value={album.artistName}
+              placeholder="Artist Name..."
+              onChange={e => onFieldChange(album.id, 'artistName', e.target.value)}
+            />
           </div>
           <div className="album-card-menu" ref={menuRef}>
             <button

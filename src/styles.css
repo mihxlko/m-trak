@@ -75,6 +75,8 @@
   --add-row-gap: 4px;
   --add-row-btn-height: 24px;
   --add-row-hover-extension: 64px;
+  --album-grid-gap: 16px;
+  --album-card-padding: 8px;
 
   /* button */
   --color-button: #88D4C8;
@@ -1089,16 +1091,18 @@ input, button, select, textarea {
 .albums-grid {
   display: flex;
   flex-wrap: wrap;
-  gap: 16px;
-  padding: 16px;
+  gap: var(--album-grid-gap);
+  padding: var(--album-grid-gap);
   align-items: flex-start;
   overflow: visible;
 }
 
 .album-card-wrapper {
   position: relative;
-  display: inline-flex;
-  align-items: center;
+  display: flex;
+  align-items: flex-start;
+  flex: 1 1 calc(25% - 3 * var(--album-grid-gap) / 4);
+  max-width: calc(25% - 3 * var(--album-grid-gap) / 4);
 }
 
 .album-card-wrapper.dragging {
@@ -1143,11 +1147,11 @@ input, button, select, textarea {
 }
 
 .album-card {
-  width: 166px;
+  width: 100%;
   border-radius: 8px;
   background: transparent;
   border: 0.5px solid var(--border-strong);
-  padding: 8px;
+  padding: var(--album-card-padding);
   display: flex;
   flex-direction: column;
   box-shadow: 0px 0px 1px 0px rgba(97, 95, 94, 0.05);
@@ -1161,8 +1165,8 @@ input, button, select, textarea {
 }
 
 .album-card-image {
-  width: 150px;
-  height: 150px;
+  width: 100%;
+  aspect-ratio: 1 / 1;
   background: var(--surface-muted);
   border: 0.5px solid var(--border-strong);
   border-radius: 6px;
@@ -2884,7 +2888,8 @@ input, button, select, textarea {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 166px;
+  flex: 1 1 calc(25% - 3 * var(--album-grid-gap) / 4);
+  max-width: calc(25% - 3 * var(--album-grid-gap) / 4);
   align-self: stretch;
   background: var(--surface-raised);
   border: 0.5px solid var(--border-strong);
@@ -2893,7 +2898,6 @@ input, button, select, textarea {
   cursor: pointer;
   color: var(--text-muted);
   transition: background 0.1s;
-  flex-shrink: 0;
 }
 
 .album-add-btn:hover {
@@ -2903,6 +2907,34 @@ input, button, select, textarea {
 .album-add-btn svg {
   width: 10px;
   height: 10px;
+}
+
+/* ---- ALBUM ADD HOVER ZONE ---- */
+
+.album-add-zone-wrapper {
+  display: contents;
+}
+
+.album-add-zone-wrapper > .album-add-btn {
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.15s ease, background 0.1s;
+}
+
+.album-add-zone-wrapper > .album-card-wrapper::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 100%;
+  width: var(--album-grid-gap);
+  pointer-events: all;
+}
+
+.album-add-zone-wrapper > .album-card-wrapper:hover ~ .album-add-btn,
+.album-add-zone-wrapper > .album-add-btn:hover {
+  opacity: 1;
+  pointer-events: all;
 }
 
 /* Song drag handles always on row hover (not gated to view-mode) */
