@@ -27,6 +27,27 @@
   --neutral-950: #161514;
   --neutral-997: #060606;
 
+  /* neutral-b */
+  --neutralB-03:  #FBFBFB; 
+  --neutralB-50:  #F1F1F2;
+  --neutralB-75:  #EAEAEC;
+  --neutralB-100: #E3E3E5;
+  --neutralB-150: #D4D5D8;
+  --neutralB-200: #C6C7CC;
+  --neutralB-300: #AAABB2;
+  --neutralB-400: #8D8F98;
+  --neutralB-500: #71737F;
+  --neutralB-600: #5A5C65;
+  --neutralB-700: #44454C;
+  --neutralB-800: #2D2E33;
+  --neutralB-825: #252529;
+  --neutralB-850: #28282C;
+  --neutralB-875: #2A2B30;
+  --neutralB-900: #2D2E33;
+  --neutralB-925: #1B1B1E;
+  --neutralB-950: #2D2E33;
+  --neutralB-997: #171719;
+
   /* brand colors */
   --primary: #51A0EA;
 
@@ -59,7 +80,7 @@
   --text-error: var(--red-500);
 
   /* hover states */
-  --hover-surface: var(--neutral-50);       /* on white/raised surfaces */
+  --hover-surface: var(--neutral-75);       /* on white/raised surfaces */
   --hover-sidebar: var(--neutral-150);      /* on subtle surfaces */
   --hover-main: var(--neutral-100);         /* on default app area */
   --hover-account-dropdown: var(--neutral-150); /* on account dropdown */
@@ -103,7 +124,7 @@
   --text-error: var(--red-500);
 
   /* hover states */
-  --hover-surface: var(--neutral-50);
+  --hover-surface: var(--neutral-75);
   --hover-sidebar: var(--neutral-150);
   --hover-main: var(--neutral-100);
   --hover-account-dropdown: var(--neutral-150);
@@ -127,7 +148,7 @@
     --surface-raised: var(--neutral-900);
     --surface-default: var(--neutral-925);
     --surface-subtle: var(--neutral-900);
-    --surface-muted: var(--neutral-875);
+    --surface-muted: var(--neutral-900);
     --surface-recessed: var(--neutral-850);
     --surface-sunken: var(--neutral-825);
     --surface-account-dropdown: var(--neutral-875);
@@ -144,13 +165,13 @@
   --hover-surface:  var(--neutral-875);
   --hover-sidebar:  var(--neutral-875);
   --hover-main:     var(--neutral-875);
-  --hover-account-dropdown: var(--neutral-850);
+  --hover-account-dropdown: var(--neutral-800);
   --hover-error: var(--red-700);
   --hover-text-error: var(--red-400);
 
   /* borders */
-  --border-subtle:  var(--neutral-900);
-  --border-default: var(--neutral-875);
+  --border-subtle:  var(--neutral-875);
+  --border-default: var(--neutral-850);
   --border-strong:  var(--neutral-800);
 
   /* buttons */
@@ -173,7 +194,7 @@
 
     /* text */
     --text-primary: var(--neutral-50);
-    --text-secondary: var(--neutral-75);
+    --text-secondary: var(--neutral-100);
     --text-tertiary: var(--neutral-300);
     --text-muted: var(--neutral-400);
     --text-placeholder: var(--neutral-500);
@@ -183,13 +204,13 @@
     --hover-surface: var(--neutral-875);
     --hover-sidebar: var(--neutral-875);
     --hover-main: var(--neutral-875);
-    --hover-account-dropdown: var(--neutral-850);
+    --hover-account-dropdown: var(--neutral-800);
     --hover-error: var(--red-700);
     --hover-text-error: var(--red-400);
 
     /* borders */
-    --border-subtle: var(--neutral-900);
-    --border-default: var(--neutral-875);
+    --border-subtle: var(--neutral-875);
+    --border-default: var(--neutral-850);
     --border-strong: var(--neutral-800);
 
     /* buttons */
@@ -238,7 +259,7 @@ input, button, select, textarea {
   width: 100%;
   min-width: 750px;
   padding: 8px;
-  background: var(--surface-subtle);
+  background: var(--surface-muted);
 }
 
 
@@ -370,7 +391,7 @@ input, button, select, textarea {
 }
 
 .profile-switcher-trigger:hover {
-  background: var(--hover-surface);
+  background: var(--hover-sidebar);
   color: var(--text-primary);
 }
 
@@ -467,7 +488,7 @@ input, button, select, textarea {
   min-width: 0;
   border-radius: 10px;
   border: 0.5px solid var(--border-default);
-  box-shadow: 0 1px 1px rgba(63, 63, 62, 0.05);
+  box-shadow: 0 1px 1px rgba(63, 63, 62, 0.1);
 }
 
 /* ---- TOP BAR ---- */
@@ -476,7 +497,7 @@ input, button, select, textarea {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  height: 36px;
+  height: 40px;
   padding: 0 16px 0px 10px;
   flex-shrink: 0;
   background: var(--surface-default);
@@ -606,7 +627,7 @@ input, button, select, textarea {
 
 .year-switcher-trigger:hover {
   opacity: 0.8;
-  background: var(--surface-muted);
+  background: var(--hover-surface);
   color: var(--text-primary);
 }
 
@@ -2440,7 +2461,7 @@ input, button, select, textarea {
   align-items: center;
   gap: 8px;
   padding: 0 8px 8px;
-  border-bottom: 0.5px solid var(--border-strong);
+  border-bottom: 1px solid var(--border-strong);
 }
 
 .account-dropdown-profile-info {
@@ -2921,6 +2942,8 @@ input, button, select, textarea {
   transition: opacity 0.15s ease, background 0.1s;
 }
 
+/* Extend the last card's hover area across the grid gap so the
+   button doesn't vanish while the cursor crosses the gap. */
 .album-add-zone-wrapper > .album-card-wrapper::after {
   content: '';
   position: absolute;
@@ -2933,6 +2956,49 @@ input, button, select, textarea {
 
 .album-add-zone-wrapper > .album-card-wrapper:hover ~ .album-add-btn,
 .album-add-zone-wrapper > .album-add-btn:hover {
+  opacity: 1;
+  pointer-events: all;
+}
+
+/* ---- ALBUM GRID WRAPPER (full-row add button variant) ---- */
+
+.album-grid-wrapper {
+  position: relative;
+}
+
+.album-grid-hover-zone {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: calc(-1 * (var(--add-row-gap) + var(--add-row-btn-height)));
+  height: calc(var(--add-row-hover-extension) + var(--add-row-gap) + var(--add-row-btn-height));
+  pointer-events: all;
+  background: transparent;
+  z-index: 2;
+}
+
+/* Full-row add album button — shown when the inline button wraps */
+.add-row-btn-album-wrapper {
+  position: absolute;
+  bottom: calc(-1 * (var(--add-row-gap) + var(--add-row-btn-height)));
+  left: 0;
+  width: calc(25% - var(--album-grid-gap) * 3 / 4);
+  padding-left: var(--album-card-padding);
+  height: var(--add-row-btn-height);
+  box-sizing: border-box;
+  opacity: 0;
+  pointer-events: none;
+  z-index: 3;
+  transition: opacity 0.15s ease;
+}
+
+.add-row-btn-album {
+  width: 100%;
+  height: 100%;
+}
+
+.album-grid-hover-zone:hover ~ .add-row-btn-album-wrapper,
+.add-row-btn-album-wrapper:hover {
   opacity: 1;
   pointer-events: all;
 }

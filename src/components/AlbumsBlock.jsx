@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import MediaBlock from './MediaBlock.jsx'
 import AlbumCard from './AlbumCard.jsx'
 import AddIcon from '../icons/add-icon.jsx'
@@ -15,7 +15,10 @@ export default function AlbumsBlock({ block, editMode, onItemsChange, onSave, on
   const [dragId, setDragId] = useState(null)
   const [dropTargetId, setDropTargetId] = useState(null)
   const [dropBefore, setDropBefore] = useState(true)
+  const [addBtnWrapped, setAddBtnWrapped] = useState(false)
   const containerRef = useRef(null)
+  const lastCardRef = useRef(null)
+  const addBtnRef = useRef(null)
   const focusAlbumIdRef = useRef(initialFocusId || null)
 
   const albums = block.items || []
@@ -25,6 +28,17 @@ export default function AlbumsBlock({ block, editMode, onItemsChange, onSave, on
     setDropTargetId(null)
     setDragId(null)
   }
+
+  useEffect(() => {
+    function check() {
+      if (!lastCardRef.current || !addBtnRef.current) return
+      setAddBtnWrapped(addBtnRef.current.offsetTop > lastCardRef.current.offsetTop)
+    }
+    check()
+    const observer = new ResizeObserver(check)
+    if (containerRef.current) observer.observe(containerRef.current)
+    return () => observer.disconnect()
+  }, [albums])
 
   function handleFieldChange(id, field, value) {
     onItemsChange(albums.map(a => a.id === id ? { ...a, [field]: value } : a))
@@ -112,70 +126,84 @@ export default function AlbumsBlock({ block, editMode, onItemsChange, onSave, on
       focusTitle={focusTitle}
       onTitleFocused={onTitleFocused}
     >
-      <div
-        className="albums-grid"
-        ref={containerRef}
-        onDragOver={!blockDragActive ? handleDragOver : undefined}
-        onDrop={!blockDragActive ? handleDrop : undefined}
-        onDragLeave={!blockDragActive ? () => setDropTargetId(null) : undefined}
-      >
-        {albums.map((album, index) => {
-          const isLast = index === albums.length - 1
-          const isDropTarget = dropTargetId === album.id
-          const wrapperClassName = [
-            'album-card-wrapper',
-            dragId === album.id ? 'dragging' : '',
-            isDropTarget && dropBefore ? 'drop-before' : '',
-            isDropTarget && !dropBefore ? 'drop-after' : '',
-          ].filter(Boolean).join(' ')
+      <div className="album-grid-wrapper">
+        <div
+          className="albums-grid"
+          ref={containerRef}
+          onDragOver={!blockDragActive ? handleDragOver : undefined}
+          onDrop={!blockDragActive ? handleDrop : undefined}
+          onDragLeave={!blockDragActive ? () => setDropTargetId(null) : undefined}
+        >
+          {albums.map((album, index) => {
+            const isLast = index === albums.length - 1
+            const isDropTarget = dropTargetId === album.id
+            const wrapperClassName = [
+              'album-card-wrapper',
+              dragId === album.id ? 'dragging' : '',
+              isDropTarget && dropBefore ? 'drop-before' : '',
+              isDropTarget && !dropBefore ? 'drop-after' : '',
+            ].filter(Boolean).join(' ')
 
-          if (isLast) {
-            return (
-              <div key={album.id} className="album-add-zone-wrapper">
-                <div data-album-id={album.id} className={wrapperClassName}>
-                  <AlbumCard
-                    album={album}
-                    onFieldChange={handleFieldChange}
-                    onSelectResult={handleSelectResult}
-                    onDelete={handleDelete}
-                    onAlbumArtChange={handleAlbumArtChange}
-                    focusIdRef={focusAlbumIdRef}
-                    dragHandleProps={!blockDragActive ? {
-                      draggable: true,
-                      onDragStart: e => handleDragStart(e, album),
-                      onDragEnd: handleDragEnd,
-                    } : {}}
-                  />
+            if (isLast) {
+              return (
+                <div key={album.id} className="album-add-zone-wrapper">
+                  <div ref={lastCardRef} data-album-id={album.id} className={wrapperClassName}>
+                    <AlbumCard
+                      album={album}
+                      onFieldChange={handleFieldChange}
+                      onSelectResult={handleSelectResult}
+                      onDelete={handleDelete}
+                      onAlbumArtChange={handleAlbumArtChange}
+                      focusIdRef={focusAlbumIdRef}
+                      dragHandleProps={!blockDragActive ? {
+                        draggable: true,
+                        onDragStart: e => handleDragStart(e, album),
+                        onDragEnd: handleDragEnd,
+                      } : {}}
+                    />
+                  </div>
+                  {!addBtnWrapped && (
+                    <button ref={addBtnRef} className="album-add-btn" onClick={handleAddAlbum}>
+                      <AddIcon />
+                    </button>
+                  )}
                 </div>
-                <button className="album-add-btn" onClick={handleAddAlbum}>
-                  <AddIcon />
-                </button>
+              )
+            }
+
+            return (
+              <div key={album.id} data-album-id={album.id} className={wrapperClassName}>
+                <AlbumCard
+                  album={album}
+                  onFieldChange={handleFieldChange}
+                  onSelectResult={handleSelectResult}
+                  onDelete={handleDelete}
+                  onAlbumArtChange={handleAlbumArtChange}
+                  focusIdRef={focusAlbumIdRef}
+                  dragHandleProps={!blockDragActive ? {
+                    draggable: true,
+                    onDragStart: e => handleDragStart(e, album),
+                    onDragEnd: handleDragEnd,
+                  } : {}}
+                />
               </div>
             )
-          }
-
-          return (
-            <div key={album.id} data-album-id={album.id} className={wrapperClassName}>
-              <AlbumCard
-                album={album}
-                onFieldChange={handleFieldChange}
-                onSelectResult={handleSelectResult}
-                onDelete={handleDelete}
-                onAlbumArtChange={handleAlbumArtChange}
-                focusIdRef={focusAlbumIdRef}
-                dragHandleProps={!blockDragActive ? {
-                  draggable: true,
-                  onDragStart: e => handleDragStart(e, album),
-                  onDragEnd: handleDragEnd,
-                } : {}}
-              />
+          })}
+          {albums.length === 0 && (
+            <button className="album-add-btn" onClick={handleAddAlbum}>
+              <AddIcon />
+            </button>
+          )}
+        </div>
+        {addBtnWrapped && (
+          <>
+            <div className="album-grid-hover-zone" />
+            <div className="add-row-btn-album-wrapper">
+              <button className="add-row-btn add-row-btn-album" onClick={handleAddAlbum}>
+                <AddIcon />
+              </button>
             </div>
-          )
-        })}
-        {albums.length === 0 && (
-          <button className="album-add-btn" onClick={handleAddAlbum}>
-            <AddIcon />
-          </button>
+          </>
         )}
       </div>
     </MediaBlock>
