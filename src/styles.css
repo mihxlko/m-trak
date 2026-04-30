@@ -62,14 +62,11 @@
 
   /* semantic colors */
 
-  /* surfaces — ordered from foreground to recessed */
-  --surface-raised: var(--neutral-03);      /* cards sitting above main */
-  --surface-default: var(--neutral-50);     /* main app background */
-  --surface-subtle: var(--neutral-75);      /* sidebar, topbar */
-  --surface-muted: var(--neutral-100);      /* block borders, dividers */
-  --surface-recessed: var(--neutral-150);   /* deeper background areas */
-  --surface-sunken: var(--neutral-200);   /* for even deeper background areas */
-  --surface-account-dropdown: var(--neutral-50); /* account dropdown background */
+  /* surfaces — 4 levels */
+  --surface-base: var(--neutral-75);        /* app chrome: sidebar */
+  --surface-primary: var(--neutral-50);     /* main content area */
+  --surface-elevated: var(--neutral-03);    /* cards, dropdowns, overlays */
+  --surface-inset: var(--neutral-100);      /* recessed areas, input fields */
 
   /* text — ordered from strongest to weakest */
   --text-primary: var(--neutral-900);
@@ -79,12 +76,11 @@
   --text-placeholder: var(--neutral-500);
   --text-error: var(--red-500);
 
-  /* hover states */
-  --hover-surface: var(--neutral-75);       /* on white/raised surfaces */
-  --hover-sidebar: var(--neutral-150);      /* on subtle surfaces */
-  --hover-main: var(--neutral-100);         /* on default app area */
-  --hover-account-dropdown: var(--neutral-150); /* on account dropdown */
-  --hover-error: var(--red-300); /* for error states */ 
+  /* interaction state overlays */
+  --state-hover: rgba(0, 0, 0, 0.03);
+  --state-active: rgba(0, 0, 0, 0.07);
+  --state-selected: rgba(0, 0, 0, 0.05);
+  --hover-error: var(--red-300); /* for error states */
   --hover-text-error: var(--red-600); /* for error text hover */
 
   /* borders */
@@ -98,6 +94,7 @@
   --add-row-hover-extension: 64px;
   --album-grid-gap: 16px;
   --album-card-padding: 8px;
+  --photo-grid-padding: 16px;
 
   /* button */
   --color-button: #88D4C8;
@@ -107,13 +104,10 @@
 
 [data-theme="light"] {
   /* surfaces */
-  --surface-raised: var(--neutral-03);
-  --surface-default: var(--neutral-50);
-  --surface-subtle: var(--neutral-75);
-  --surface-muted: var(--neutral-100);
-  --surface-recessed: var(--neutral-150);
-  --surface-sunken: var(--neutral-200);
-  --surface-account-dropdown: var(--neutral-50);
+  --surface-base: var(--neutral-75);
+  --surface-primary: var(--neutral-50);
+  --surface-elevated: var(--neutral-03);
+  --surface-inset: var(--neutral-100);
 
   /* text */
   --text-primary: var(--neutral-900);
@@ -123,10 +117,10 @@
   --text-placeholder: var(--neutral-500);
   --text-error: var(--red-500);
 
-  /* hover states */
-  --hover-surface: var(--neutral-75);
-  --hover-sidebar: var(--neutral-150);
-  --hover-main: var(--neutral-100);
+  /* interaction state overlays */
+  --state-hover: rgba(0, 0, 0, 0.03);
+  --state-active: rgba(0, 0, 0, 0.07);
+  --state-selected: rgba(0, 0, 0, 0.05);
   --hover-account-dropdown: var(--neutral-150);
   --hover-error: var(--red-300);
   --hover-text-error: var(--red-600); /* for error text hover */
@@ -144,14 +138,11 @@
 }
 
 [data-theme="dark"] {
-  /* surfaces — raised is LIGHTEST, recessed is DARKEST in dark mode */
-    --surface-raised: var(--neutral-900);
-    --surface-default: var(--neutral-925);
-    --surface-subtle: var(--neutral-900);
-    --surface-muted: var(--neutral-900);
-    --surface-recessed: var(--neutral-850);
-    --surface-sunken: var(--neutral-825);
-    --surface-account-dropdown: var(--neutral-875);
+  /* surfaces */
+  --surface-base: var(--neutral-900);
+  --surface-primary: var(--neutral-875);
+  --surface-elevated: var(--neutral-800);
+  --surface-inset: var(--neutral-950);
 
   /* text */
   --text-primary:     var(--neutral-50);
@@ -161,10 +152,10 @@
   --text-placeholder: var(--neutral-600);
   --text-error: var(--red-500);
 
-  /* hover states */
-  --hover-surface:  var(--neutral-875);
-  --hover-sidebar:  var(--neutral-875);
-  --hover-main:     var(--neutral-875);
+  /* interaction state overlays */
+  --state-hover: rgba(255, 255, 255, 0.06);
+  --state-active: rgba(255, 255, 255, 0.10);
+  --state-selected: rgba(255, 255, 255, 0.08);
   --hover-account-dropdown: var(--neutral-800);
   --hover-error: var(--red-700);
   --hover-text-error: var(--red-400);
@@ -184,13 +175,10 @@
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme]) {
     /* surfaces */
-    --surface-raised: var(--neutral-900);
-    --surface-default: var(--neutral-925);
-    --surface-subtle: var(--neutral-900);
-    --surface-muted: var(--neutral-875);
-    --surface-recessed: var(--neutral-850);
-    --surface-sunken: var(--neutral-825);
-    --surface-account-dropdown: var(--neutral-875);
+    --surface-base: var(--neutral-900);
+    --surface-primary: var(--neutral-875);
+    --surface-elevated: var(--neutral-800);
+    --surface-inset: var(--neutral-950);
 
     /* text */
     --text-primary: var(--neutral-50);
@@ -200,10 +188,10 @@
     --text-placeholder: var(--neutral-500);
     --text-error: var(--red-500);
 
-    /* hover states */
-    --hover-surface: var(--neutral-875);
-    --hover-sidebar: var(--neutral-875);
-    --hover-main: var(--neutral-875);
+    /* interaction state overlays */
+    --state-hover: rgba(255, 255, 255, 0.06);
+    --state-active: rgba(255, 255, 255, 0.10);
+    --state-selected: rgba(255, 255, 255, 0.08);
     --hover-account-dropdown: var(--neutral-800);
     --hover-error: var(--red-700);
     --hover-text-error: var(--red-400);
@@ -239,7 +227,7 @@ body {
   font-size: 12px;
   letter-spacing: 0em;
   color: var(--text-primary);
-  background: var(--surface-muted);
+  background: var(--surface-inset);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
@@ -259,7 +247,7 @@ input, button, select, textarea {
   width: 100%;
   min-width: 750px;
   padding: 8px;
-  background: var(--surface-muted);
+  background: var(--surface-inset);
 }
 
 
@@ -301,12 +289,12 @@ input, button, select, textarea {
 }
 
 .sidebar-nav-item:hover {
-  background: var(--hover-sidebar);
+  background: var(--state-hover);
   color: var(--text-tertiary);
 }
 
 .sidebar-nav-item.active {
-  background: var(--surface-sunken);
+  background: var(--state-selected);
   color: var(--text-secondary);
 }
 
@@ -352,24 +340,24 @@ input, button, select, textarea {
   display: flex;
   align-items: center;
   justify-content: center;
-  background: var(--surface-raised);
+  background: var(--surface-elevated);
   border: 0.5px solid var(--border-strong);
-  border-radius: 6px;
+  border-radius: 20px;
   cursor: pointer;
-  padding: 7px;
+  padding: 8px;
   box-shadow: 0px 0px 2px rgba(130, 128, 125, 0.1);
   line-height: 0;
   transition: opacity 0.1s;
 }
 
 .sidebar-create-icon-btn svg {
-  width: 16px;
-  height: 16px;
+  width: 14px;
+  height: 14px;
   color: var(--text-secondary);
 }
 
 .sidebar-create-icon-btn:hover {
-  background: var(--hover-surface);
+  background: var(--surface-primary);
 }
 
 /* ---- PROFILE SWITCHER ---- */
@@ -391,7 +379,7 @@ input, button, select, textarea {
 }
 
 .profile-switcher-trigger:hover {
-  background: var(--hover-sidebar);
+  background-color: var(--state-hover);
   color: var(--text-primary);
 }
 
@@ -401,7 +389,7 @@ input, button, select, textarea {
   border-radius: 4px;
   overflow: hidden;
   flex-shrink: 0;
-  background: var(--surface-muted);
+  background: var(--surface-inset);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -420,7 +408,7 @@ input, button, select, textarea {
   border-radius: 50%;
   overflow: hidden;
   flex-shrink: 0;
-  background: var(--surface-muted);
+  background: var(--surface-inset);
 }
 
 .profile-avatar-small img {
@@ -448,7 +436,7 @@ input, button, select, textarea {
   top: calc(100% + 4px);
   left: 0;
   right: 0;
-  background: var(--surface-raised);
+  background: var(--surface-elevated);
   border-radius: 8px;
   box-shadow: 0 4px 16px rgba(0,0,0,0.12), 0 1px 4px rgba(0,0,0,0.06);
   z-index: 100;
@@ -468,7 +456,7 @@ input, button, select, textarea {
 }
 
 .profile-dropdown-item:hover {
-  background: var(--hover-surface);
+  background-color: var(--state-hover);
 }
 
 .profile-dropdown-item .check-icon {
@@ -481,7 +469,7 @@ input, button, select, textarea {
 
 .main-area {
   flex: 1;
-  background: var(--surface-default);
+  background: var(--surface-primary);
   display: flex;
   flex-direction: column;
   overflow: hidden;
@@ -500,7 +488,7 @@ input, button, select, textarea {
   height: 40px;
   padding: 0 16px 0px 10px;
   flex-shrink: 0;
-  background: var(--surface-default);
+  background: var(--surface-primary);
   border-bottom: 0.5px solid var(--border-default);
   border-radius: 10px 10px 0 0;
 }
@@ -556,7 +544,7 @@ input, button, select, textarea {
 }
 
 .topbar-sidebar-toggle:hover {
-  background: var(--hover-main);
+  background-color: var(--state-hover);
 }
 
 .topbar-back-btn svg,
@@ -568,7 +556,7 @@ input, button, select, textarea {
 
 .topbar-back-btn:hover:not(:disabled),
 .topbar-forward-btn:hover:not(:disabled) {
-  background: var(--hover-main);
+  background-color: var(--state-hover);
 }
 
 .topbar-back-btn:disabled,
@@ -618,7 +606,7 @@ input, button, select, textarea {
   padding: 4px 8px 4.5px 8px;
   border-radius: 6px;
   border: 0.5px solid var(--border-strong);
-  background: var(--surface-raised);
+  background: var(--surface-elevated);
   cursor: pointer;
   user-select: none;
   color: var(--text-tertiary);
@@ -627,7 +615,7 @@ input, button, select, textarea {
 
 .year-switcher-trigger:hover {
   opacity: 0.8;
-  background: var(--hover-surface);
+  background: var(--surface-primary);
   color: var(--text-primary);
 }
 
@@ -635,7 +623,7 @@ input, button, select, textarea {
   position: absolute;
   top: calc(100% + 4px);
   right: 0;
-  background: var(--surface-raised);
+  background: var(--surface-elevated);
   border-radius: 8px;
   box-shadow: 0 4px 16px rgba(0,0,0,0.12), 0 1px 4px rgba(0,0,0,0.06);
   z-index: 100;
@@ -658,7 +646,7 @@ input, button, select, textarea {
 }
 
 .year-dropdown-item:hover {
-  background: var(--surface-muted);
+  background: var(--surface-inset);
 }
 
 .icon-btn {
@@ -686,7 +674,7 @@ input, button, select, textarea {
   display: flex;
   height: 24px;
   align-items: stretch;
-  background: var(--surface-default);
+  background: var(--surface-primary);
   border-radius: 4px;
 }
 
@@ -703,7 +691,7 @@ input, button, select, textarea {
 }
 
 .view-toggle-btn:hover {
-  background: var(--hover-surface);
+  background-color: var(--state-hover);
   color: var(--text-primary);
 }
 
@@ -718,7 +706,7 @@ input, button, select, textarea {
 }
 
 .view-toggle-btn.active {
-  background: var(--surface-muted);
+  background: var(--surface-inset);
   color: var(--text-tertiary);
 }
 
@@ -741,7 +729,7 @@ input, button, select, textarea {
 .month-card {
   border-radius: 8px;
   cursor: pointer;
-  background: var(--surface-raised);
+  background: var(--surface-elevated);
   box-shadow: var(--shadow-block);
   border: 0.5px solid var(--border-default);
   padding: 8px;
@@ -750,14 +738,14 @@ input, button, select, textarea {
 }
 
 .month-card:hover {
-  background: var(--hover-surface);
+  background: var(--state-hover);
   border: 0.5px solid var(--border-strong);
 }
 
 .month-card-image-area {
   position: relative;
   aspect-ratio: 1/1;
-  background: var(--surface-muted);
+  background: var(--surface-inset);
   border: 0.5px solid var(--border-default);
   overflow: hidden;
   border-radius: 6px;
@@ -824,7 +812,7 @@ input, button, select, textarea {
   position: absolute;
   top: calc(100% + 4px);
   right: 0;
-  background: var(--surface-muted);
+  background: var(--surface-inset);
   border-radius: 8px;
   box-shadow: 0 4px 16px rgba(0,0,0,0.12), 0 1px 4px rgba(0,0,0,0.06);
   z-index: 100;
@@ -865,7 +853,7 @@ input, button, select, textarea {
 .month-detail-content {
   flex: 1;
   overflow-y: auto;
-  padding: 32px 64px;
+  padding: 32px 64px 72px 64px;
   display: flex;
   flex-direction: column;
   gap: 16px;
@@ -1011,7 +999,7 @@ input, button, select, textarea {
   border: 0.5px solid var(--border-default);
   border-radius: 8px;
   box-shadow: 0px 0px 1px 0px rgba(97, 95, 94, 0.05);
-  background-color: var(--surface-raised);
+  background-color: var(--surface-elevated);
 }
 
 .media-block-label-row {
@@ -1182,13 +1170,13 @@ input, button, select, textarea {
 }
 
 .album-card:hover {
-  background: var(--hover-surface);
+  background-color: var(--state-hover);
 }
 
 .album-card-image {
   width: 100%;
   aspect-ratio: 1 / 1;
-  background: var(--surface-muted);
+  background: var(--surface-inset);
   border: 0.5px solid var(--border-strong);
   border-radius: 6px;
   overflow: hidden;
@@ -1321,7 +1309,7 @@ input, button, select, textarea {
   display: grid;
   gap: 8px;
   align-items: start;
-  padding: 16px;
+  padding: var(--photo-grid-padding);
 }
 
 .photos-grid[data-columns="2"] { grid-template-columns: repeat(2, 1fr); }
@@ -1357,17 +1345,42 @@ input, button, select, textarea {
 
 .photo-add-btn-wrapper {
   border-radius: 4px;
-  transition: box-shadow 0.1s;
+  transition: box-shadow 0.1s, opacity 0.15s ease;
 }
 
 .photo-add-btn-wrapper--drop {
   box-shadow: -3px 0 0 0 var(--color-button);
 }
 
+.photo-add-zone-wrapper {
+  display: contents;
+}
+
+.photo-add-zone-wrapper > .photo-add-btn-wrapper {
+  opacity: 0;
+}
+
+/* Extend the last photo's hover area across the grid gap so the
+   button doesn't vanish while the cursor crosses the gap. */
+.photo-add-zone-wrapper > .photo-item::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 100%;
+  width: 8px;
+  pointer-events: all;
+}
+
+.photo-add-zone-wrapper > .photo-item:hover ~ .photo-add-btn-wrapper,
+.photo-add-zone-wrapper > .photo-add-btn-wrapper:hover {
+  opacity: 1;
+}
+
 .photo-add-btn {
   width: 100%;
   aspect-ratio: 4 / 3;
-  background: var(--surface-raised);
+  background: var(--surface-elevated);
   border: 0.5px solid var(--border-strong);
   border-radius: 8px;
   padding: 5px;
@@ -1380,7 +1393,7 @@ input, button, select, textarea {
 }
 
 .photo-add-btn:hover {
-  background: var(--hover-surface);
+  background: var(--surface-primary);
 }
 
 .photo-add-btn svg {
@@ -1441,7 +1454,7 @@ input, button, select, textarea {
   display: flex;
   align-items: center;
   justify-content: center;
-  background: var(--surface-raised);
+  background: var(--surface-elevated);
   color: var(--text-muted);
   transition: background 0.1s, color 0.1s;
 }
@@ -1466,7 +1479,7 @@ input, button, select, textarea {
 
 .song-table {
   width: 100%;
-  background: var(--surface-raised);
+  background: var(--surface-elevated);
   box-shadow: 0px 0px 1px 0px rgba(97, 95, 94, 0.05);
   border-radius: 8px;
   padding: 16px 16px 8px 16px;
@@ -1506,7 +1519,7 @@ input, button, select, textarea {
 }
 
 .song-table.view-mode .song-row:hover {
-  background: var(--hover-surface);
+  background-color: var(--state-hover);
 }
 
 .song-row.selected {
@@ -1562,7 +1575,7 @@ input, button, select, textarea {
 }
 
 .song-drag-handle:hover {
-  background: var(--hover-main);
+  background-color: var(--state-hover);
 }
 
 .song-drag-handle svg { /* move icon */
@@ -1602,7 +1615,7 @@ input, button, select, textarea {
   position: absolute;
   top: calc(100% + 4px);
   right: 0;
-  background: var(--surface-muted);
+  background: var(--surface-inset);
   border-radius: 8px;
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
   z-index: 100;
@@ -1653,7 +1666,7 @@ input, button, select, textarea {
   width: 50px;
   height: 50px;
   border-radius: 6px;
-  background: var(--surface-muted);
+  background: var(--surface-inset);
   flex-shrink: 0;
   overflow: hidden;
 }
@@ -1721,14 +1734,14 @@ input, button, select, textarea {
 }
 
 .month-list-row:hover {
-  background: var(--hover-main);
+  background-color: var(--state-hover);
 }
 
 .month-list-image {
   width: 50px;
   height: 50px;
   border-radius: 8px;
-  background: var(--surface-muted);
+  background: var(--surface-inset);
   flex-shrink: 0;
   overflow: hidden;
 }
@@ -1789,7 +1802,7 @@ input, button, select, textarea {
   position: absolute;
   top: calc(100% + 4px);
   right: 0;
-  background: var(--surface-muted);
+  background: var(--surface-inset);
   border-radius: 8px;
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12), 0 1px 4px rgba(0, 0, 0, 0.06);
   z-index: 100;
@@ -1844,7 +1857,7 @@ input, button, select, textarea {
 .board-card {
   border-radius: 8px;
   cursor: pointer;
-  background: var(--surface-raised);
+  background: var(--surface-elevated);
   border: 0.5px solid var(--border-default);
   padding: 8px;
   box-shadow: 0px 0px 1px 0px rgba(97, 95, 94, 0.05);
@@ -1852,14 +1865,14 @@ input, button, select, textarea {
 }
 
 .board-card:hover {
-  background: var(--hover-surface);
+  background: var(--surface-primary);
   border: 0.5px solid var(--border-strong);
 }
 
 .board-card-image-area {
   position: relative;
   aspect-ratio: 1 / 1;
-  background: var(--surface-muted);
+  background: var(--surface-inset);
   border: 0.5px solid var(--border-default);
   overflow: hidden;
   border-radius: 6px;
@@ -1889,13 +1902,13 @@ input, button, select, textarea {
 
 .board-folder-card {
   border-radius: 8px;
-  background: var(--surface-raised);
+  background: var(--surface-elevated);
   padding: 4px;
 }
 
 .board-folder-icon {
   aspect-ratio: 1 / 1;
-  background: var(--surface-muted);
+  background: var(--surface-inset);
   border-radius: 6px;
   display: flex;
   align-items: center;
@@ -1931,7 +1944,7 @@ input, button, select, textarea {
 }
 
 .overlay-modal {
-  background: var(--surface-raised);
+  background: var(--surface-elevated);
   border-radius: 12px;
   padding: 24px;
   width: 400px;
@@ -1950,7 +1963,7 @@ input, button, select, textarea {
   width: 120px;
   height: 120px;
   border-radius: 8px;
-  background: var(--surface-muted);
+  background: var(--surface-inset);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -1978,7 +1991,7 @@ input, button, select, textarea {
 
 .overlay-input {
   width: 100%;
-  background: var(--surface-raised);
+  background: var(--surface-elevated);
   border: none;
   border-radius: 8px;
   padding: 8px 12px;
@@ -2091,7 +2104,7 @@ input, button, select, textarea {
   max-width: 1160px;   /* match your Figma */
   max-height: 90vh;
   min-width: 800px;
-  background: var(--surface-default);
+  background: var(--surface-primary);
   border: 0.5px solid var(--border-strong);
   border-radius: 10px;
   display: flex;
@@ -2125,7 +2138,7 @@ input, button, select, textarea {
 
 .settings-back-btn:hover {
   color: var(--text-secondary);
-  background: var(--hover-surface);
+  background-color: var(--state-hover);
 }
 
 .settings-esc-badge {
@@ -2133,7 +2146,7 @@ input, button, select, textarea {
   align-items: center;
   justify-content: center;
   padding: 3px 5px;
-  background: var(--surface-raised);
+  background: var(--surface-elevated);
   border: 0.5px solid var(--border-default);
   border-radius: 4px;
   font-size: 8px;
@@ -2202,7 +2215,7 @@ input, button, select, textarea {
   width: 80px;
   height: 80px;
   border-radius: 10px;
-  background: var(--surface-muted);
+  background: var(--surface-inset);
   flex-shrink: 0;
 }
 
@@ -2234,7 +2247,7 @@ input, button, select, textarea {
 }
 
 .settings-display-name-value {
-  background: var(--surface-raised);
+  background: var(--surface-elevated);
   border: 0.5px solid var(--border-default);
   border-radius: 6px;
   padding: 8px 10px;
@@ -2250,7 +2263,7 @@ input, button, select, textarea {
 /* Account Security section */
 
 .settings-security-body {
-  background: var(--surface-raised);
+  background: var(--surface-elevated);
   border: 0.5px solid var(--border-default);
   border-radius: 10px;
   padding: 10px 16px;
@@ -2297,7 +2310,7 @@ input, button, select, textarea {
 }
 
 .settings-action-btn {
-  background: var(--surface-raised);
+  background: var(--surface-elevated);
   border: 0.5px solid var(--border-strong);
   border-radius: 6px;
   padding: 8px 10px;
@@ -2313,13 +2326,13 @@ input, button, select, textarea {
 }
 
 .settings-action-btn:hover {
-  background: var(--hover-surface);
+  background: var(--surface-primary);
 }
 
 /* Appearance section */
 
 .settings-appearance-body {
-  background: var(--surface-raised);
+  background: var(--surface-elevated);
   border: 0.5px solid var(--border-default);
   border-radius: 10px;
   padding: 10px 16px;
@@ -2348,11 +2361,11 @@ input, button, select, textarea {
 }
 
 .settings-theme-toggle:hover {
-  background: var(--hover-surface);
+  background-color: var(--state-hover);
 }
 
 .settings-theme-indicator {
-  background: var(--surface-raised);
+  background: var(--surface-elevated);
   border: 0.5px solid var(--border-strong);
   border-radius: 4px;
   padding: 4px 6px;
@@ -2388,7 +2401,7 @@ input, button, select, textarea {
   position: absolute;
   top: calc(100% + 4px);
   right: 0;
-  background: var(--surface-raised);
+  background: var(--surface-elevated);
   border: 0.5px solid var(--border-default);
   border-radius: 8px;
   box-shadow: 0 2px 8px rgba(63,63,62,0.1);
@@ -2413,14 +2426,14 @@ input, button, select, textarea {
 }
 
 .settings-theme-menu-item:hover {
-  background: var(--surface-muted);
+  background: var(--surface-inset);
   color: var(--text-primary);
 }
 
 /* Danger Zone section */
 
 .settings-danger-body {
-  background: var(--surface-raised);
+  background: var(--surface-elevated);
   border: 0.5px solid var(--border-default);
   border-radius: 10px;
   padding: 16px;
@@ -2458,7 +2471,7 @@ input, button, select, textarea {
 }
 
 .account-dropdown {
-  background: var(--surface-account-dropdown);
+  background: var(--surface-primary);
   border: 0.5px solid var(--border-strong);
   border-radius: 8px;
   box-shadow: 0px 1px 4px 0px rgba(63,63,62,0.1);
@@ -2484,7 +2497,7 @@ input, button, select, textarea {
   height: 30px;
   border-radius: 4px;
   flex-shrink: 0;
-  background: var(--surface-muted);
+  background: var(--surface-inset);
   overflow: hidden;
 }
 
@@ -2500,7 +2513,7 @@ input, button, select, textarea {
   height: 18px;
   border-radius: 4px;
   flex-shrink: 0;
-  background: var(--surface-muted);
+  background: var(--surface-inset);
   overflow: hidden;
 }
 
@@ -2546,7 +2559,7 @@ input, button, select, textarea {
 }
 
 .account-dropdown-account-item:hover {
-  background: var(--hover-account-dropdown);
+  background: var(--state-hover);
   color: var(--text-primary);
 }
 
@@ -2630,7 +2643,7 @@ input, button, select, textarea {
 }
 
 .account-dropdown-item:hover {
-  background: var(--hover-account-dropdown);
+  background: var(--state-hover);
   color: var(--text-primary);
 }
 
@@ -2640,7 +2653,7 @@ input, button, select, textarea {
   bottom: calc(100% + 4px);
   transform: translateX(-50%);
   background: var(--text-primary);
-  color: var(--surface-raised);
+  color: var(--surface-elevated);
   font-size: 11px;
   font-weight: 500;
   font-family: 'Inter', sans-serif;
@@ -2670,7 +2683,7 @@ input, button, select, textarea {
   display: flex;
   align-items: center;
   gap: 8px;
-  background: var(--surface-raised);
+  background: var(--surface-elevated);
   padding: 10px 16px;
 }
 
@@ -2743,7 +2756,7 @@ input, button, select, textarea {
 }
 
 .block-controls-drag:hover {
-  background: var(--hover-main);
+  background-color: var(--state-hover);
 }
 
 .block-controls-drag:active {
@@ -2780,12 +2793,12 @@ input, button, select, textarea {
 }
 
 .block-insert-btn:hover {
-  background: var(--hover-main);
+  background-color: var(--state-hover);
   color: var(--text-tertiary);
 }
 
 .block-insert-btn--empty {
-  background: var(--surface-muted);
+  background: var(--surface-inset);
   border: 0.5px solid var(--border-subtle);
   padding: 10px 16px;
   color: var(--text-muted);
@@ -2793,7 +2806,7 @@ input, button, select, textarea {
 }
 
 .block-insert-btn--empty:hover {
-  background: var(--surface-recessed);
+  background: var(--surface-inset);
 }
 
 /* ---- BLOCK DROPDOWNS ---- */
@@ -2806,7 +2819,7 @@ input, button, select, textarea {
   position: absolute;
   top: calc(100% + 4px);
   left: 0;
-  background: var(--surface-muted);
+  background: var(--surface-inset);
   border-radius: 8px;
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
   z-index: 200;
@@ -2846,7 +2859,7 @@ input, button, select, textarea {
 }
 
 .kbd-badge {
-  background: var(--surface-muted);
+  background: var(--surface-inset);
   border: 0.5px solid var(--border-subtle);
   border-radius: 4px;
   font-size: 11px;
@@ -2861,7 +2874,7 @@ input, button, select, textarea {
   display: flex;
   align-items: center;
   justify-content: center;
-  background: var(--surface-raised);
+  background: var(--surface-elevated);
   border: 0.5px solid var(--border-strong);
   border-radius: 6px;
   padding: 6px 0 6px 0;
@@ -2871,7 +2884,7 @@ input, button, select, textarea {
 }
 
 .add-row-btn:hover {
-  background: var(--hover-surface);
+  background: var(--surface-primary);
 }
 
 /* Add row button — svg icon sizing */
@@ -2911,7 +2924,7 @@ input, button, select, textarea {
 }
 
 .add-row-btn-song:hover {
-  background: var(--hover-surface);
+  background: var(--surface-primary);
 }
 
 /* Album add button — flex sibling inside albums-grid */
@@ -2922,7 +2935,7 @@ input, button, select, textarea {
   flex: 1 1 calc(25% - 3 * var(--album-grid-gap) / 4);
   max-width: calc(25% - 3 * var(--album-grid-gap) / 4);
   align-self: stretch;
-  background: var(--surface-raised);
+  background: var(--surface-elevated);
   border: 0.5px solid var(--border-strong);
   border-radius: 8px;
   padding: 5px;
@@ -2932,7 +2945,7 @@ input, button, select, textarea {
 }
 
 .album-add-btn:hover {
-  background: var(--hover-surface);
+  background: var(--surface-primary);
 }
 
 .album-add-btn svg {
@@ -2992,8 +3005,8 @@ input, button, select, textarea {
   position: absolute;
   bottom: calc(-1 * (var(--add-row-gap) + var(--add-row-btn-height)));
   left: 0;
-  width: calc(25% - var(--album-grid-gap) * 3 / 4);
-  padding-left: var(--album-card-padding);
+  width: calc(25% - var(--album-card-padding) * 3 / 4 + 2px);
+  padding-left: var(--album-grid-gap); /* align with card content, not card edge */
   height: var(--add-row-btn-height);
   box-sizing: border-box;
   opacity: 0;
@@ -3009,6 +3022,49 @@ input, button, select, textarea {
 
 .album-grid-hover-zone:hover ~ .add-row-btn-album-wrapper,
 .add-row-btn-album-wrapper:hover {
+  opacity: 1;
+  pointer-events: all;
+}
+
+/* ---- PHOTO GRID WRAPPER (full-row add button variant) ---- */
+
+.photo-grid-wrapper {
+  position: relative;
+}
+
+.photo-grid-hover-zone {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: calc(-1 * (var(--add-row-gap) + var(--add-row-btn-height)));
+  height: calc(var(--add-row-hover-extension) + var(--add-row-gap) + var(--add-row-btn-height));
+  pointer-events: all;
+  background: transparent;
+  z-index: 2;
+}
+
+/* Full-row add photo button — shown when the inline button wraps */
+.add-row-btn-photo-wrapper {
+  position: absolute;
+  bottom: calc(-1 * (var(--add-row-gap) + var(--add-row-btn-height)));
+  left: 0;
+  width: calc(25% - var(--photo-grid-padding));
+  padding-left: var(--photo-grid-padding);
+  height: var(--add-row-btn-height);
+  box-sizing: border-box;
+  opacity: 0;
+  pointer-events: none;
+  z-index: 3;
+  transition: opacity 0.15s ease;
+}
+
+.add-row-btn-photo {
+  width: 100%;
+  height: 100%;
+}
+
+.photo-grid-hover-zone:hover ~ .add-row-btn-photo-wrapper,
+.add-row-btn-photo-wrapper:hover {
   opacity: 1;
   pointer-events: all;
 }
@@ -3030,7 +3086,7 @@ input, button, select, textarea {
   top: calc(100% + 4px);
   left: 0;
   z-index: 100;
-  background: var(--surface-default);
+  background: var(--surface-primary);
   border: 0.5px solid var(--border-subtle);
   border-radius: 6px;
   padding: 10px;
@@ -3049,7 +3105,7 @@ input, button, select, textarea {
 }
 
 .search-dropdown-item.active {
-  background: var(--surface-muted);
+  background: var(--surface-inset);
 }
 
 .search-dropdown-thumb {
@@ -3057,7 +3113,7 @@ input, button, select, textarea {
   height: 32px;
   border-radius: 3px;
   flex-shrink: 0;
-  background: var(--surface-recessed);
+  background: var(--surface-inset);
 }
 
 .search-dropdown-info {

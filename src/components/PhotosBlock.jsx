@@ -82,6 +82,10 @@ export default function PhotosBlock({
   const pendingRemovalRef = useRef(null)
   const timerRef = useRef(null)
   const fileInputRef = useRef(null)
+  const gridRef = useRef(null)
+  const lastPhotoRef = useRef(null)
+  const addBtnRef = useRef(null)
+  const [addBtnWrapped, setAddBtnWrapped] = useState(false)
 
   // Drag-to-reorder state
   const [dragPhotoId, setDragPhotoId] = useState(null)
@@ -128,6 +132,17 @@ export default function PhotosBlock({
       }
     }
   }, [month, year]) // eslint-disable-line react-hooks/exhaustive-deps
+
+  useEffect(() => {
+    function check() {
+      if (!lastPhotoRef.current || !addBtnRef.current) return
+      setAddBtnWrapped(addBtnRef.current.offsetTop > lastPhotoRef.current.offsetTop)
+    }
+    check()
+    const observer = new ResizeObserver(check)
+    if (gridRef.current) observer.observe(gridRef.current)
+    return () => observer.disconnect()
+  }, [photos, columnCount])
 
   function commitPendingRemoval() {
     const pending = pendingRemovalRef.current
@@ -198,12 +213,10 @@ export default function PhotosBlock({
     dragPhotoIdRef.current = photoId
     setDragPhotoId(photoId)
     e.dataTransfer.effectAllowed = 'move'
-    const ghost = document.createElement('div')
-    ghost.style.position = 'fixed'
-    ghost.style.top = '-9999px'
-    document.body.appendChild(ghost)
-    e.dataTransfer.setDragImage(ghost, 0, 0)
-    setTimeout(() => document.body.removeChild(ghost), 0)
+    const blank = document.createElement('canvas')
+    blank.width = 1
+    blank.height = 1
+    e.dataTransfer.setDragImage(blank, 0, 0)
   }
 
   function handlePhotoDragOver(e, photoId) {
@@ -299,54 +312,97 @@ export default function PhotosBlock({
         focusTitle={focusTitle}
         onTitleFocused={onTitleFocused}
       >
-        <div className="photos-grid" data-columns={columnCount}>
-          {displayPhotos.map(photo => {
-            const isDragging = dragPhotoId === photo.id
-            const isTarget = dropTargetPhotoId === photo.id
-            let itemClass = 'photo-item'
-            if (isDragging) itemClass += ' photo-item--dragging'
-            if (isTarget) itemClass += dropBefore ? ' photo-item--drop-before' : ' photo-item--drop-after'
-            return (
+        <div className="photo-grid-wrapper">
+          <div className="photos-grid" data-columns={columnCount} ref={gridRef}>
+            {displayPhotos.map((photo, index) => {
+              const isDragging = dragPhotoId === photo.id
+              const isTarget = dropTargetPhotoId === photo.id
+              const isLast = index === displayPhotos.length - 1
+              let itemClass = 'photo-item'
+              if (isDragging) itemClass += ' photo-item--dragging'
+              if (isTarget) itemClass += dropBefore ? ' photo-item--drop-before' : ' photo-item--drop-after'
+              const photoEl = (
+                <div
+                  key={photo.id}
+                  className={itemClass}
+                  ref={isLast ? lastPhotoRef : undefined}
+                  draggable
+                  onDragStart={e => handlePhotoDragStart(e, photo.id)}
+                  onDragOver={e => handlePhotoDragOver(e, photo.id)}
+                  onDrop={e => handlePhotoDrop(e, photo.id)}
+                  onDragEnd={handlePhotoDragEnd}
+                >
+                  <img
+                    src={photoDataMap[photo.id] || photo.data || ''}
+                    alt={photo.fileName || ''}
+                    className="photo-img"
+                  />
+                  <PhotoMenu onRemove={() => handleRemovePhoto(photo.id)} />
+                </div>
+              )
+              if (isLast) {
+                return (
+                  <div key={photo.id} className="photo-add-zone-wrapper">
+                    {photoEl}
+                    {!addBtnWrapped && (
+                      <div
+                        ref={addBtnRef}
+                        className={`photo-add-btn-wrapper${dropTargetPhotoId === '__add__' ? ' photo-add-btn-wrapper--drop' : ''}`}
+                        onDragOver={handleAddSlotDragOver}
+                        onDrop={handleAddSlotDrop}
+                        onDragLeave={() => { if (dropTargetPhotoId === '__add__') setDropTargetPhotoId(null) }}
+                      >
+                        <button
+                          className="photo-add-btn"
+                          onClick={() => fileInputRef.current?.click()}
+                        >
+                          <AddIcon />
+                        </button>
+                      </div>
+                    )}
+                  </div>
+                )
+              }
+              return photoEl
+            })}
+            {displayPhotos.length === 0 && (
               <div
-                key={photo.id}
-                className={itemClass}
-                draggable
-                onDragStart={e => handlePhotoDragStart(e, photo.id)}
-                onDragOver={e => handlePhotoDragOver(e, photo.id)}
-                onDrop={e => handlePhotoDrop(e, photo.id)}
-                onDragEnd={handlePhotoDragEnd}
+                className={`photo-add-btn-wrapper${dropTargetPhotoId === '__add__' ? ' photo-add-btn-wrapper--drop' : ''}`}
+                onDragOver={handleAddSlotDragOver}
+                onDrop={handleAddSlotDrop}
+                onDragLeave={() => { if (dropTargetPhotoId === '__add__') setDropTargetPhotoId(null) }}
               >
-                <img
-                  src={photoDataMap[photo.id] || photo.data || ''}
-                  alt={photo.fileName || ''}
-                  className="photo-img"
-                />
-                <PhotoMenu onRemove={() => handleRemovePhoto(photo.id)} />
+                <button
+                  className="photo-add-btn"
+                  onClick={() => fileInputRef.current?.click()}
+                >
+                  <AddIcon />
+                </button>
               </div>
-            )
-          })}
-          <div
-            className={`photo-add-btn-wrapper${dropTargetPhotoId === '__add__' ? ' photo-add-btn-wrapper--drop' : ''}`}
-            onDragOver={handleAddSlotDragOver}
-            onDrop={handleAddSlotDrop}
-            onDragLeave={() => { if (dropTargetPhotoId === '__add__') setDropTargetPhotoId(null) }}
-          >
-            <button
-              className="photo-add-btn"
-              onClick={() => fileInputRef.current?.click()}
-            >
-              <AddIcon />
-            </button>
-            <input
-              ref={fileInputRef}
-              type="file"
-              accept=".jpg,.jpeg,.png,.heic,.webp,image/heic"
-              multiple
-              style={{ display: 'none' }}
-              onChange={handleFileChange}
-            />
+            )}
           </div>
+          {addBtnWrapped && (
+            <>
+              <div className="photo-grid-hover-zone" />
+              <div className="add-row-btn-photo-wrapper">
+                <button
+                  className="add-row-btn add-row-btn-photo"
+                  onClick={() => fileInputRef.current?.click()}
+                >
+                  <AddIcon />
+                </button>
+              </div>
+            </>
+          )}
         </div>
+        <input
+          ref={fileInputRef}
+          type="file"
+          accept=".jpg,.jpeg,.png,.heic,.webp,image/heic"
+          multiple
+          style={{ display: 'none' }}
+          onChange={handleFileChange}
+        />
       </MediaBlock>
       {toastVisible && (
         <Toast key={toastKey} onRestore={handleRestorePhoto} />
