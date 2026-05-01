@@ -460,6 +460,7 @@ export default function MonthDetail({ month, year, monthData, onSave, onSaveNote
                     onSongsChange={items => handleBlockItemsChange(block.id, items)}
                     onViewSongsChange={items => handleBlockItemsChange(block.id, items)}
                     initialFocusId={justCreatedBlock?.id === block.id ? justCreatedBlock.items?.[0]?.id : null}
+                    blockDragActive={!!dragBlockId}
                   />
                 </MediaBlock>
               )

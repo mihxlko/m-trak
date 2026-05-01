@@ -28,3 +28,58 @@ export async function searchAlbums(query) {
     return []
   }
 }
+
+const MB_BASE = 'https://musicbrainz.org/ws/2'
+const MB_HEADERS = { 'User-Agent': 'm-trak/2.0 (contact@m-trak.app)' }
+
+export async function getTrackInfo(trackName, artistName) {
+  try {
+    const query = `recording:"${trackName}" AND artist:"${artistName}"`
+    const res = await fetch(
+      `${MB_BASE}/recording?query=${encodeURIComponent(query)}&fmt=json&limit=1`,
+      { headers: MB_HEADERS }
+    )
+    const data = await res.json()
+    const recording = data.recordings?.[0]
+    if (!recording) return null
+    const release = recording.releases?.[0]
+    return {
+      album: release?.title || '',
+      releaseId: release?.id || null,
+      artist: recording['artist-credit']?.[0]?.name || artistName,
+    }
+  } catch (err) {
+    console.error('getTrackInfo failed:', err)
+    return null
+  }
+}
+
+export async function getCoverArt(releaseId) {
+  if (!releaseId) return null
+  try {
+    const res = await fetch(`https://coverartarchive.org/release/${releaseId}`)
+    const data = await res.json()
+    const front = data.images?.find(img => img.front)
+    return front?.thumbnails?.['500'] || front?.thumbnails?.large || front?.image || null
+  } catch (err) {
+    console.error('getCoverArt failed:', err)
+    return null
+  }
+}
+
+export async function getAlbumCoverArt(albumName, artistName) {
+  try {
+    const query = `release:"${albumName}" AND artist:"${artistName}"`
+    const res = await fetch(
+      `${MB_BASE}/release?query=${encodeURIComponent(query)}&fmt=json&limit=1`,
+      { headers: MB_HEADERS }
+    )
+    const data = await res.json()
+    const releaseId = data.releases?.[0]?.id
+    if (!releaseId) return null
+    return await getCoverArt(releaseId)
+  } catch (err) {
+    console.error('getAlbumCoverArt failed:', err)
+    return null
+  }
+}

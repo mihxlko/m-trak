@@ -977,11 +977,11 @@ input, button, select, textarea {
 }
 
 .month-block-wrapper.block-drop-before::before {
-  top: -13px;
+  top: 0;
 }
 
 .month-block-wrapper.block-drop-after::after {
-  bottom: -13px;
+  bottom: 0;
 }
 
 .month-add-content-row {

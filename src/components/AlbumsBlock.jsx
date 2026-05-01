@@ -2,6 +2,7 @@ import { useState, useRef, useEffect } from 'react'
 import MediaBlock from './MediaBlock.jsx'
 import AlbumCard from './AlbumCard.jsx'
 import AddIcon from '../icons/add-icon.jsx'
+import { getAlbumCoverArt } from '../utils/musicApi.js'
 
 function uuid() {
   return crypto.randomUUID()
@@ -22,6 +23,8 @@ export default function AlbumsBlock({ block, editMode, onItemsChange, onSave, on
   const focusAlbumIdRef = useRef(initialFocusId || null)
 
   const albums = block.items || []
+  const albumsRef = useRef(albums)
+  albumsRef.current = albums
 
   // Clear internal drop state whenever block-level drag becomes active
   if (blockDragActive && (dropTargetId !== null || dragId !== null)) {
@@ -51,6 +54,15 @@ export default function AlbumsBlock({ block, editMode, onItemsChange, onSave, on
       ? { ...a, albumName: result.name, artistName: result.artist, coverUrl }
       : a
     ))
+
+    ;(async () => {
+      const hiResCover = await getAlbumCoverArt(result.name, result.artist)
+      if (hiResCover) {
+        onItemsChange(albumsRef.current.map(a =>
+          a.id === id ? { ...a, coverUrl: hiResCover } : a
+        ))
+      }
+    })()
   }
 
   function handleDelete(id) {

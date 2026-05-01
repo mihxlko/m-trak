@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from 'react'
-import { searchTracks } from '../utils/musicApi.js'
+import { searchTracks, getTrackInfo, getCoverArt } from '../utils/musicApi.js'
 import { debounce } from '../utils/debounce.js'
 import SearchDropdown from './SearchDropdown.jsx'
 import MoveIcon from '../icons/move-icon.jsx'
@@ -22,7 +22,7 @@ function uuid() {
 }
 
 function makeBlankSong() {
-  return { id: uuid(), track: '', artist: '', album: '', albumArt: null }
+  return { id: uuid(), track: '', artist: '', album: '', albumArt: null, coverUrl: null }
 }
 
 function TrackInputCell({ song, onFieldChange, onSelectResult, onBlurRow, autoFocusRef }) {
@@ -88,7 +88,7 @@ function TrackInputCell({ song, onFieldChange, onSelectResult, onBlurRow, autoFo
 }
 
 
-export default function SongTable({ songs, editMode, onSongsChange, onViewSongsChange, initialFocusId }) {
+export default function SongTable({ songs, editMode, onSongsChange, onViewSongsChange, initialFocusId, blockDragActive }) {
   // Local songs state for immediate UI feedback while saves propagate
   const [localSongs, setLocalSongs] = useState(songs)
 
@@ -156,6 +156,7 @@ export default function SongTable({ songs, editMode, onSongsChange, onViewSongsC
   }
 
   function handleDragOver(e) {
+    if (blockDragActive) return
     e.preventDefault()
     e.dataTransfer.dropEffect = 'move'
     const rows = tableRef.current?.querySelectorAll('.song-row')
@@ -227,6 +228,25 @@ export default function SongTable({ songs, editMode, onSongsChange, onViewSongsC
     )
     setLocalSongs(next)
     onSongsChange(next)
+
+    ;(async () => {
+      const info = await getTrackInfo(result.name, result.artist)
+      if (!info) return
+      const withAlbum = localSongsRef.current.map(s =>
+        s.id === songId ? { ...s, album: info.album || s.album } : s
+      )
+      setLocalSongs(withAlbum)
+      onSongsChange(withAlbum)
+
+      const coverUrl = await getCoverArt(info.releaseId)
+      if (coverUrl) {
+        const withCover = localSongsRef.current.map(s =>
+          s.id === songId ? { ...s, coverUrl } : s
+        )
+        setLocalSongs(withCover)
+        onSongsChange(withCover)
+      }
+    })()
   }
 
   // ── Empty row cleanup on blur ────────────────────────────────────────────
@@ -335,7 +355,9 @@ export default function SongTable({ songs, editMode, onSongsChange, onViewSongsC
                 </div>
 
                 <div className="song-row-art">
-                  {song.albumArt && <img src={song.albumArt} alt="" />}
+                  {(song.albumArt || song.coverUrl) && (
+                    <img src={song.albumArt || song.coverUrl} alt="" />
+                  )}
                 </div>
 
                 <TrackInputCell
