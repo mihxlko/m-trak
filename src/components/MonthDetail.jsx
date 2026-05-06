@@ -4,6 +4,7 @@ import AlbumsBlock, { makeBlankAlbum } from './AlbumsBlock.jsx'
 import NotesBlock from './NotesBlock.jsx'
 import PhotosBlock from './PhotosBlock.jsx'
 import MediaBlock from './MediaBlock.jsx'
+import SongEditModal from './SongEditModal.jsx'
 import Toast from './Toast.jsx'
 import AddIcon from '../icons/add-icon.jsx'
 import MoveIcon from '../icons/move-icon.jsx'
@@ -98,6 +99,9 @@ export default function MonthDetail({ month, year, monthData, onSave, onSaveNote
   const [toastKey, setToastKey] = useState(0)
   const pendingRemovalRef = useRef(null)
   const timerRef = useRef(null)
+
+  // ── Song edit modal ──────────────────────────────────────────────────────
+  const [editingBlock, setEditingBlock] = useState(null)
 
   // ── Block drag reorder ───────────────────────────────────────────────────
   const [dragBlockId, setDragBlockId] = useState(null)
@@ -315,6 +319,10 @@ export default function MonthDetail({ month, year, monthData, onSave, onSaveNote
     onSave(blocks.map(b => b.id === blockId ? { ...b, items } : b))
   }
 
+  function handleSaveBlockItems(blockId, updatedItems) {
+    onSave(blocks.map(b => b.id === blockId ? { ...b, items: updatedItems } : b))
+  }
+
   function handleNotesChange(blockId, content) {
     clearTimeout(notesTimers.current[blockId])
     notesTimers.current[blockId] = setTimeout(() => {
@@ -446,13 +454,21 @@ export default function MonthDetail({ month, year, monthData, onSave, onSaveNote
             if (block.type === 'songs') {
               blockEl = (
                 <MediaBlock
-                  title={block.title}
-                  titleVisible={block.titleVisible}
+                  title={block.title || 'Songs'}
+                  titleVisible={true}
                   editMode={true}
                   onTitleChange={newTitle => handleTitleChange(block.id, newTitle)}
                   onRemove={onRemove}
                   focusTitle={isTitleFocused}
                   onTitleFocused={() => setTitleFocusId(null)}
+                  headerControls={
+                    <button
+                      className="text-btn"
+                      onClick={() => setEditingBlock(block)}
+                    >
+                      Edit
+                    </button>
+                  }
                 >
                   <SongTable
                     songs={block.items}
@@ -563,6 +579,18 @@ export default function MonthDetail({ month, year, monthData, onSave, onSaveNote
 
       {toastVisible && (
         <Toast key={toastKey} onRestore={handleRestoreBlock} />
+      )}
+
+      {editingBlock?.type === 'songs' && (
+        <SongEditModal
+          title={editingBlock.title || 'Songs'}
+          items={editingBlock.items}
+          onSave={(updatedItems) => {
+            handleSaveBlockItems(editingBlock.id, updatedItems)
+            setEditingBlock(null)
+          }}
+          onClose={() => setEditingBlock(null)}
+        />
       )}
     </div>
   )

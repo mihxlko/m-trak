@@ -3,7 +3,6 @@ import { searchTracks, getTrackInfo, getCoverArt } from '../utils/musicApi.js'
 import { debounce } from '../utils/debounce.js'
 import SearchDropdown from './SearchDropdown.jsx'
 import MoveIcon from '../icons/move-icon.jsx'
-import AddIcon from '../icons/add-icon.jsx'
 
 const ADD_ALBUM_ART_LABEL = 'Add Album Art'
 
@@ -108,7 +107,6 @@ export default function SongTable({ songs, editMode, onSongsChange, onViewSongsC
   const [dropTargetId, setDropTargetId] = useState(null)
   const [dropBefore, setDropBefore] = useState(true)
   const [openMenuId, setOpenMenuId] = useState(null)
-  const [lastRowHovered, setLastRowHovered] = useState(false)
   const tableRef = useRef(null)
   const focusTrackIdRef = useRef(initialFocusId || null)
   const albumArtInputRef = useRef(null)
@@ -261,14 +259,6 @@ export default function SongTable({ songs, editMode, onSongsChange, onViewSongsC
     }
   }
 
-  function handleAddTrack() {
-    const blank = makeBlankSong()
-    focusTrackIdRef.current = blank.id
-    const next = [...localSongs, blank]
-    setLocalSongs(next)
-    onSongsChange(next)
-  }
-
   function handleAlbumArtFileChange(e) {
     const file = e.target.files?.[0]
     if (!file) return
@@ -324,7 +314,6 @@ export default function SongTable({ songs, editMode, onSongsChange, onViewSongsC
             const isDragging = dragIds.has(song.id)
             const isDropTarget = dropTargetId === song.id
             const menuOpen = openMenuId === song.id
-            const isLast = idx === localSongs.length - 1
 
             const rowClass = [
               'song-row',
@@ -338,9 +327,6 @@ export default function SongTable({ songs, editMode, onSongsChange, onViewSongsC
                 key={song.id}
                 data-song-id={song.id}
                 className={rowClass}
-                style={isLast ? { zIndex: 4 } : undefined}
-                onMouseEnter={isLast ? () => setLastRowHovered(true) : undefined}
-                onMouseLeave={isLast ? () => setLastRowHovered(false) : undefined}
               >
                 <div className="song-num-cell">
                   <span className="song-row-num">{String(idx + 1).padStart(2, '0')}</span>
@@ -419,14 +405,6 @@ export default function SongTable({ songs, editMode, onSongsChange, onViewSongsC
         </div>
       </div>
 
-      <div className="song-table-hover-zone" />
-      <button
-        className="add-row-btn add-row-btn-song"
-        onClick={handleAddTrack}
-        style={lastRowHovered ? { opacity: 1, pointerEvents: 'all' } : undefined}
-      >
-        <AddIcon />
-      </button>
       <input
         ref={albumArtInputRef}
         type="file"
