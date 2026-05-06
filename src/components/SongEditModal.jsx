@@ -22,9 +22,12 @@ export default function SongEditModal({ title, items, onSave, onClose }) {
   // ── Drag reorder ─────────────────────────────────────────────────────────
   const [dragIdx, setDragIdx] = useState(null)
   const [dragOverIdx, setDragOverIdx] = useState(null)
+  const [dragTranslateY, setDragTranslateY] = useState(0)
   const dragIdxRef = useRef(null)
   const dragOverIdxRef = useRef(null)
   const rowHeightRef = useRef(0)
+  const pointerStartYRef = useRef(0)
+  const rowRectsRef = useRef([])
   const listRef = useRef(null)
 
   // Escape closes modal
@@ -99,47 +102,37 @@ export default function SongEditModal({ title, items, onSave, onClose }) {
     setDraftItems(prev => prev.filter(s => s.id !== id))
   }
 
-  // ── Drag reorder (HTML5 DnD on handle, events on list container) ─────────
-  function handleDragStart(e, idx) {
+  // ── Drag reorder (pointer events) ────────────────────────────────────────
+  function handlePointerDown(e, idx) {
+    e.preventDefault()
+    const rows = listRef.current?.querySelectorAll('.song-edit-modal-row')
+    if (!rows?.length) return
+
+    rowRectsRef.current = Array.from(rows).map(r => r.getBoundingClientRect())
+    rowHeightRef.current = rows[idx].offsetHeight + 8
+    pointerStartYRef.current = e.clientY
+
     dragIdxRef.current = idx
     dragOverIdxRef.current = idx
     setDragIdx(idx)
     setDragOverIdx(idx)
-    e.dataTransfer.effectAllowed = 'move'
-    // Capture row height for transform calculations
-    const rows = listRef.current?.querySelectorAll('.song-edit-modal-row')
-    if (rows?.[idx]) rowHeightRef.current = rows[idx].offsetHeight + 8 // include gap
+    setDragTranslateY(0)
+
+    document.body.style.cursor = 'grabbing'
+    window.addEventListener('pointermove', handlePointerMove)
+    window.addEventListener('pointerup', handlePointerUp)
   }
 
-  function handleDragEnd() {
-    const from = dragIdxRef.current
-    const to = dragOverIdxRef.current
-    dragIdxRef.current = null
-    dragOverIdxRef.current = null
-    if (from !== null && to !== null && from !== to) {
-      setDraftItems(prev => {
-        const next = [...prev]
-        const [moved] = next.splice(from, 1)
-        next.splice(to, 0, moved)
-        return next
-      })
-    }
-    setDragIdx(null)
-    setDragOverIdx(null)
-  }
-
-  function handleListDragOver(e) {
-    e.preventDefault()
-    e.dataTransfer.dropEffect = 'move'
+  function handlePointerMove(e) {
     if (dragIdxRef.current === null) return
 
-    const rows = listRef.current?.querySelectorAll('.song-edit-modal-row')
-    if (!rows?.length) return
+    const deltaY = e.clientY - pointerStartYRef.current
+    setDragTranslateY(deltaY)
 
-    let overIdx = rows.length - 1
-    for (let i = 0; i < rows.length; i++) {
-      const rect = rows[i].getBoundingClientRect()
-      const mid = rect.top + rect.height / 2
+    const rects = rowRectsRef.current
+    let overIdx = rects.length - 1
+    for (let i = 0; i < rects.length; i++) {
+      const mid = rects[i].top + rects[i].height / 2
       if (e.clientY < mid) { overIdx = i; break }
     }
 
@@ -149,20 +142,47 @@ export default function SongEditModal({ title, items, onSave, onClose }) {
     }
   }
 
+  function handlePointerUp() {
+    window.removeEventListener('pointermove', handlePointerMove)
+    window.removeEventListener('pointerup', handlePointerUp)
+    document.body.style.cursor = ''
+
+    const from = dragIdxRef.current
+    const to = dragOverIdxRef.current
+    dragIdxRef.current = null
+    dragOverIdxRef.current = null
+
+    if (from !== null && to !== null && from !== to) {
+      setDraftItems(prev => {
+        const next = [...prev]
+        const [moved] = next.splice(from, 1)
+        next.splice(to, 0, moved)
+        return next
+      })
+    }
+
+    setDragIdx(null)
+    setDragOverIdx(null)
+    setDragTranslateY(0)
+  }
+
   function getRowStyle(idx) {
     const from = dragIdx
     const to = dragOverIdx
     const h = rowHeightRef.current
 
-    if (from === null || to === null || from === to || h === 0) {
+    if (from === null || to === null) {
       return { transition: 'transform 0.15s ease, box-shadow 0.1s' }
     }
 
     if (idx === from) {
       return {
+        transform: `translateY(${dragTranslateY}px)`,
         boxShadow: '0 4px 12px rgba(0,0,0,0.12)',
-        opacity: 0.85,
-        transition: 'transform 0.15s ease, box-shadow 0.1s',
+        opacity: 1,
+        zIndex: 10,
+        position: 'relative',
+        transition: 'box-shadow 0.1s',
       }
     }
 
@@ -187,7 +207,7 @@ export default function SongEditModal({ title, items, onSave, onClose }) {
         {/* Header */}
         <div className="song-edit-modal-header">
           <span className="song-edit-modal-title">{title}</span>
-          <button className="song-edit-modal-icon-btn" onClick={onClose}>
+          <button className="song-edit-modal-header-icon-btn" onClick={onClose}>
             <IconClose />
           </button>
         </div>
@@ -196,8 +216,6 @@ export default function SongEditModal({ title, items, onSave, onClose }) {
         <div
           className="song-edit-modal-list"
           ref={listRef}
-          onDragOver={handleListDragOver}
-          onDrop={e => e.preventDefault()}
         >
           {draftItems.map((song, idx) => (
             <div
@@ -229,9 +247,7 @@ export default function SongEditModal({ title, items, onSave, onClose }) {
                 </button>
                 <span
                   className="song-edit-modal-icon-btn song-edit-drag-handle"
-                  draggable
-                  onDragStart={e => handleDragStart(e, idx)}
-                  onDragEnd={handleDragEnd}
+                  onPointerDown={e => handlePointerDown(e, idx)}
                   title="Drag to reorder"
                 >
                   <IconMoveHamburger />

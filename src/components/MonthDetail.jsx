@@ -463,7 +463,7 @@ export default function MonthDetail({ month, year, monthData, onSave, onSaveNote
                   onTitleFocused={() => setTitleFocusId(null)}
                   headerControls={
                     <button
-                      className="text-btn"
+                      className="text-btn-md"
                       onClick={() => setEditingBlock(block)}
                     >
                       Edit

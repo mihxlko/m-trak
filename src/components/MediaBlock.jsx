@@ -121,48 +121,6 @@ export default function MediaBlock({
             <div className="media-block-header-controls">{headerControls}</div>
           )}
 
-          {hasMenu && (
-            <div className="media-block-header-menu" ref={menuRef} style={{ position: 'relative' }}>
-              <button
-                className="song-row-menu-btn"
-                onClick={e => { e.stopPropagation(); setMenuOpen(v => !v) }}
-              >
-                <DotsIcon />
-              </button>
-              {menuOpen && (
-                <div className="song-row-dropdown">
-                  {onDone && (
-                    <button
-                      className="song-row-dropdown-item"
-                      onMouseDown={e => e.stopPropagation()}
-                      onClick={() => { setMenuOpen(false); onDone() }}
-                    >
-                      Done Editing
-                    </button>
-                  )}
-                  {!editMode && onEdit && (
-                    <button
-                      className="song-row-dropdown-item"
-                      onMouseDown={e => e.stopPropagation()}
-                      onClick={() => { setMenuOpen(false); onEdit() }}
-                    >
-                      Edit Block
-                    </button>
-                  )}
-                  {onRemove && (onDone || (!editMode && onEdit)) && <div className="dropdown-divider" />}
-                  {onRemove && (
-                    <button
-                      className="song-row-dropdown-item song-row-dropdown-item--danger"
-                      onMouseDown={e => e.stopPropagation()}
-                      onClick={() => { setMenuOpen(false); onRemove() }}
-                    >
-                      Remove Block
-                    </button>
-                  )}
-                </div>
-              )}
-            </div>
-          )}
         </div>
       )}
       {children}
